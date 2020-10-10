@@ -10,16 +10,16 @@ import SourceryFramework
 import PathKit
 
 /// Used to write modified model templates to swift files
-struct ModelFacade : Facade {
+struct ModelFacade: Facade {
     var modifiables: [Modifiable]
     var targetDirectory: Path
-    var migrationSet : MigrationSet?
+    var migrationSet: MigrationSet?
     
     /// Persists models to files
     /// - Throws: error if writing fails
     /// - Returns: `[URL]` of file URLs
     func persist() throws -> [URL] {
-        try self.modifiables.map { (m) -> URL in
+        try self.modifiables.map { m -> URL in
             let template = ModelTemplate()
             let model = try migrationSet!.activate(for: m) as! WrappedClass
             return try template.write(model, to: targetDirectory.persistentPath + Path("\(model.localName).swift"))!

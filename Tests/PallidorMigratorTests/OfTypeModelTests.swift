@@ -3,7 +3,6 @@ import SourceryFramework
 @testable import PallidorMigrator
 
 class OfTypeModelTests: XCTestCase {
-    
     override func tearDown() {
         CodeStore.clear()
     }
@@ -141,7 +140,7 @@ class OfTypeModelTests: XCTestCase {
         XCTAssertEqual(result, readResource(Resources.ResultModelOfTypeReplaced.rawValue))
     }
     
-    enum Resources : String {
+    enum Resources: String {
         case ModelOfType, ModelOfTypeRenamed, ModelOfTypeFacade, ModelPlaceholder
         case ResultModelOfType, ResultModelOfTypeRenamed, ResultModelOfTypeDeletedCase, ResultModelOfTypeDeleted, ResultModelOfTypeReplaced
     }

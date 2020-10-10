@@ -9,7 +9,7 @@ import Foundation
 import SourceryRuntime
 
 /// Variable wrapped SourceryVariable
-class WrappedVariable : Modifiable {
+class WrappedVariable: Modifiable {
     var annotation: Annotation?
     
     
@@ -31,30 +31,30 @@ class WrappedVariable : Modifiable {
     }
     
     /// name of variable
-    var name : String
+    var name: String
     /// default value of variable
-    var defaultValue : String?
+    var defaultValue: String?
     /// true if variable is not a constant
-    var isMutable : Bool
+    var isMutable: Bool
     /// true if variable is an enum type
-    var isEnum : Bool
+    var isEnum: Bool
     /// true if variable is an custom type
-    var isCustomType : Bool
+    var isCustomType: Bool
     /// true if variable is an array type
-    var isArray : Bool
+    var isArray: Bool
     /// true if variable is an internal enum type
-    var isCustomInternalEnumType : Bool
+    var isCustomInternalEnumType: Bool
     /// true if variable is optional
-    var isOptional : Bool
+    var isOptional: Bool
     /// true if variable is static
-    var isStatic : Bool
+    var isStatic: Bool
     /// true if variable is a typealias
-    var isTypeAlias : Bool {
+    var isTypeAlias: Bool {
         typeName.isTypeAlias
     }
     
     /// the type of the variable
-    var typeName : WrappedTypeName
+    var typeName: WrappedTypeName
     
     /// Declaration string of variable
     lazy var declaration : () -> String = { () in
@@ -110,5 +110,4 @@ class WrappedVariable : Modifiable {
             fatalError("Variable: Modification not implemented")
         }
     }
-    
 }

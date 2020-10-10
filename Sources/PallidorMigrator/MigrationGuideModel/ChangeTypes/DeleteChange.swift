@@ -8,22 +8,20 @@
 import Foundation
 
 /// Deletion change as stated in migration guide
-class DeleteChange : Change {
-    
+class DeleteChange: Change {
     internal init(fallbackValue: ContentType? = nil, reason: String?, object: ObjectType, target: TargetType) {
         self.fallbackValue = fallbackValue
         super.init(reason: reason, object: object, target: target, changeType: .delete)
     }
     
     /// a fallback value to be put in place for deleted item
-    var fallbackValue : ContentType?
+    var fallbackValue: ContentType?
     
-    private enum CodingKeys : String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case fallbackValue = "fallback-value"
     }
     
     required init(from decoder: Decoder) throws {
-        
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         if let value = try? container.decode(Variable.self, forKey: .fallbackValue) {
@@ -52,5 +50,4 @@ class DeleteChange : Change {
         
         self.changeType = .delete
     }
-    
 }

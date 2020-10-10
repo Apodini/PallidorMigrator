@@ -9,10 +9,8 @@ import Foundation
 
 
 /// Migration of a RenameChange on a Modifiable
-final class RenameMigration : Migration {
-    
+final class RenameMigration: Migration {
     internal init(solvable: Bool, executeOn: Modifiable, change: RenameChange) {
         super.init(solvable: solvable, executeOn: executeOn, change: change)
     }
-        
 }

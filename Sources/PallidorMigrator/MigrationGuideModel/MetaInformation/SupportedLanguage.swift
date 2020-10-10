@@ -8,6 +8,6 @@
 import Foundation
 
 /// represents the supported language, currently only `Swift`
-enum SupportedLanguage : String, CaseIterable, Decodable {
+enum SupportedLanguage: String, CaseIterable, Decodable {
     case swift = "Swift"
 }

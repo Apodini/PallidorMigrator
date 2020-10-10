@@ -16,7 +16,7 @@ protocol Migrating {
     /// the change this migration action results from
     var change: Change { get set }
     /// modifiable which is about to be changed
-    var executeOn : Modifiable { get set }
+    var executeOn: Modifiable { get set }
     
     /// execution of the migrating actions defined by change on the modifiable
     func execute() throws

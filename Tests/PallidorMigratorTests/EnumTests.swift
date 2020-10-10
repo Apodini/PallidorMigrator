@@ -3,7 +3,6 @@ import SourceryFramework
 @testable import PallidorMigrator
 
 class EnumTests: XCTestCase {
-    
     override func tearDown() {
         CodeStore.clear()
     }
@@ -151,7 +150,7 @@ class EnumTests: XCTestCase {
         XCTAssertEqual(result, readResource(Resources.ResultEnumMessageLevelReplaced.rawValue))
     }
     
-    enum Resources : String {
+    enum Resources: String {
         case EnumMessageLevelFacade, EnumPlaceholder, EnumTimeMode, EnumTimeModeFacade, EnumTimeModeDeletedCase, EnumTimeModeRenamed
         case ResultEnumMessageLevelReplaced, ResultEnumTimeMode, ResultEnumTimeModeDeleted, ResultEnumTimeModeDeletedCase, ResultEnumTimeModeRenamed
     }

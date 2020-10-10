@@ -8,15 +8,14 @@
 import Foundation
 
 /// Renaming change as stated in migration guide
-class RenameChange : Change {
-    
+class RenameChange: Change {
     /// name of the item before it was changed
-    var originalId : String
+    var originalId: String
     
     /// renamed item after changed
-    var renamed : ContentType?
+    var renamed: ContentType?
     
-    private enum CodingKeys : String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case originalId = "original-id"
         case renamed
     }

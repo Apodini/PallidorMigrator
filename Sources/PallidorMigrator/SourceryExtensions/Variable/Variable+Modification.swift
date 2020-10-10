@@ -8,11 +8,10 @@
 import Foundation
 
 extension WrappedVariable {
-    
     /// handle added a variable
     /// - Parameter addChange: AddChange affecting this variable
     internal func handleAddChange(_ addChange: AddChange) {
-        let attribute = addChange.added.first(where: {$0.id == name})! as! Property
+        let attribute = addChange.added.first(where: { $0.id == name })! as! Property
         
         self.defaultValue = attribute.defaultValue!
         
@@ -55,7 +54,7 @@ extension WrappedVariable {
         self.isOptional = !replacedProperty.required
         self.typeName = WrappedTypeName(name: replacedProperty.type, actualName: replacedProperty.type, isOptional: !replacedProperty.required, isArray: replacedProperty.type.unwrapped.isArrayType, isVoid: false, isPrimitive: replacedProperty.type.isPrimitiveType)
         
-        self.replaceAdaption = { (isFromConversion) in
+        self.replaceAdaption = { isFromConversion in
                 isFromConversion ?
             """
                 context.evaluateScript(\"""\n\(replaceChange.customRevert!)\n\""")
@@ -75,7 +74,7 @@ extension WrappedVariable {
         }
         
         convertTo = { () in self.replacedTo(replaceChange.replacementId) }
-        convertFrom = { () in self.replacedFrom(self.id)}
+        convertFrom = { () in self.replacedFrom(self.id) }
     }
     
     /// handle replacing of the parent model of a property
@@ -84,5 +83,3 @@ extension WrappedVariable {
         self.replaceAdaption = { $0 ? "self.\(self.name) = from.\(self.name)" : "" }
     }
 }
-
-

@@ -8,18 +8,17 @@
 import Foundation
 
 /// represents a method content type
-class Method : ContentType {
-    
+class Method: ContentType {
     /// operation identifier as stated in open api document
-    var operationId : String
+    var operationId: String
     /// top level route segment
-    var definedIn : String
+    var definedIn: String
     /// content body as stated in open api document (no name required)
-    var contentBody : Parameter?
+    var contentBody: Parameter?
     /// return value as stated in open api document (no name required)
-    var returnValue : ReturnValue?
+    var returnValue: ReturnValue?
     
-    private enum CodingKeys : String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case operationId = "operation-id"
         case definedIn = "defined-in"
         case returnValue
@@ -40,5 +39,4 @@ class Method : ContentType {
         
         self.id = "\(definedIn).\(operationId)"
     }
-    
 }

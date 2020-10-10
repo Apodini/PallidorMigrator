@@ -9,16 +9,15 @@ import Foundation
 import SourceryRuntime
 
 extension WrappedMethod {
-    
     /// Important for API methods -> need to change typename of `element` to persistent typename
-    var persistentName : String {
+    var persistentName: String {
         """
         \(shortName)(\(self.parameterString()))
         """
     }
     
     /// only operation id without parameters and round brackets
-    var shortName : String {
+    var shortName: String {
         String(name[name.startIndex..<name.firstIndex(of: "(")!])
     }
 }

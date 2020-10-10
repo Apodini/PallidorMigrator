@@ -8,13 +8,12 @@
 import Foundation
 
 extension WrappedMethodParameter {
-    
     /// handle added a method parameter
     /// - Parameter change: AddChange affecting this parameter
     func handleAddChange(_ change: AddChange) {
         switch change.target {
         case .parameter:
-            let param = change.added.first(where: {$0.id == self.name})! as! Parameter
+            let param = change.added.first(where: { $0.id == self.name })! as! Parameter
             self.defaultValue = param.defaultValue!
             
             signatureString = { () in
@@ -63,7 +62,6 @@ extension WrappedMethodParameter {
         default:
             print("MethodParameter: AddChange unknown target.")
         }
-        
     }
     
     /// handle renaming a method parameter
@@ -131,5 +129,4 @@ extension WrappedMethodParameter {
             break
         }
     }
-        
 }

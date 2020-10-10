@@ -8,13 +8,11 @@
 import Foundation
 
 extension WrappedMethod {
-    
     /// handle renaming a method
     /// - Parameter change: RenameChange affecting this method
     func handleRenameChange(change: RenameChange) {
-
         switch change.object {
-        case .method(_):
+        case .method:
             switch change.target {
             case .signature:
                 let newName = self.shortName
@@ -24,7 +22,7 @@ extension WrappedMethod {
                 }
                 break
             case .parameter:
-                let renamedParam = self.parameters.first(where: {$0.name == change.renamed!.id})!
+                let renamedParam = self.parameters.first(where: { $0.name == change.renamed!.id })!
                 renamedParam.modify(change: change)
                 break
             default:
@@ -36,7 +34,7 @@ extension WrappedMethod {
                 """
                 \(self.signatureString) {
                 \(self.parameterConversion() ?? "")
-                return _\(Endpoint.endpointName(from: ep.id!)).\(self.nameToCall())(\(self.parameters.map({$0.endpointCall()}).skipEmptyJoined(separator: ", ")))
+                return _\(Endpoint.endpointName(from: ep.id!)).\(self.nameToCall())(\(self.parameters.map({ $0.endpointCall() }).skipEmptyJoined(separator: ", ")))
                 \(self.apiMethodResultMap)
                 }
                 """
@@ -54,7 +52,7 @@ extension WrappedMethod {
         case .parameter:
             let deletedParam = createMethodParameter(param: change.fallbackValue as! Parameter)
             deletedParam.modify(change: change)
-            let insertIndex = self.parameters.firstIndex(where: {$0.name > deletedParam.name || $0.name == "element" || $0.name == "authorization"})!
+            let insertIndex = self.parameters.firstIndex(where: { $0.name > deletedParam.name || $0.name == "element" || $0.name == "authorization" })!
             self.parameters.insert(deletedParam, at: insertIndex)
             break
         case .signature:
@@ -80,11 +78,11 @@ extension WrappedMethod {
         case .parameter:
             for addition in change.added {
                 let param = addition as! Parameter
-                self.parameters.first(where: {$0.id == param.id})!.modify(change: change)
+                self.parameters.first(where: { $0.id == param.id })!.modify(change: change)
             }
             break
         case .contentBody:
-            let body = self.parameters.first(where: {$0.name == "element"})
+            let body = self.parameters.first(where: { $0.name == "element" })
             body!.modify(change: change)
             break
         default:
@@ -110,7 +108,7 @@ extension WrappedMethod {
             self.mapString = mapStringFunction(change: change)
             break
         case .contentBody:
-            let element = self.parameters.first(where: {$0.name == "element"})
+            let element = self.parameters.first(where: { $0.name == "element" })
             element!.modify(change: change)
             self.paramsRequireJSContext = true
             break
@@ -151,11 +149,11 @@ extension WrappedMethod {
             self.parameterConversion = { () in
                 """
                 struct InputParam : Codable {
-                    \(paramsInput.map({"var \($0.name) : \($0.typeName.actualName)"}).joined(separator: "\n"))
+                    \(paramsInput.map({ "var \($0.name) : \($0.typeName.actualName)" }).joined(separator: "\n"))
                 }
 
                 struct OutputParam : Codable {
-                    \(paramsOutput.map({"var \($0.name) : \($0.typeName.actualName)"}).joined(separator: "\n"))
+                    \(paramsOutput.map({ "var \($0.name) : \($0.typeName.actualName)" }).joined(separator: "\n"))
                 }
 
                 let context = JSContext()!
@@ -164,7 +162,7 @@ extension WrappedMethod {
                 \(change.customConvert!)
                 \""")
 
-                let inputEncoded = try! JSONEncoder().encode(InputParam(\(paramsInput.map({"\($0.name) : \($0.name)"}).joined(separator: ", "))))
+                let inputEncoded = try! JSONEncoder().encode(InputParam(\(paramsInput.map({ "\($0.name) : \($0.name)" }).joined(separator: ", "))))
 
                 let outputTmp = context.objectForKeyedSubscript("conversion").call(withArguments: [inputEncoded])?.toString()
 
@@ -180,14 +178,13 @@ extension WrappedMethod {
                 """
                 \(self.signatureString) {
                 \(self.parameterConversion()!)
-                return \(replacementMethod.definedInTypeName!.actualName).\(self.nameToCall())(\(paramsOutput.map({"\($0.name) : outputDecoded.\($0.name)"}).joined(separator: ", ")), authorization: authorization, contentType: contentType)
+                return \(replacementMethod.definedInTypeName!.actualName).\(self.nameToCall())(\(paramsOutput.map({ "\($0.name) : outputDecoded.\($0.name)" }).joined(separator: ", ")), authorization: authorization, contentType: contentType)
                 \(self.apiMethodResultMap)
                 }
                 """
             }
             
             if replacementMethod.returnTypeName.actualName != self.returnTypeName.actualName {
-                                
                 let returnTypeChangeData = """
                 {
                     "object":{
@@ -206,11 +203,8 @@ extension WrappedMethod {
                 """.data(using: .utf8)!
                 let returnTypeChange = try! JSONDecoder().decode(ReplaceChange.self, from: returnTypeChangeData)
                 self.modify(change: returnTypeChange)
-                
             }
-            
         }
-        
     }
     
     /// Creates a method parameter from a `Parameter`
@@ -226,11 +220,8 @@ extension WrappedMethod {
     /// - Parameter change: ReplaceChange affecting this method
     /// - Returns: function which creates the map string
     private func mapStringFunction(change: ReplaceChange) -> (String) -> String {
-        
-        return !change.type!.isPrimitiveType ?
-            { (type) in
-                
-        return !type.isPrimitiveType ?
+        !change.type!.isPrimitiveType ? { type in
+        !type.isPrimitiveType ?
         (type.isArrayType ?
         """
         .map({ (result) -> \(type) in
@@ -264,9 +255,8 @@ extension WrappedMethod {
         })
         """
         }
-        :
-        { (type) in
-            return !type.isPrimitiveType ?
+        : { type in
+            !type.isPrimitiveType ?
             (type.isArrayType ?
             """
             .map({ (result) -> \(type) in

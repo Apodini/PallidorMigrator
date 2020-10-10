@@ -3,7 +3,6 @@ import SourceryFramework
 @testable import PallidorMigrator
 
 class ErrorEnumTests: XCTestCase {
-    
     func testErrorEnumNoChange() {
         let migrationResult = getMigrationResult(migration: noChange, target: readResource(Resources.ErrorEnum.rawValue))
         let result = ErrorEnumTemplate().render(migrationResult)
@@ -41,7 +40,7 @@ class ErrorEnumTests: XCTestCase {
         XCTAssertEqual(result, readResource(Resources.ResultErrorEnumAddedCase.rawValue))
     }
     
-    enum Resources : String {
+    enum Resources: String {
         case ErrorEnum, ErrorEnumAddedCase, ErrorEnumDeletedCase, ErrorEnumFacadeAddedCase, ErrorEnumFacadeDeletedCase
         case ResultErrorEnum, ResultErrorEnumAddedCase, ResultErrorEnumDeletedCase
     }
@@ -50,5 +49,4 @@ class ErrorEnumTests: XCTestCase {
         ("testErrorEnumDeletedCase", testErrorEnumDeletedCase),
         ("testErrorEnumNoChange", testErrorEnumNoChange)
     ]
-    
 }

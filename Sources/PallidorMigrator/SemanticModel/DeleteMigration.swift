@@ -8,10 +8,8 @@
 import Foundation
 
 /// Migration of a DeleteChange on a Modifiable
-final class DeleteMigration : Migration {
-    
+final class DeleteMigration: Migration {
     internal init(solvable: Bool, executeOn: Modifiable, change: DeleteChange) {
         super.init(solvable: solvable, executeOn: executeOn, change: change)
     }
-        
 }

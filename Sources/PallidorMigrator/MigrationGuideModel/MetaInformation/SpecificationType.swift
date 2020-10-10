@@ -8,6 +8,6 @@
 import Foundation
 
 /// represents specification type as stated in migration guide, currently only `OpenAPI` supported
-enum SpecificationType : String, CaseIterable, Decodable {
+enum SpecificationType: String, CaseIterable, Decodable {
     case openapi = "OpenAPI"
 }

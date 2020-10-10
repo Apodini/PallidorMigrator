@@ -8,7 +8,7 @@
 import Foundation
 
 /// Abstract content type
-class ContentType : Decodable {
+class ContentType: Decodable {
     /// identifier of content type (e.g. name)
-    var id : String?
+    var id: String?
 }

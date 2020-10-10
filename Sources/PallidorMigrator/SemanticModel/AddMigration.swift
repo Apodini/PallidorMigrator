@@ -8,10 +8,8 @@
 import Foundation
 
 /// Migration of an AddChange on a Modifiable
-final class AddMigration : Migration {
-    
+final class AddMigration: Migration {
     internal init(solvable: Bool, executeOn: Modifiable, change: AddChange) {
         super.init(solvable: solvable, executeOn: executeOn, change: change)
     }
-        
 }

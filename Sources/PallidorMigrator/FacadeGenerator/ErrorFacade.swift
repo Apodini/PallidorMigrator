@@ -10,13 +10,12 @@ import PathKit
 import SourceryFramework
 
 /// Used to write modified error enum templates to swift files
-struct ErrorFacade : Facade {
-    
-    var migrationSet: MigrationSet? = nil
+struct ErrorFacade: Facade {
+    var migrationSet: MigrationSet?
     
     /// here the modifiables array contains only two values: _APIError & APIError
     var modifiables: [Modifiable]
-    var targetDirectory : Path
+    var targetDirectory: Path
     
     /// Persists error enums to files
     /// - Throws: error if writing fails

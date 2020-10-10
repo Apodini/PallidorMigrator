@@ -8,27 +8,24 @@
 import Foundation
 
 extension WrappedClass {
-    
     /// handle added a model
     /// - Parameter addChange: AddChange affecting this model
     internal func handleAddedProperty(_ addChange: AddChange) {
         // get all attribute names to filter them
-        let addedIds = addChange.added.map({$0.id})
+        let addedIds = addChange.added.map({ $0.id })
         
-        _ = self.variables.filter { (variable) -> Bool in
+        _ = self.variables.filter { variable -> Bool in
             if addedIds.contains(variable.name) {
                 variable.modify(change: addChange)
                 return false
             }
             return true
         }
-        
     }
     
     /// handle deleting a property
     /// - Parameter delChange: DeleteChange affecting a property of this model
     internal func handleDeletedProperty(_ delChange: DeleteChange) {
-    
         let deletedProperty = delChange.fallbackValue as! Property
         
         let property = WrappedVariable(name: deletedProperty.id!, defaultValue: deletedProperty.defaultValue!, isMutable: true, isEnum: false, isCustomType: false, isArray: false, isCustomInternalEnumType: false, isOptional: true, isStatic: false, typeName: WrappedTypeName(name: deletedProperty.type, actualName: deletedProperty.type, isOptional: true, isArray: false, isVoid: false, isPrimitive: deletedProperty.type.isPrimitiveType))
@@ -36,7 +33,6 @@ extension WrappedClass {
         property.modify(change: delChange)
         
         self.variables.append(property)
-                
     }
     
     /// handle deleting a model
@@ -67,7 +63,6 @@ extension WrappedClass {
         let replacement = self.variables.first(where: { $0.id == replaceChange.replacementId })
         
         replacement!.modify(change: replaceChange)
-        
     }
     
     /// handle renaming a property
@@ -76,13 +71,11 @@ extension WrappedClass {
         let renamed = self.variables.first(where: { $0.id == renameChange.renamed!.id })
         
         renamed!.modify(change: renameChange)
-        
     }
     
     /// handle renaming a model
     /// - Parameter renameChange: RenameChange affecting this model
     internal func handleRenameChange(_ renameChange: RenameChange) {
-        
         let newName = self.localName
         self.localName = renameChange.originalId
         
@@ -93,7 +86,7 @@ extension WrappedClass {
             \(self.replacedProperty ?
                 """
                 let context = JSContext()!
-                \(self.variables.map({$0.replaceAdaption(true)}).skipEmptyJoined(separator: ", "))
+                \(self.variables.map({ $0.replaceAdaption(true) }).skipEmptyJoined(separator: ", "))
                 """
             : "")
                 \(self.variables.map({ $0.convertFrom() }).joined(separator: "\n"))
@@ -110,14 +103,13 @@ extension WrappedClass {
             \(self.replacedProperty ?
             """
             let context = JSContext()!
-            \(self.variables.map({$0.replaceAdaption(false)}).skipEmptyJoined(separator: ", "))
+            \(self.variables.map({ $0.replaceAdaption(false) }).skipEmptyJoined(separator: ", "))
             """
             : "")
-            return _\(newName)(\(self.variables.sorted(by: {$0.name < $1.name}).map({ $0.convertTo() }).skipEmptyJoined(separator: ", ")))
+            return _\(newName)(\(self.variables.sorted(by: { $0.name < $1.name }).map({ $0.convertTo() }).skipEmptyJoined(separator: ", ")))
             }
             """
         }
-        
     }
     
     /// handle replacing a model
@@ -148,7 +140,7 @@ extension WrappedClass {
                 \""")
                 let encodedResult = context.objectForKeyedSubscript("conversion").call(withArguments: [String(data: fromEncoded, encoding: .utf8)!])?.toString()
                 let from = try! JSONDecoder().decode(\(self.localName).self, from: encodedResult!.data(using: .utf8)!)
-                \(self.variables.map({$0.replaceAdaption(true)}).skipEmptyJoined(separator: "\n"))
+                \(self.variables.map({ $0.replaceAdaption(true) }).skipEmptyJoined(separator: "\n"))
                 } else {
                 return nil
                 }
@@ -170,7 +162,5 @@ extension WrappedClass {
             }
             """
         }
-
     }
-
 }

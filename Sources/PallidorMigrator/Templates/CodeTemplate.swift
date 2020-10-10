@@ -10,7 +10,6 @@ import PathKit
 
 /// Protocol all templates need to conform to
 protocol CodeTemplate {
-    
     /// renders the modifiable to its corresponding string representation in source code
     /// - Parameter modifiable: modifiable
     func render(_ modifiable: Modifiable) -> String

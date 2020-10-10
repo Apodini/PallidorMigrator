@@ -8,10 +8,9 @@
 import Foundation
 
 /// represents an enum content type
-class EnumModel : ContentType {
-    
+class EnumModel: ContentType {
     /// represents an enum case content type
-    class Case : ContentType {
+    class Case: ContentType {
         var `case` : String
         
         required init(from decoder: Decoder) throws {
@@ -27,7 +26,7 @@ class EnumModel : ContentType {
             super.id = self.case
         }
         
-        private enum CodingKeys : String, CodingKey {
+        private enum CodingKeys: String, CodingKey {
             case `case`
         }
     }
@@ -39,11 +38,11 @@ class EnumModel : ContentType {
     }
     
     /// enum identifier
-    var enumName : String
+    var enumName: String
     /// enum primitive type (e.g. String)
-    var type : String?
+    var type: String?
     /// list of enum cases
-    var cases : [Case] = [Case]()
+    var cases: [Case] = [Case]()
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -64,10 +63,9 @@ class EnumModel : ContentType {
         self.id = enumName
     }
     
-    private enum CodingKeys : String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case cases
         case enumName = "enum-name"
         case type
     }
-    
 }

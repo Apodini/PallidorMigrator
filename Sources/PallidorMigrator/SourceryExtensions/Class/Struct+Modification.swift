@@ -8,7 +8,6 @@
 import Foundation
 
 extension WrappedStruct {
-    
     /// handle renaming an endpoint
     /// - Parameter change: RenameChange affecting this endpoint
     internal func handleEndpointRenameChange(_ change: RenameChange) {

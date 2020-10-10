@@ -8,8 +8,7 @@
 import Foundation
 
 /// Abstract change
-class Change : Changing {
-    
+class Change: Changing {
     internal init(reason: String? = nil, object: ObjectType, target: TargetType, changeType: ChangeType = .nil) {
         self.reason = reason
         self.object = object
@@ -17,16 +16,16 @@ class Change : Changing {
         self.changeType = changeType
     }
 
-    var reason : String?
-    var object : ObjectType
-    var target : TargetType
-    var changeType : ChangeType = .nil
+    var reason: String?
+    var object: ObjectType
+    var target: TargetType
+    var changeType: ChangeType = .nil
     
-    private enum CodingKeys : CodingKey {
+    private enum CodingKeys: CodingKey {
         case reason, object, target
     }
     
-    private enum ObjectTypeDecodingError : Error {
+    private enum ObjectTypeDecodingError: Error {
         case failedToDecode
         case unsupported(msg: String)
     }
@@ -37,25 +36,25 @@ class Change : Changing {
         reason = try? values.decode(String.self, forKey: .reason)
         target = try values.decode(TargetType.self, forKey: .target)
                 
-        if let value = try? values.decode(Method.self, forKey: .object){
+        if let value = try? values.decode(Method.self, forKey: .object) {
             object = .method(value)
             try self.validate()
             return
         }
         
-        if let value = try? values.decode(Endpoint.self, forKey: .object){
+        if let value = try? values.decode(Endpoint.self, forKey: .object) {
             object = .endpoint(value)
             try self.validate()
             return
         }
         
-        if let value = try? values.decode(Model.self, forKey: .object){
+        if let value = try? values.decode(Model.self, forKey: .object) {
             object = .model(value)
             try self.validate()
             return
         }
         
-        if let value = try? values.decode(EnumModel.self, forKey: .object){
+        if let value = try? values.decode(EnumModel.self, forKey: .object) {
             object = .enum(value)
             try self.validate()
             return
@@ -67,14 +66,14 @@ class Change : Changing {
     
     func validate() throws {
         switch object {
-        case .model(_):
+        case .model:
             switch target {
             case .parameter:
                 throw ObjectTypeDecodingError.unsupported(msg: "Change object `Model` cannot target `Parameter`")
             default:
                 return
             }
-        case .method(_):
+        case .method:
             switch target {
             default:
                 return

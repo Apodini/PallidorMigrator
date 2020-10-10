@@ -4,8 +4,7 @@ import SourceryFramework
 @testable import PallidorMigrator
 
 extension XCTestCase {
-
-    var noChange : String { """
+    var noChange: String { """
    {
        "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
@@ -41,5 +40,4 @@ extension XCTestCase {
         
         return ""
     }
-    
 }

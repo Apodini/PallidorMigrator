@@ -11,16 +11,15 @@ import PathKit
 
 /// Location of storing the parsed source code (API & previous Facade)
 public class CodeStore {
-    
-    private static var instance : CodeStore?
+    private static var instance: CodeStore?
     
     /// parsed source code located in facade folders
-    var previousFacade : [Modifiable]? = nil
+    var previousFacade: [Modifiable]?
     /// parsed source code located in API folders
-    var currentAPI : [Modifiable] = [Modifiable]()
+    var currentAPI: [Modifiable] = [Modifiable]()
     
     /// true after initial setup
-    var hasFacade : Bool {
+    var hasFacade: Bool {
         previousFacade != nil && previousFacade!.isEmpty
     }
     
@@ -35,7 +34,7 @@ public class CodeStore {
     }
     
     /// required for UnitTests to reset the code store after each test
-    static func clear() -> Void {
+    static func clear() {
         CodeStore.instance = nil
     }
     
@@ -48,7 +47,7 @@ public class CodeStore {
         let modelDirectory = modelPath
         let apiDirectory = apiPath
         
-        let modelPaths = try? FileManager.default.swiftFilesInDirectory(atPath: modelDirectory.string + "/").sorted(by: {$0 == "_APIAliases.swift" || $0 == "APIAliases.swift" || $0 < $1})
+        let modelPaths = try? FileManager.default.swiftFilesInDirectory(atPath: modelDirectory.string + "/").sorted(by: { $0 == "_APIAliases.swift" || $0 == "APIAliases.swift" || $0 < $1 })
         let apiPaths = try? FileManager.default.swiftFilesInDirectory(atPath: apiDirectory.string + "/")
         let errorPaths = [modelPath.parent() + Path("_APIErrors.swift"), modelPath.parent() + Path("APIErrors.swift")]
     
@@ -93,7 +92,7 @@ public class CodeStore {
     /// - Parameters:
     ///   - previous: parsed source code items  of previous facade
     ///   - current: parsed source code items of current API
-    static func initInstance(previous: [Modifiable], current: [Modifiable]) -> Void {
+    static func initInstance(previous: [Modifiable], current: [Modifiable]) {
         if CodeStore.instance == nil {
             CodeStore.instance = CodeStore(previousFacade: previous, currentAPI: current)
         }

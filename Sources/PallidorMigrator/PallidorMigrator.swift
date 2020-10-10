@@ -4,16 +4,14 @@ import SourceryRuntime
 import PathKit
 
 public struct PallidorMigrator {
-    
     let decoder = JSONDecoder()
     
     var codeStore: CodeStore?
-    var targetDirectory : Path
-    var migrationGuide : MigrationGuide
-    var migrationSet : MigrationSet
+    var targetDirectory: Path
+    var migrationGuide: MigrationGuide
+    var migrationSet: MigrationSet
     
     public init(targetDirectory: String, migrationGuidePath: String? = nil, migrationGuideContent: String? = nil) throws {
-        
         self.targetDirectory = Path(targetDirectory)
         
         if migrationGuidePath == nil, migrationGuideContent == nil {
@@ -36,7 +34,6 @@ public struct PallidorMigrator {
     
     
     public func buildFacade() throws -> [URL] {
-        
         guard let codeStore = self.codeStore else {
             fatalError("Code Store could not be initialized.")
         }

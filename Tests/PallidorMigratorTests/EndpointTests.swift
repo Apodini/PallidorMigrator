@@ -3,7 +3,6 @@ import SourceryFramework
 @testable import PallidorMigrator
 
 class EndpointTests: XCTestCase {
-    
     override func tearDown() {
         CodeStore.clear()
     }
@@ -122,15 +121,14 @@ class EndpointTests: XCTestCase {
         XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamedMethodAndContentBody.rawValue))
     }
 
-    enum Resources : String {
+    enum Resources: String {
         case PetEndpointRenamed, PetEndpointFacade, EndpointPlaceholder, PetEndpointRenamedMethodAndContentBody
         case ResultPetEndpointFacadeRenamed, ResultPetEndpointFacadeDeleted, ResultPetEndpointFacadeRenamedMethodAndContentBody
     }
     
     static var allTests = [
-        ("testDeleted",testDeleted),
+        ("testDeleted", testDeleted),
         ("testRenamed", testRenamed),
         ("testRenameMethodAndChangeContentBodyChange", testRenameMethodAndChangeContentBodyChange)
     ]
-
 }

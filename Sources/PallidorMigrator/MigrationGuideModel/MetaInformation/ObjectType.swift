@@ -10,11 +10,9 @@ import Foundation
 
 /// object affected by change
 enum ObjectType {
-        
     case service(String)
     case endpoint(Endpoint)
     case model(Model)
     case method(Method)
     case `enum`(EnumModel)
-    
 }

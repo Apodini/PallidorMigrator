@@ -8,8 +8,7 @@
 import Foundation
 
 /// Abstract migration
-class Migration : Migrating {
-    
+class Migration: Migrating {
     internal init(solvable: Bool, executeOn: Modifiable, change: Change) {
         self.solvable = solvable
         self.change = change
@@ -34,7 +33,7 @@ class Migration : Migrating {
         }
     }
     
-    private enum RuleError : Error {
+    private enum RuleError: Error {
         case notSupported(msg: String)
     }
 }

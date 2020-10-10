@@ -9,9 +9,8 @@ import Foundation
 import SourceryRuntime
 
 extension WrappedMethod {
-    
     /// signature of method
-    var signatureString : String {
+    var signatureString: String {
         isInitializer ?
             """
             public \(getPersistentInitializer(self))\(self.throws ? " throws" : "" )
@@ -22,7 +21,7 @@ extension WrappedMethod {
     }
     
     /// `map()` method for result mapping
-    var apiMethodResultMap : String {
+    var apiMethodResultMap: String {
         get {
             let mappedType = returnTypeName.mappedPublisherSuccessType
             let mapString = self.mapString(mappedType)
@@ -35,12 +34,12 @@ extension WrappedMethod {
     }
     
     /// `mapError()` method for error mapping
-    var apiMethodErrorMap : String {
+    var apiMethodErrorMap: String {
         ".mapError({($0 as! OpenAPIError)})"
     }
     
     /// default `receive()` & `eraseToAnyPublisher()` string
-    var apiMethodEraseToPublisher : String {
+    var apiMethodEraseToPublisher: String {
         """
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()

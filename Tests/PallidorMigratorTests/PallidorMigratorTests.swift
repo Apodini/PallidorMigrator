@@ -4,7 +4,6 @@ import SourceryFramework
 @testable import PallidorMigrator
 
 final class PallidorMigratorTests: XCTestCase {
-    
     func testSemanticVersion() {
         let oldVersion = SemanticVersion(versionString: "1.0.1")
         let newVersion = SemanticVersion(versionString: "1.0.11")
@@ -18,7 +17,7 @@ final class PallidorMigratorTests: XCTestCase {
         XCTAssertFalse(newVersion >= newerVersion)
     }
     
-    func testTypeIdentification(){
+    func testTypeIdentification() {
         let enumCode = try! FileParser(contents: "public enum Status : String, CaseIterable, Codable {}" ).parse()
         let enumType = WrappedTypes(types: enumCode.types)
         

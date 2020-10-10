@@ -8,23 +8,23 @@
 import Foundation
 
 /// represents the migration guide
-class MigrationGuide : Decodable {
+class MigrationGuide: Decodable {
     /// textual summary of changes between versions
-    var summary : String
+    var summary: String
     /// supported language
-    var lang : SupportedLanguage
+    var lang: SupportedLanguage
     /// supported specification type
-    var specType : SpecificationType
+    var specType: SpecificationType
     /// supported service type
-    var serviceType : ServiceType
+    var serviceType: ServiceType
     /// list of changes between versions
-    var changes : [Change]
+    var changes: [Change]
     /// previous version
-    var versionFrom : SemanticVersion
+    var versionFrom: SemanticVersion
     /// current version
-    var versionTo : SemanticVersion
+    var versionTo: SemanticVersion
     
-    private enum CodingKeys : String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case summary
         case lang
         case changes
@@ -48,34 +48,33 @@ class MigrationGuide : Decodable {
         var changesContainer = try container.nestedUnkeyedContainer(forKey: .changes)
         
         while !changesContainer.isAtEnd {
-            if let value = try? changesContainer.decode(AddChange.self){
+            if let value = try? changesContainer.decode(AddChange.self) {
                 self.changes.append(value)
                 continue
             }
-            if let value = try? changesContainer.decode(RenameChange.self){
+            if let value = try? changesContainer.decode(RenameChange.self) {
                 self.changes.append(value)
                 continue
             }
-            if let value = try? changesContainer.decode(DeleteChange.self){
+            if let value = try? changesContainer.decode(DeleteChange.self) {
                 self.changes.append(value)
                 addDeleted(change: value)
                 continue
             }
-            if let value = try? changesContainer.decode(ReplaceChange.self){
+            if let value = try? changesContainer.decode(ReplaceChange.self) {
                 self.changes.append(value)
                 continue
             }
-            if let value = try? changesContainer.decode(Change.self){
+            if let value = try? changesContainer.decode(Change.self) {
                 self.changes.append(value)
             }
         }
-        
     }
     
     /// Identifies deleted items and prepares the facade for their deletion
     /// - Parameter change: change in which sth. was deleted
     private func addDeleted(change: DeleteChange) {
-        var modifiable : Modifiable?
+        var modifiable: Modifiable?
         switch change.object {
         case .endpoint(let ep):
             if case .signature = change.target {
@@ -105,19 +104,18 @@ class MigrationGuide : Decodable {
                 endpoint!.methods.append(modifiable as! WrappedMethod)
             }
             break
-        case .service(_):
+        case .service:
             break
         }
         if let modifiable = modifiable {
             modifiable.modify(change: change)
         }
     }
-
 }
 
 extension MigrationGuide {
     /// The set of migrations which result from this migration guide
-    var migrationSet : MigrationSet {
+    var migrationSet: MigrationSet {
         MigrationSet(guide: self)
     }
 }

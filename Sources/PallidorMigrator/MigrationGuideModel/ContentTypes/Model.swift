@@ -8,12 +8,11 @@
 import Foundation
 
 /// represents a schema model content type
-class Model : ContentType {
-    
+class Model: ContentType {
     /// identifier of model
     var name: String
     
-    private enum CodingKeys : String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case name
     }
     

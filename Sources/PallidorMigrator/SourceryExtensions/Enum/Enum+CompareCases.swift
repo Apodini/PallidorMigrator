@@ -8,8 +8,6 @@
 import Foundation
 
 extension WrappedEnum {
-    
-    
     /// Compares the cases between to enums
     /// so that differences can be detected and the
     /// corresponding change types can be created.
@@ -32,7 +30,7 @@ extension WrappedEnum {
         var cases = [EnumModel.Case]()
         
         for c in self.cases {
-            if !rhs.cases.contains(where: {$0.name == c.name}){
+            if !rhs.cases.contains(where: { $0.name == c.name }) {
                 cases.append(EnumModel.Case(case: c.name))
             }
         }
@@ -47,9 +45,8 @@ extension WrappedEnum {
     private func compareDeletedCases(_ rhs: WrappedEnum) -> [Change] {
         let delChange = rhs.compareAddedCases(self)
         if case let .enum(model) = delChange.object {
-            return model.cases.map({DeleteChange(fallbackValue: $0, reason: "Deleted case", object: .enum(model), target: .case)})
+            return model.cases.map({ DeleteChange(fallbackValue: $0, reason: "Deleted case", object: .enum(model), target: .case) })
         }
         return []
     }
-    
 }

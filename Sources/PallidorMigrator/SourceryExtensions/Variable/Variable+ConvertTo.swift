@@ -9,19 +9,18 @@ import Foundation
 import SourceryRuntime
 
 extension WrappedVariable {
-    
     /// unmodified version of `to()` conversion
-    var unmodifiedTo : String {
+    var unmodifiedTo: String {
         self.isMutable ? (self.isArray && self.isCustomType ? self.customTypeArrayConvert : (self.isEnum || (self.isCustomType && !self.isTypeAlias) || self.isCustomInternalEnumType ? self.complexConvert : "\(self.name): self.\(self.name)")) : ""
     }
     
     /// conversion string of complex types
-    private var complexConvert : String {
+    private var complexConvert: String {
         "\(name): self.\(name)\(isOptional ? "?" : "").to()"
     }
     
     /// conversion string of complex array types
-    private var customTypeArrayConvert : String {
+    private var customTypeArrayConvert: String {
         "\(name): self.\(name)\(isOptional ? "?" : "").map({ $0.to()! })"
     }
     

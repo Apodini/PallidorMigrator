@@ -9,7 +9,7 @@ import Foundation
 import SourceryRuntime
 
 /// Wraps the enum type of Sourcery
-class WrappedEnum : Modifiable {
+class WrappedEnum: Modifiable {
     var annotation: Annotation?
     
     var id: String {
@@ -26,18 +26,18 @@ class WrappedEnum : Modifiable {
         switch change.changeType {
         case .add:
             if change.target == .case, self.localName == "OpenAPIError" {
-                let cases = (change as! AddChange).added.map({$0 as! EnumModel.Case})
-                self.cases.append(contentsOf: cases.map({ (c) -> WrappedEnumCase in
+                let cases = (change as! AddChange).added.map({ $0 as! EnumModel.Case })
+                self.cases.append(contentsOf: cases.map({ c -> WrappedEnumCase in
                     let caseType = c.case.replacingOccurrences(of: "response", with: "").replacingOccurrences(of: "Error", with: "")
                     return  WrappedEnumCase(name: c.case, hasAssociatedValue: true, associatedValues: [WrappedAssociatedValue(localName: "Int", typeName: WrappedTypeName(name: "Int", actualName: "Int", isOptional: false, isArray: false, isVoid: false, isPrimitive: true)), WrappedAssociatedValue(typeName: WrappedTypeName(name: caseType, actualName: caseType, isOptional: false, isArray: caseType.isArrayType, isVoid: false, isPrimitive: caseType.isPrimitiveType))])
                 }))
             }
             break
         case .replace:
-            if change.target == .signature, case .model(_) = change.object {
+            if change.target == .signature, case .model = change.object {
                 handleReplacedParentChange(change: change as! ReplaceChange)
             }
-            if change.target == .signature, case .enum(_) = change.object {
+            if change.target == .signature, case .enum = change.object {
                 handleReplacedChange(change: change as! ReplaceChange)
             }
             break
@@ -65,18 +65,18 @@ class WrappedEnum : Modifiable {
         self.cases = cases
     }
     
-    convenience init(from: Enum){
-        self.init(ignore: from.annotations["ignore"] != nil, isOfType: from.annotations["OfTypeEnum"] != nil, localName: from.localName.removePrefix, name: from.name, parentName: from.parentName, inheritedTypes: from.inheritedTypes, cases: from.cases.map({WrappedEnumCase(from: $0)}))
+    convenience init(from: Enum) {
+        self.init(ignore: from.annotations["ignore"] != nil, isOfType: from.annotations["OfTypeEnum"] != nil, localName: from.localName.removePrefix, name: from.name, parentName: from.parentName, inheritedTypes: from.inheritedTypes, cases: from.cases.map({ WrappedEnumCase(from: $0) }))
     }
     
     /// true if stated in source code
-    var ignore : Bool
+    var ignore: Bool
     /// true if stated in source code
-    var isOfType : Bool
+    var isOfType: Bool
     /// local name of enum
     var localName: String
     /// name of enum
-    var name : String
+    var name: String
     /// name of parent of enum (for internal enums)
     var parentName: String?
     /// list of inherited protocols

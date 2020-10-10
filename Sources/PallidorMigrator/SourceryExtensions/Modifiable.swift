@@ -12,9 +12,9 @@ protocol Modifiable {
     /// identifier of source code type
     var id: String { get }
     /// true if migration affected this modifiable
-    var modified : Bool { get set }
+    var modified: Bool { get set }
     /// annotation for this modifiable (if available)
-    var annotation : Annotation? { get set }
+    var annotation: Annotation? { get set }
     
     /// Modifies the source code type according to the change as stated in migration guide.
     /// Is called from within the migration process of `MigrationSet`

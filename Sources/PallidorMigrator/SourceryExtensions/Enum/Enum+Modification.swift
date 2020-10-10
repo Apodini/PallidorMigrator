@@ -8,7 +8,6 @@
 import Foundation
 
 extension WrappedEnum {
-    
     /// handle replacing the parent of an internal enum
     /// - Parameter change: ReplaceChange affecting this internal enum
     internal func handleReplacedParentChange(change: ReplaceChange) {
@@ -24,7 +23,6 @@ extension WrappedEnum {
     /// handle replacing an enum
     /// - Parameter change: ReplaceChange affecting this enum
     internal func handleReplacedChange(change: ReplaceChange) {
-        
         let replaceEnumType = (change.replaced as! EnumModel).type != nil ? (change.replaced as! EnumModel).type! : "String"
         
         self.specialImports.insert("import JavaScriptCore")
@@ -62,7 +60,6 @@ extension WrappedEnum {
     /// handle renaming an enum
     /// - Parameter change: RenameChange affecting this enum
     internal func handleRenameChange(change: RenameChange) {
-        
         self.localName = change.originalId
         
         if case let .enum(model) = change.object {

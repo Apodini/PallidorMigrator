@@ -9,15 +9,14 @@ import Foundation
 import PathKit
 
 extension Path {
-    
     /// returns the persistent variant of the current path
-    public var persistentPath : Path {
+    public var persistentPath: Path {
         get {
             let folder = self.lastComponent
             var persPath = self.parent()
             persPath = persPath + Path("Persistent" + folder)
             
-            if (!persPath.exists) {
+            if !persPath.exists {
                 try! persPath.mkdir()
             }
             

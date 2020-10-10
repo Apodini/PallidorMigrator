@@ -3,7 +3,6 @@ import SourceryFramework
 @testable import PallidorMigrator
 
 class ModelPropertyTests: XCTestCase {
-    
     override func tearDown() {
         CodeStore.clear()
     }
@@ -196,7 +195,7 @@ class ModelPropertyTests: XCTestCase {
         XCTAssertEqual(resultCategory, readResource(Resources.ResultModelCategoryRenamedProperty.rawValue))
     }
     
-    enum Resources : String {
+    enum Resources: String {
         case ModelAddress, ModelPet, ModelCustomerReplacedProperty, ModelPetRenamedProperty, ModelCategoryRenamedProperty
         case ResultModelAddressAddedSimpleProperty, ResultModelPetAddedComplexProperty, ResultModelPetDeletedProperty, ResultModelCustomerReplacedProperty, ResultModelPetRenamedProperty, ResultModelCategoryRenamedProperty
     }

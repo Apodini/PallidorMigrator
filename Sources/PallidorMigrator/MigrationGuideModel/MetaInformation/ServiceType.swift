@@ -8,6 +8,6 @@
 import Foundation
 
 /// service type stated in migration guide - currently REST only
-enum ServiceType : String, CaseIterable, Decodable {
+enum ServiceType: String, CaseIterable, Decodable {
     case rest = "REST"
 }

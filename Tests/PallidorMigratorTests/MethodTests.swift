@@ -3,7 +3,6 @@ import SourceryFramework
 @testable import PallidorMigrator
 
 class MethodTests: XCTestCase {
-    
     override func tearDown() {
         CodeStore.clear()
     }
@@ -62,7 +61,6 @@ class MethodTests: XCTestCase {
    """
     
     func testDeletedMethod() {
-        
         let fp = try! FileParser(contents: readResource(Resources.PetEndpointFacade.rawValue))
         let code = try! fp.parse()
         let facade = WrappedTypes(types: code.types)
@@ -138,7 +136,6 @@ class MethodTests: XCTestCase {
         let result = APITemplate().render(modAPI)
         
         XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeReplacedMethod.rawValue))
-        
     }
     
     let replaceMethodReturnTypeChange = """
@@ -191,7 +188,7 @@ class MethodTests: XCTestCase {
     }
     
 
-    enum Resources : String {
+    enum Resources: String {
         case PetEndpointRenamedMethod, PetEndpointReplacedReturnValue, PetEndpointFacade, PetEndpointDeletedMethod, PetEndpointFacadeReplacedMethod, PetEndpointReplacedMethod, UserEndpointReplacedMethod
         case ResultPetEndpointFacadeRenamedMethod, ResultPetEndpointFacadeReplacedReturnValue, ResultPetEndpointFacadeDeletedMethod, ResultPetEndpointFacadeReplacedMethod
     }
@@ -202,5 +199,4 @@ class MethodTests: XCTestCase {
         ("testReplacedMethod", testReplacedMethod),
         ("testReplacedReturnValue", testReplacedReturnValue)
     ]
-
 }

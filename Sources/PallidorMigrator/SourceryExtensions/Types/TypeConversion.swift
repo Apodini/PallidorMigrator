@@ -9,8 +9,6 @@ import Foundation
 
 /// Helper for converting types for en-/decoding
 struct TypeConversion {
-    
-    
     /// Provides conversion string for type
     /// - Parameter from: type which needs to be converted
     /// - Returns: conversion string
@@ -26,7 +24,6 @@ struct TypeConversion {
     ///   - required: true if variable is required
     /// - Returns: Encoding string
     static func getEncodingString(id: String, type: String, required: Bool) -> String {
-        
         if type.isPrimitiveType && !type.isCollectionType {
             return "String(\(id)\(required ? "" : "!"))"
         }

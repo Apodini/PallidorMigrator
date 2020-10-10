@@ -9,25 +9,21 @@ import Foundation
 import SourceryRuntime
 
 extension WrappedEnum {
-    
     /// Declaration string for enum cases
-    var casesString : String {
-        isOfType ? self.cases.map({$0.ofCase}).joined(separator: "\n") : self.cases.map({$0.defaultCase()}).skipEmptyJoined(separator: "\n")
+    var casesString: String {
+        isOfType ? self.cases.map({ $0.ofCase }).joined(separator: "\n") : self.cases.map({ $0.defaultCase() }).skipEmptyJoined(separator: "\n")
     }
     
     /// Representation of an internal enum
-    var internalEnum : String {
+    var internalEnum: String {
        !isOfType ? defaultInternal()
         : ofInternal
     }
 }
 
 extension WrappedEnumCase {
-       
     /// Declaration string for ofType enum case
-    var ofCase : String {
-        "\(self.annotationString ?? "")case \(name)\(hasAssociatedValue ? "(\(associatedValues.map({$0.typeName.name}).joined(separator: ", ")))" : "")"
+    var ofCase: String {
+        "\(self.annotationString ?? "")case \(name)\(hasAssociatedValue ? "(\(associatedValues.map({ $0.typeName.name }).joined(separator: ", ")))" : "")"
     }
-    
 }
-

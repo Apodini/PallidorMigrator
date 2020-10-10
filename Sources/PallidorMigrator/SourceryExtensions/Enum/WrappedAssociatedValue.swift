@@ -10,7 +10,6 @@ import SourceryRuntime
 
 /// Wraps the AssociatedValue Sourcery Type
 class WrappedAssociatedValue {
-    
     internal init(localName: String? = nil, typeName: WrappedTypeName) {
         self.localName = localName
         self.typeName = typeName

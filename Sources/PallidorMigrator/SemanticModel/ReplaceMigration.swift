@@ -8,10 +8,8 @@
 import Foundation
 
 /// Migration of a ReplaceChange on a Modifiable
-final class ReplaceMigration : Migration {
-    
+final class ReplaceMigration: Migration {
     internal init(solvable: Bool, executeOn: Modifiable, change: ReplaceChange) {
         super.init(solvable: solvable, executeOn: executeOn, change: change)
     }
-        
 }

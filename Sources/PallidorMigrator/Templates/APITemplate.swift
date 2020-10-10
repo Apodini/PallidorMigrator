@@ -9,8 +9,7 @@ import Foundation
 import PathKit
 
 /// Template which represents the code structure for an endpoint
-struct APITemplate : CodeTemplate {
-    
+struct APITemplate: CodeTemplate {
     func render(_ modifiable: Modifiable) -> String {
         let s = modifiable as! WrappedStruct
         
@@ -23,7 +22,7 @@ struct APITemplate : CodeTemplate {
             public struct \(s.localName) {
                 \(s.variables.map({ $0.declaration() }).joined(separator: "\n"))
             
-                \(s.methods.map({$0.apiMethodString()}).joined(separator: "\n\n"))
+                \(s.methods.map({ $0.apiMethodString() }).joined(separator: "\n\n"))
             
             }
             """

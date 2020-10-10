@@ -9,7 +9,7 @@ import Foundation
 import SourceryRuntime
 
 /// Wrapped method of sourcery Method
-class WrappedMethod : Modifiable {
+class WrappedMethod: Modifiable {
     var annotation: Annotation?
     
     var id: String { self.shortName }
@@ -55,12 +55,12 @@ class WrappedMethod : Modifiable {
     }
     
     convenience init(from: SourceryMethod) {
-        self.init(ignore: from.annotations["ignore"] != nil, isInitializer: from.isInitializer, isRequired: from.isRequired, isGeneric: from.isGeneric, isStatic: from.isStatic, throws: from.throws, name: from.name, definedInTypeName: from.definedInTypeName != nil ? WrappedTypeName(from: from.definedInTypeName!) : nil, returnTypeName: WrappedTypeName(from: from.returnTypeName), parameters: from.parameters.map({WrappedMethodParameter(from: $0)}))
+        self.init(ignore: from.annotations["ignore"] != nil, isInitializer: from.isInitializer, isRequired: from.isRequired, isGeneric: from.isGeneric, isStatic: from.isStatic, throws: from.throws, name: from.name, definedInTypeName: from.definedInTypeName != nil ? WrappedTypeName(from: from.definedInTypeName!) : nil, returnTypeName: WrappedTypeName(from: from.returnTypeName), parameters: from.parameters.map({ WrappedMethodParameter(from: $0) }))
     }
     
     
-    var ignore : Bool
-    var isInitializer : Bool
+    var ignore: Bool
+    var isInitializer: Bool
     var isRequired: Bool
     var isGeneric: Bool
     var isStatic: Bool
@@ -70,7 +70,7 @@ class WrappedMethod : Modifiable {
     var returnTypeName: WrappedTypeName
     var parameters: [WrappedMethodParameter]
     
-    var getPersistentInitializer : (WrappedMethod) -> String = { m in m.name }
+    var getPersistentInitializer: (WrappedMethod) -> String = { m in m.name }
     
     lazy var nameToCall : () -> String = { () in
         self.shortName
@@ -80,7 +80,7 @@ class WrappedMethod : Modifiable {
         """
         \(self.signatureString) {
         \(self.parameterConversion() ?? "")
-        return _\(self.definedInTypeName!.name).\(self.nameToCall())(\(self.parameters.map({$0.endpointCall()}).skipEmptyJoined(separator: ", ")))
+        return _\(self.definedInTypeName!.name).\(self.nameToCall())(\(self.parameters.map({ $0.endpointCall() }).skipEmptyJoined(separator: ", ")))
         \(self.apiMethodResultMap)
         }
         """
@@ -90,17 +90,17 @@ class WrappedMethod : Modifiable {
         self.paramsRequireJSContext ?
             """
             let context = JSContext()!
-            \(self.parameters.map({$0.paramConversionString()}).skipEmptyJoined(separator: "\n"))
+            \(self.parameters.map({ $0.paramConversionString() }).skipEmptyJoined(separator: "\n"))
             """
-            : self.parameters.map({$0.paramConversionString()}).skipEmptyJoined(separator: "\n")
+            : self.parameters.map({ $0.paramConversionString() }).skipEmptyJoined(separator: "\n")
     }
     
     lazy var parameterString : () -> String = { () in
-        self.parameters.compactMap({$0.signatureString()}).skipEmptyJoined(separator: ", ")
+        self.parameters.compactMap({ $0.signatureString() }).skipEmptyJoined(separator: ", ")
     }
     
-    lazy var mapString : (String) -> String? = { (type) in
-        return type.isPrimitiveType ? nil :
+    lazy var mapString: (String) -> String? = { type in
+        type.isPrimitiveType ? nil :
             ( type.isArrayType ?
                 """
                 .map({$0.map({\(type.dropFirstAndLast())($0)!})})

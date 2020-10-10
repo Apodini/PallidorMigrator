@@ -12,18 +12,17 @@ typealias Parameter = Variable
 typealias ReturnValue = Variable
 
 /// represents a variable, property, parameter and return value content type
-class Variable : ContentType {
-    
+class Variable: ContentType {
     /// identifier
-    var name : String
+    var name: String
     /// type of variable
-    var type : String
+    var type: String
     /// default value of variable
-    var defaultValue : String?
+    var defaultValue: String?
     /// required as stated in open api document
-    var required : Bool
+    var required: Bool
     
-    private enum CodingKeys : String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case type
         case name
         case required
@@ -45,5 +44,4 @@ class Variable : ContentType {
         
         self.id = name
     }
-    
 }

@@ -9,7 +9,7 @@ import Foundation
 import SourceryRuntime
 
 /// Wraps struct types of Sourcery
-class WrappedStruct : Modifiable {
+class WrappedStruct: Modifiable {
     var annotation: Annotation?
     
     var id: String {
@@ -26,12 +26,12 @@ class WrappedStruct : Modifiable {
             specialImports.insert("import JavaScriptCore")
             break
         case .rename:
-            if case .signature = change.target, case .endpoint(_) = change.object {
+            if case .signature = change.target, case .endpoint = change.object {
                 handleEndpointRenameChange(change as! RenameChange)
             }
             break
         case .delete:
-            if case .signature = change.target, case .endpoint(_) = change.object {
+            if case .signature = change.target, case .endpoint = change.object {
                 handleEndpointDeletedChange(change as! DeleteChange)
             }
             break
@@ -54,8 +54,8 @@ class WrappedStruct : Modifiable {
         self.methods = methods
     }
     
-    convenience init(from: SourceryRuntime.Struct){
-        self.init(localName: from.localName.removePrefix, variables: from.variables.map({WrappedVariable(from: $0)}), methods: from.methods.map({WrappedMethod(from: $0)}))
+    convenience init(from: SourceryRuntime.Struct) {
+        self.init(localName: from.localName.removePrefix, variables: from.variables.map({ WrappedVariable(from: $0) }), methods: from.methods.map({ WrappedMethod(from: $0) }))
     }
     
     /// contains additional imports besides Foundation if necessary

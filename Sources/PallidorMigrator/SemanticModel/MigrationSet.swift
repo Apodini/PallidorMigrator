@@ -9,11 +9,10 @@ import Foundation
 
 /// represents all migrations resulting from the migration guide
 class MigrationSet {
-    
     /// guide from which this set is generated
-    private var guide : MigrationGuide
+    private var guide: MigrationGuide
     /// list of migrations to be executed
-    private var migrations : [Migrating]
+    private var migrations: [Migrating]
     
     init(guide: MigrationGuide) {
         self.guide = guide
@@ -25,7 +24,7 @@ class MigrationSet {
     /// - Throws: error if change type could not be detected
     /// - Returns: the migrated modifiable
     func activate(for modifiable: Modifiable?) throws -> Modifiable {
-        var migration : Migrating?
+        var migration: Migrating?
         for change in guide.changes {
             switch change.object {
             case .endpoint(let endpoint):
@@ -40,7 +39,7 @@ class MigrationSet {
                     migrations.append(migration!)
                 }
                 break
-            case .service(_):
+            case .service:
                 break
             case .model(let model):
                 if model.id == modifiable!.id {
@@ -94,7 +93,7 @@ class MigrationSet {
                 }
                 if case .case = change.target {
                     let facade = CodeStore.getInstance().getEnum(e.id!)!
-                    (target as! WrappedEnum).cases.append(facade.cases.first(where: {$0.name == (change as! DeleteChange).fallbackValue!.id!})!)
+                    (target as! WrappedEnum).cases.append(facade.cases.first(where: { $0.name == (change as! DeleteChange).fallbackValue!.id! })!)
                     return DeleteMigration(solvable: true, executeOn: target, change: change as! DeleteChange)
                 }
             }

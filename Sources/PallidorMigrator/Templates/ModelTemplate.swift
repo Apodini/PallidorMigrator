@@ -11,8 +11,7 @@ import SourceryRuntime
 import PathKit
 
 /// Template which represents the code structure for a model
-struct ModelTemplate : CodeTemplate {
-    
+struct ModelTemplate: CodeTemplate {
     func render(_ modifiable: Modifiable) -> String {
         let c = modifiable as! WrappedClass
         let enums = c.nestedEnums ?? [WrappedEnum]()
@@ -25,7 +24,7 @@ struct ModelTemplate : CodeTemplate {
         public class \(c.localName)\(c.isGeneric ? c.genericAnnotation : "") \(!c.inheritedTypes.isEmpty ? " : \(c.inheritedTypes.skipEmptyJoined(separator: ", "))" : "") {
         \(c.variables.map({ $0.declaration() }).joined(separator: "\n"))
         
-        \(enums.filter({!$0.ignore}).map({$0.internalEnum}).joined(separator: "\n"))
+        \(enums.filter({ !$0.ignore }).map({ $0.internalEnum }).joined(separator: "\n"))
         
         \(c.initializer())
         
@@ -48,6 +47,4 @@ struct ModelTemplate : CodeTemplate {
         try content.write(to: outputPath, atomically: true, encoding: .utf8)
         return outputPath
     }
-    
 }
-

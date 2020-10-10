@@ -11,7 +11,7 @@ import SourceryRuntime
 import PathKit
 
 /// Template which represents the code structure for an enum
-struct EnumTemplate : CodeTemplate {    
+struct EnumTemplate: CodeTemplate {
     func render(_ modifiable: Modifiable) -> String {
         let e = modifiable as! WrappedEnum
         TypeStore.nonPersistentTypes["_\(e.localName)"] = e.localName
@@ -24,7 +24,6 @@ struct EnumTemplate : CodeTemplate {
             \(e.externalEnum())
         }
         """
-
     }
     
     func write(_ modifiable: Modifiable, to path: Path) throws -> URL? {

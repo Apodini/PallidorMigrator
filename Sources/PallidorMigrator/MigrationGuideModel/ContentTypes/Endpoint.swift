@@ -8,10 +8,9 @@
 import Foundation
 
 /// represents an endpoint content type
-class Endpoint : ContentType {
-    
+class Endpoint: ContentType {
     /// the route which identifies this endpoint
-    var route : String
+    var route: String
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -20,10 +19,9 @@ class Endpoint : ContentType {
         
         try super.init(from: decoder)
         self.id = route
-
     }
     
-    private enum CodingKeys : String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case route
     }
     
@@ -41,5 +39,4 @@ class Endpoint : ContentType {
     static func routeName(from name: String) -> String {
         "/\(name.lowerFirst)".replacingOccurrences(of: "API", with: "")
     }
-    
 }

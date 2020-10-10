@@ -3,13 +3,11 @@ import SourceryFramework
 @testable import PallidorMigrator
 
 class ModelTests: XCTestCase {
-    
     override func tearDown() {
         CodeStore.clear()
     }
     
     func testNoChangeToPetModel() {
-        
         let migrationResult = getMigrationResult(migration: noChange, target: readResource(Resources.ModelPet.rawValue))
         let result = ModelTemplate().render(migrationResult)
         
@@ -37,7 +35,6 @@ class ModelTests: XCTestCase {
    """
     
     func testDeletedModel() {
-        
         let fp = try! FileParser(contents: readResource(Resources.ModelApiResponseFacadeDeleted.rawValue))
         let code = try! fp.parse()
         let types = WrappedTypes(types: code.types)
@@ -77,7 +74,6 @@ class ModelTests: XCTestCase {
    """
     
     func testReplacedModel() {
-        
         let migrationResult = getMigrationResult(migration: replaceModelChange, target: readResource(Resources.ModelOrderFacadeReplaced.rawValue))
         let result = ModelTemplate().render(migrationResult)
 
@@ -126,7 +122,7 @@ class ModelTests: XCTestCase {
         XCTAssertEqual(result, readResource(Resources.ResultModelAddressRenamed.rawValue))
     }
     
-    enum Resources : String {
+    enum Resources: String {
         case ModelPet, ModelApiResponseFacadeDeleted, ModelPlaceholder, ModelOrderFacadeReplaced, ModelAddressRenamed
         case ResultModelPet, ResultModelApiResponseDeleted, ResultModelOrderReplaced, ResultModelAddressRenamed
     }

@@ -8,7 +8,7 @@
 import Foundation
 
 /// represents the target of a change as stated in migration guide
-public enum TargetType : String, CaseIterable, Decodable {
+public enum TargetType: String, CaseIterable, Decodable {
     case property = "Property"
     case signature = "Signature"
     case parameter = "Parameter"

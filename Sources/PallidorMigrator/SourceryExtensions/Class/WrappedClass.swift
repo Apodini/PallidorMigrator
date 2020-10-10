@@ -9,7 +9,7 @@ import Foundation
 import SourceryRuntime
 
 /// Wraps class type of Sourcery
-class WrappedClass : Modifiable {
+class WrappedClass: Modifiable {
     var annotation: Annotation?
     
     
@@ -23,7 +23,7 @@ class WrappedClass : Modifiable {
     }
     
     convenience init(from: SourceryRuntime.Class) {
-        self.init(inheritedTypes: from.inheritedTypes, localName: from.localName.removePrefix, genericAnnotation: from.annotations["genericTypeAnnotation"] as? String ?? "<T: Codable>" , isGeneric: from.isGeneric, variables: from.variables.map({WrappedVariable(from: $0)}), methods: from.methods.map({WrappedMethod(from: $0)}))
+        self.init(inheritedTypes: from.inheritedTypes, localName: from.localName.removePrefix, genericAnnotation: from.annotations["genericTypeAnnotation"] as? String ?? "<T: Codable>", isGeneric: from.isGeneric, variables: from.variables.map({ WrappedVariable(from: $0) }), methods: from.methods.map({ WrappedMethod(from: $0) }))
     }
     
     /// protocols implemented
@@ -44,8 +44,8 @@ class WrappedClass : Modifiable {
     /// initializer string
     lazy var initializer: () -> String = { () in
         """
-        init(\(self.variables.filter({$0.isMutable}).sorted(by: {$0.name < $1.name}).map({$0.initParam()}).skipEmptyJoined(separator: ", "))){
-        \(self.variables.filter({$0.isMutable}).sorted(by: {$0.name < $1.name}).map({$0.initBody()}).skipEmptyJoined(separator: "\n"))
+        init(\(self.variables.filter({ $0.isMutable }).sorted(by: { $0.name < $1.name }).map({ $0.initParam() }).skipEmptyJoined(separator: ", "))){
+        \(self.variables.filter({ $0.isMutable }).sorted(by: { $0.name < $1.name }).map({ $0.initBody() }).skipEmptyJoined(separator: "\n"))
         }
         """
     }
@@ -58,7 +58,7 @@ class WrappedClass : Modifiable {
         \(self.replacedProperty ?
             """
             let context = JSContext()!
-            \(self.variables.map({$0.replaceAdaption(true)}).skipEmptyJoined(separator: ", "))
+            \(self.variables.map({ $0.replaceAdaption(true) }).skipEmptyJoined(separator: ", "))
             """
         : "")
             \(self.variables.map({ $0.convertFrom() }).joined(separator: "\n"))
@@ -76,10 +76,10 @@ class WrappedClass : Modifiable {
         \(self.replacedProperty ?
         """
         let context = JSContext()!
-        \(self.variables.map({$0.replaceAdaption(false)}).skipEmptyJoined(separator: ", "))
+        \(self.variables.map({ $0.replaceAdaption(false) }).skipEmptyJoined(separator: ", "))
         """
         : "")
-        return _\(self.localName)(\(self.variables.sorted(by: {$0.name < $1.name}).map({ $0.convertTo() }).skipEmptyJoined(separator: ", ")))
+        return _\(self.localName)(\(self.variables.sorted(by: { $0.name < $1.name }).map({ $0.convertTo() }).skipEmptyJoined(separator: ", ")))
         }
         """
     }
@@ -90,7 +90,7 @@ class WrappedClass : Modifiable {
     /// true if class contains a replaced property
     var replacedProperty = false
     /// list of enums inside this class
-    var nestedEnums: [WrappedEnum]? = nil
+    var nestedEnums: [WrappedEnum]?
     
     func modify(change: Change) {
         modified = true

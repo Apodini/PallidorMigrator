@@ -8,8 +8,7 @@
 import Foundation
 
 /// represents the semantic version of the migration guide
-class SemanticVersion : Comparable {
-    
+class SemanticVersion: Comparable {
     internal init(versionString: String) {
         let versions = versionString.split(separator: ".")
         self.major = Int(versions[0])!
@@ -42,9 +41,9 @@ class SemanticVersion : Comparable {
     }
     
     /// MAJOR.x.x
-    var major : Int
+    var major: Int
     /// x.MINOR.x
-    var minor : Int
+    var minor: Int
     /// x.x.PATCH
-    var patch : String
+    var patch: String
 }

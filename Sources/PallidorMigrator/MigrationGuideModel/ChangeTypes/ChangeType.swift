@@ -9,7 +9,7 @@ import Foundation
 
 
 /// Type of change as stated in migration guide
-enum ChangeType : String, CaseIterable {
+enum ChangeType: String, CaseIterable {
     case add = "Add"
     case delete = "Delete"
     case rename = "Rename"

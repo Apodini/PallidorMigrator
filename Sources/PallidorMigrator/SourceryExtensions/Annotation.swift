@@ -8,8 +8,7 @@
 import Foundation
 
 /// Annotation which can be added to any `Modifiable`
-enum Annotation : CustomStringConvertible {
-    
+enum Annotation: CustomStringConvertible {
     /// representation of annotation in template
     var description: String {
         get {

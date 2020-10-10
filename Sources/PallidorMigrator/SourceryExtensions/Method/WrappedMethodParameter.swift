@@ -9,7 +9,7 @@ import Foundation
 import SourceryRuntime
 
 /// Wrapped parameter of sourcery MethodParameter
-class WrappedMethodParameter : Modifiable {
+class WrappedMethodParameter: Modifiable {
     var annotation: Annotation?
     
     var id: String {

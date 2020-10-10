@@ -14,7 +14,7 @@ import PathKit
 struct APIFacade: Facade {
     var modifiables: [Modifiable]
     var targetDirectory: Path
-    var migrationSet : MigrationSet?
+    var migrationSet: MigrationSet?
 
     
     /// Persists endpoints to files
@@ -24,5 +24,4 @@ struct APIFacade: Facade {
         let activated = try self.modifiables.map { try migrationSet!.activate(for: $0) as! WrappedStruct }
         return try activated.map({ try APITemplate().write($0, to: targetDirectory.persistentPath + Path("\($0 .localName.removePrefix).swift"))! })
     }
-    
 }

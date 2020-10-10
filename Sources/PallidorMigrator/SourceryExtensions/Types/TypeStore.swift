@@ -10,5 +10,5 @@ import SourceryRuntime
 
 /// Temporary storage of non persistent type names.
 struct TypeStore {
-    static var nonPersistentTypes = [String : String]()
+    static var nonPersistentTypes = [String: String]()
 }

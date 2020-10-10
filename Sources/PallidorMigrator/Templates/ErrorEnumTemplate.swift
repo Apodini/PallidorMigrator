@@ -11,15 +11,14 @@ import SourceryRuntime
 import PathKit
 
 /// Template which represents the code structure for the `OpenAPIError` enum
-struct ErrorEnumTemplate : CodeTemplate {
-
+struct ErrorEnumTemplate: CodeTemplate {
     func render(_ modifiable: Modifiable) -> String {
         let e = modifiable as! WrappedEnum
         TypeStore.nonPersistentTypes["_\(e.localName)"] = e.localName
         return """
         import Foundation
         
-        public enum \(e.localName): \(e.inheritedTypes.map({$0}).joined(separator: ", ")) {
+        public enum \(e.localName): \(e.inheritedTypes.map({ $0 }).joined(separator: ", ")) {
             \(e.errorEnum)
         }
         """

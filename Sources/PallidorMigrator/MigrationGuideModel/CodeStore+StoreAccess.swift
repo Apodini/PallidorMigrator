@@ -9,10 +9,9 @@ import Foundation
 
 /// extension of CodeStore for CodeStore content manipulation & access
 extension CodeStore {
-    
     /// inserts a new modifiable into the current api list (for getting deleted source code out of facade into current api)
     /// - Parameter modifiable: deleted source code from facade
-    func insertDeleted(modifiable: Modifiable) -> Void {
+    func insertDeleted(modifiable: Modifiable) {
         currentAPI.append(modifiable)
     }
     
@@ -27,7 +26,7 @@ extension CodeStore {
         let searchTarget = searchInCurrent ? currentAPI : previousFacade!
         for m in searchTarget {
             if let endpoint = m as? WrappedStruct, endpoint.id == definedIn {
-                return endpoint.methods.first(where: {$0.id == id})
+                return endpoint.methods.first(where: { $0.id == id })
             }
         }
         return nil
@@ -84,7 +83,7 @@ extension CodeStore {
     /// - Returns: List of all models
     func getModels(searchInCurrent: Bool = true) -> [Modifiable] {
         let modifiables = searchInCurrent ? currentAPI : previousFacade
-        return modifiables!.filter({($0 as? WrappedClass) != nil})
+        return modifiables!.filter({ ($0 as? WrappedClass) != nil })
     }
     
     /// Retrieves all endpoints from CodeStore
@@ -92,7 +91,7 @@ extension CodeStore {
     /// - Returns: List of all endpoints
     func getEndpoints(searchInCurrent: Bool = true) -> [Modifiable] {
         let modifiables = searchInCurrent ? currentAPI : previousFacade
-        return modifiables!.filter({($0 as? WrappedStruct) != nil})
+        return modifiables!.filter({ ($0 as? WrappedStruct) != nil })
     }
     
     /// Retrieves all enums from CodeStore
@@ -100,6 +99,6 @@ extension CodeStore {
     /// - Returns: List of all enums
     func getEnums(searchInCurrent: Bool = true) -> [Modifiable] {
         let modifiables = searchInCurrent ? currentAPI : previousFacade
-        return modifiables!.filter({($0 as? WrappedEnum) != nil && ($0 as! WrappedEnum).localName.removePrefix != "OpenAPIError"})
+        return modifiables!.filter({ ($0 as? WrappedEnum) != nil && ($0 as! WrappedEnum).localName.removePrefix != "OpenAPIError" })
     }
 }

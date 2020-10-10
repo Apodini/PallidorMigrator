@@ -9,19 +9,18 @@ import Foundation
 import SourceryRuntime
 
 extension WrappedEnum {
-            
     /// En-/Decoding for ofType internal enums
-    var ofTypeCoding : String {
+    var ofTypeCoding: String {
         """
         public func encode(to encoder: Encoder) throws {
                    switch self {
-                        \(self.cases.map({$0.ofEncoding()}).joined(separator: "\n"))
+                        \(self.cases.map({ $0.ofEncoding() }).joined(separator: "\n"))
                    }
         }
         
         public init(from decoder: Decoder) throws {
             
-            \(self.cases.map({$0.ofDecoding(self.localName)}).joined(separator: "\n"))
+            \(self.cases.map({ $0.ofDecoding(self.localName) }).joined(separator: "\n"))
             
             throw APIEncodingError.canNotEncodeOfType(\(self.localName).self)
         }
@@ -29,7 +28,7 @@ extension WrappedEnum {
     }
     
     /// Default representation of ofType internal enums
-    var ofInternal : String {
+    var ofInternal: String {
         """
         //sourcery: OfTypeEnum
         public enum \(localName) : \(inheritedTypes.mapJoined(separator: ", ")) {
@@ -39,14 +38,14 @@ extension WrappedEnum {
         
             func to() -> \(name.addPrefix) {
                 switch self {
-                    \(cases.map({$0.ofTo(name.addPrefix)}).joined(separator: "\n"))
+                    \(cases.map({ $0.ofTo(name.addPrefix) }).joined(separator: "\n"))
                 }
             }
             
             init?(_ from: \(name.addPrefix)?) {
                 if let from = from {
                     switch from {
-                                \(cases.map({$0.ofFrom()}).joined(separator: "\n"))
+                                \(cases.map({ $0.ofFrom() }).joined(separator: "\n"))
                             }
                 } else {
                     return nil
@@ -57,4 +56,3 @@ extension WrappedEnum {
         """
     }
 }
-

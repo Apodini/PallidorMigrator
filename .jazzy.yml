@@ -1,7 +1,7 @@
-module: PROJECT_NAME
-author: Apodini
+module: PallidorMigrator
+author: tum-aweink
 theme: fullwidth
 output: ./docs
 documentation: ./*.md
-author_url: https://github.com/Apodini
-github_url: https://github.com/Apodini/PROJECT_NAME
+author_url: https://github.com/tum-aweink
+github_url: https://github.com/tum-aweink/PallidorMigrator

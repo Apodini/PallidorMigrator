@@ -23,7 +23,7 @@ To integrate the `PallidorMigrator` library in your SwiftPM project, add the fol
 Because `PallidorMigrator` is currently under active development, there is no guarantee for source-stability.
 
 ## Usage
-To get started with `PallidorGenerator` you first need to create an instance of it, providing the path to the directory in which the source files are located, as well as the path to the location of the migration guide:
+To get started with `PallidorMigrator` you first need to create an instance of it, providing the path to the directory in which the source files are located, as well as the path to the location of the migration guide:
 ```swift
 var targetPath : String = ...
 var guidePath : String = ...

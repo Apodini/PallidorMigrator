@@ -9,7 +9,10 @@
         <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg" alt="MIT License">
     </a>
     <a href="https://swift.org">
-        <img src="https://img.shields.io/badge/Swift-5.3-blue.svg" alt="Swift 5.2">
+        <img src="https://img.shields.io/badge/Swift-5.3-blue.svg" alt="Swift 5.3">
+    </a>
+      <a href="https://github.com/tum-aweink/PallidorMigrator">
+        <img src="https://github.com/tum-aweink/PallidorMigrator/workflows/Build%20and%20Test/badge.svg" alt="Build and Test">
     </a>
 </p>
 

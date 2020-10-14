@@ -67,3 +67,9 @@ class WrappedStruct: Modifiable {
     /// methods of struct
     var methods: [WrappedMethod]
 }
+
+extension WrappedStruct : NSCopying {
+    func copy(with zone: NSZone? = nil) -> Any {
+        return WrappedStruct(localName: localName, variables: variables, methods: methods)
+    }
+}

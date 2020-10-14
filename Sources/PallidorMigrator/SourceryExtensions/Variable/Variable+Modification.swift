@@ -25,7 +25,13 @@ extension WrappedVariable {
     internal func handleDeletedChange(_ delChange: DeleteChange) {
         self.convertTo = { () in "" }
         self.convertFrom = { () in
-            "self.\(self.name) = \"\(self.defaultValue!)\""
+            if self.typeName.actualName.unwrapped.isCollectionType || !self.typeName.actualName.unwrapped.isPrimitiveType {
+                return "self.\(self.name) = try JSONDecoder().decode(\(self.typeName.actualName.unwrapped).self, from: \"\(self.defaultValue!)\".data(using: .utf8)!"
+            } else if self.typeName.actualName.unwrapped.isString {
+                return "self.\(self.name) = \"\(self.defaultValue!)\""
+            } else {
+                return "self.\(self.name) = \(self.defaultValue!)"
+            }
         }
     }
     

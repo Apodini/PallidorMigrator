@@ -76,6 +76,8 @@ extension WrappedMethodParameter {
     /// handle deleting a method parameter
     /// - Parameter change: DeleteChange affecting this parameter
     func handleDeleteChange(_ change: DeleteChange) {
+        self.isOptional = true
+        self.actualTypeName!.actualName = self.actualTypeName!.actualName.wrapped
         self.endpointCall = { () in "" }
     }
     

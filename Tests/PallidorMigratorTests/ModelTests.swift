@@ -121,9 +121,9 @@ class ModelTests: XCTestCase {
 
         XCTAssertEqual(result, readResource(Resources.ResultModelAddressRenamed.rawValue))
     }
-    
+        
     enum Resources: String {
-        case ModelPet, ModelApiResponseFacadeDeleted, ModelPlaceholder, ModelOrderFacadeReplaced, ModelAddressRenamed
+        case ModelPet, ModelApiResponseFacadeDeleted, ModelPlaceholder, ModelOrderFacadeReplaced, ModelAddressRenamed, ModelCustomerRenamedAndReplacedProperty
         case ResultModelPet, ResultModelApiResponseDeleted, ResultModelOrderReplaced, ResultModelAddressRenamed
     }
     

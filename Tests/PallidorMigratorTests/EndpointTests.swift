@@ -3,6 +3,7 @@ import SourceryFramework
 @testable import PallidorMigrator
 
 class EndpointTests: XCTestCase {
+    
     override func tearDown() {
         CodeStore.clear()
     }

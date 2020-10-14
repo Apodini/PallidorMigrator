@@ -197,7 +197,7 @@ class ModelPropertyTests: XCTestCase {
     
     enum Resources: String {
         case ModelAddress, ModelPet, ModelCustomerReplacedProperty, ModelPetRenamedProperty, ModelCategoryRenamedProperty
-        case ResultModelAddressAddedSimpleProperty, ResultModelPetAddedComplexProperty, ResultModelPetDeletedProperty, ResultModelCustomerReplacedProperty, ResultModelPetRenamedProperty, ResultModelCategoryRenamedProperty
+        case ResultModelAddressAddedSimpleProperty, ResultModelPetAddedComplexProperty, ResultModelPetDeletedProperty, ResultModelCustomerReplacedProperty, ResultModelPetRenamedProperty, ResultModelCategoryRenamedProperty, ResultModelPetAddedAndDeletedProperty
     }
     
     static var allTests = [

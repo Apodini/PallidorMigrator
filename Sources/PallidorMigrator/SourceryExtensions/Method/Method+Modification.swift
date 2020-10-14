@@ -49,8 +49,12 @@ extension WrappedMethod {
     /// - Parameter change: DeleteChange affecting this method
     func handleDeleteChange(change: DeleteChange) {
         switch change.target {
-        case .parameter:
+        case .parameter,
+             .contentBody:
             let deletedParam = createMethodParameter(param: change.fallbackValue as! Parameter)
+            if change.target == .contentBody {
+                deletedParam.name = "element"
+            }
             deletedParam.modify(change: change)
             let insertIndex = self.parameters.firstIndex(where: { $0.name > deletedParam.name || $0.name == "element" || $0.name == "authorization" })!
             self.parameters.insert(deletedParam, at: insertIndex)
@@ -131,22 +135,35 @@ extension WrappedMethod {
         
         if method.definedIn != ownRoute {
             let codeStore = CodeStore.getInstance()
-            let changeEndpoint = codeStore.getEndpoint(method.definedIn, searchInCurrent: true)!
-            changeEndpoint.specialImports.insert("import JavaScriptCore")
             let changeMethod = codeStore.getMethod(method.operationId, definedIn: method.definedIn)!
             changeMethod.modify(change: change)
-            changeEndpoint.methods.append(changeMethod)
+            if let changeEndpoint = codeStore.getEndpoint(method.definedIn, searchInCurrent: true) {
+                changeEndpoint.specialImports.insert("import JavaScriptCore")
+                changeEndpoint.methods.append(changeMethod)
+            }
         } else {
             let codeStore = CodeStore.getInstance()
             guard case let .method(m) = change.object else {
                 fatalError()
             }
+            
+            var methodToModify: WrappedMethod
+            
+            if m.operationId == self.shortName {
+                methodToModify = codeStore.getMethod(method.operationId, definedIn: method.definedIn, searchInCurrent: false)!
+                let changeEndpoint = codeStore.getEndpoint(m.definedIn, searchInCurrent: true)!
+                changeEndpoint.specialImports.insert("import JavaScriptCore")
+                changeEndpoint.methods.append(methodToModify)
+            } else {
+                methodToModify = self
+            }
+            
             let replacementMethod = codeStore.getMethod(m.operationId, definedIn: m.definedIn, searchInCurrent: true)!
             
             let paramsOutput = Array(replacementMethod.parameters.dropLast(2))
-            let paramsInput = Array(self.parameters.dropLast(2))
+            let paramsInput = Array(methodToModify.parameters.dropLast(2))
             
-            self.parameterConversion = { () in
+            methodToModify.parameterConversion = { () in
                 """
                 struct InputParam : Codable {
                     \(paramsInput.map({ "var \($0.name) : \($0.typeName.actualName)" }).joined(separator: "\n"))
@@ -170,25 +187,25 @@ extension WrappedMethod {
                 """
             }
             
-            self.nameToCall = { () in
+            methodToModify.nameToCall = { () in
                 replacementMethod.shortName
             }
             
-            self.apiMethodString = { () in
+            methodToModify.apiMethodString = { () in
                 """
-                \(self.signatureString) {
-                \(self.parameterConversion()!)
-                return \(replacementMethod.definedInTypeName!.actualName).\(self.nameToCall())(\(paramsOutput.map({ "\($0.name) : outputDecoded.\($0.name)" }).joined(separator: ", ")), authorization: authorization, contentType: contentType)
-                \(self.apiMethodResultMap)
+                \(methodToModify.signatureString) {
+                \(methodToModify.parameterConversion()!)
+                return \(replacementMethod.definedInTypeName!.actualName).\(methodToModify.nameToCall())(\(paramsOutput.map({ "\($0.name) : outputDecoded.\($0.name)" }).joined(separator: ", ")), authorization: authorization, contentType: contentType)
+                \(methodToModify.apiMethodResultMap)
                 }
                 """
             }
             
-            if replacementMethod.returnTypeName.actualName != self.returnTypeName.actualName {
+            if replacementMethod.returnTypeName.actualName != methodToModify.returnTypeName.actualName {
                 let returnTypeChangeData = """
                 {
                     "object":{
-                       "operation-id":"\(self.shortName)",
+                       "operation-id":"\(methodToModify.shortName)",
                        "defined-in":"\(ownRoute)"
                     },
                     "target":"ReturnValue",
@@ -197,12 +214,15 @@ extension WrappedMethod {
                     "custom-revert":"\(change.customRevert!)",
                     "replaced": {
                        "name":"_",
-                       "type":"\(self.returnTypeName.mappedPublisherSuccessType)"
+                       "type":"\(methodToModify.returnTypeName.mappedPublisherSuccessType)"
                     }
                 }
                 """.data(using: .utf8)!
                 let returnTypeChange = try! JSONDecoder().decode(ReplaceChange.self, from: returnTypeChangeData)
-                self.modify(change: returnTypeChange)
+                methodToModify.modify(change: returnTypeChange)
+                if codeStore.getMethod(methodToModify.shortName, definedIn: m.definedIn, searchInCurrent: true) == nil {
+                    codeStore.getEndpoint(m.definedIn, searchInCurrent: true)!.methods.append(methodToModify)
+                }
             }
         }
     }

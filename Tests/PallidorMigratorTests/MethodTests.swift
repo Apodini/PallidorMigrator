@@ -138,6 +138,54 @@ class MethodTests: XCTestCase {
         XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeReplacedMethod.rawValue))
     }
     
+    let replaceMethodInSameEndpointChange = """
+   {
+       "lang" : "Swift",
+       "summary" : "Here would be a nice summary what changed between versions",
+       "api-spec": "OpenAPI",
+       "api-type": "REST",
+       "from-version" : "0.0.1b",
+       "to-version" : "0.0.2",
+       "changes" : [
+           {
+               "object":{
+                  "operation-id":"updatePetWithForm",
+                  "defined-in":"/pet"
+               },
+               "target" : "Signature",
+               "replacement-id" : "updatePetWithForm",
+               "custom-convert" : "function conversion(o) { return JSON.stringify({ 'type' : 'PSI' } )}",
+               "custom-revert" : "function conversion(o) { return JSON.stringify({ 'type': '', 'of' : { 'type': 'PSI'} } )}",
+               "replaced" : {
+                  "operation-id":"updatePet",
+                  "defined-in":"/pet"
+                }
+           }
+       ]
+
+   }
+   """
+    
+    /// method `updatePet()` is replaced by `updatePetWithForm()` in `Pet` endpoint (same)
+    /// parameters & return value are also changed
+    func testReplacedMethodInSameEndpoint() {
+        let fp = try! FileParser(contents: readResource(Resources.PetEndpointReplacedMethod.rawValue))
+        let code = try! fp.parse()
+        let current = WrappedTypes(types: code.types)
+        
+        let fp2 = try! FileParser(contents: readResource(Resources.PetEndpointFacadeReplacedMethod.rawValue))
+        let code2 = try! fp2.parse()
+        let facade = WrappedTypes(types: code2.types)
+        
+        CodeStore.initInstance(previous: [facade.getModifiable()!], current: [current.getModifiable()!])
+        
+        _ = getMigrationResult(migration: replaceMethodInSameEndpointChange, target: readResource(Resources.PetEndpointReplacedMethod.rawValue))
+        
+        let result = APITemplate().render(CodeStore.getInstance().getEndpoint("/pet", searchInCurrent: true)!)
+        
+        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeReplacedMethodInSameEndpoint.rawValue))
+    }
+    
     let replaceMethodReturnTypeChange = """
       {
          "lang":"Swift",
@@ -190,7 +238,7 @@ class MethodTests: XCTestCase {
 
     enum Resources: String {
         case PetEndpointRenamedMethod, PetEndpointReplacedReturnValue, PetEndpointFacade, PetEndpointDeletedMethod, PetEndpointFacadeReplacedMethod, PetEndpointReplacedMethod, UserEndpointReplacedMethod
-        case ResultPetEndpointFacadeRenamedMethod, ResultPetEndpointFacadeReplacedReturnValue, ResultPetEndpointFacadeDeletedMethod, ResultPetEndpointFacadeReplacedMethod
+        case ResultPetEndpointFacadeRenamedMethod, ResultPetEndpointFacadeReplacedReturnValue, ResultPetEndpointFacadeDeletedMethod, ResultPetEndpointFacadeReplacedMethod, ResultPetEndpointFacadeReplacedMethodInSameEndpoint
     }
     
     static var allTests = [

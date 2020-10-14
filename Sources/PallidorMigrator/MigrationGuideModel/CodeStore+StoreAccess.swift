@@ -14,8 +14,7 @@ extension CodeStore {
     func insertDeleted(modifiable: Modifiable) {
         currentAPI.append(modifiable)
     }
-    
-    
+        
     /// Retrieves a method
     /// - Parameters:
     ///   - id: identifier of method (e.g. name)

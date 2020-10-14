@@ -11,7 +11,9 @@ extension WrappedStruct {
     /// handle renaming an endpoint
     /// - Parameter change: RenameChange affecting this endpoint
     internal func handleEndpointRenameChange(_ change: RenameChange) {
+        
         self.localName = Endpoint.endpointName(from: change.originalId)
+       
         for m in methods {
             m.modify(change: change)
         }

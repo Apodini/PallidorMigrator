@@ -99,7 +99,7 @@ class MigrationGuide: Decodable {
         case .method(let method):
             if case .signature = change.target {
                 let codeStore = CodeStore.getInstance()
-                modifiable = codeStore.getMethod(method.operationId, definedIn: method.definedIn)
+                modifiable = codeStore.getMethod(method.operationId)
                 let endpoint = codeStore.getEndpoint(method.definedIn, searchInCurrent: true)
                 endpoint!.methods.append(modifiable as! WrappedMethod)
             }

@@ -12,7 +12,15 @@ extension WrappedStruct {
     /// - Parameter change: RenameChange affecting this endpoint
     internal func handleEndpointRenameChange(_ change: RenameChange) {
         
-        self.localName = Endpoint.endpointName(from: change.originalId)
+        let rename = Endpoint.endpointName(from: change.originalId)
+        
+        if let facadeEndpoint = CodeStore.getInstance().getEndpoint(change.originalId) {
+            let renamed = facadeEndpoint.copy() as! WrappedStruct
+            renamed.localName = rename
+            CodeStore.getInstance().insert(modifiable: renamed)
+        }
+        
+        self.localName = rename
        
         for m in methods {
             m.modify(change: change)

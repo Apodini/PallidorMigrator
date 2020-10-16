@@ -135,7 +135,7 @@ extension WrappedMethod {
         
         if method.definedIn != ownRoute {
             let codeStore = CodeStore.getInstance()
-            let changeMethod = codeStore.getMethod(method.operationId, definedIn: method.definedIn)!
+            let changeMethod = codeStore.getMethod(method.operationId)!
             changeMethod.modify(change: change)
             if let changeEndpoint = codeStore.getEndpoint(method.definedIn, searchInCurrent: true) {
                 changeEndpoint.specialImports.insert("import JavaScriptCore")
@@ -150,7 +150,7 @@ extension WrappedMethod {
             var methodToModify: WrappedMethod
             
             if m.operationId == self.shortName {
-                methodToModify = codeStore.getMethod(method.operationId, definedIn: method.definedIn, searchInCurrent: false)!
+                methodToModify = codeStore.getMethod(method.operationId, searchInCurrent: false)!
                 let changeEndpoint = codeStore.getEndpoint(m.definedIn, searchInCurrent: true)!
                 changeEndpoint.specialImports.insert("import JavaScriptCore")
                 changeEndpoint.methods.append(methodToModify)
@@ -158,7 +158,7 @@ extension WrappedMethod {
                 methodToModify = self
             }
             
-            let replacementMethod = codeStore.getMethod(m.operationId, definedIn: m.definedIn, searchInCurrent: true)!
+            let replacementMethod = codeStore.getMethod(m.operationId, searchInCurrent: true)!
             
             let paramsOutput = Array(replacementMethod.parameters.dropLast(2))
             let paramsInput = Array(methodToModify.parameters.dropLast(2))
@@ -220,7 +220,7 @@ extension WrappedMethod {
                 """.data(using: .utf8)!
                 let returnTypeChange = try! JSONDecoder().decode(ReplaceChange.self, from: returnTypeChangeData)
                 methodToModify.modify(change: returnTypeChange)
-                if codeStore.getMethod(methodToModify.shortName, definedIn: m.definedIn, searchInCurrent: true) == nil {
+                if codeStore.getMethod(methodToModify.shortName, searchInCurrent: true) == nil {
                     codeStore.getEndpoint(m.definedIn, searchInCurrent: true)!.methods.append(methodToModify)
                 }
             }

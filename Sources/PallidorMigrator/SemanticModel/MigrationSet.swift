@@ -101,7 +101,7 @@ class MigrationSet {
         case .replace:
             // solvable has to be checked on constraint conditions (aka. remove endpoint not supported)
             if case .method(let m) = change.object, case .signature = change.target, m.definedIn != target.id {
-                let target = CodeStore.getInstance().getMethod(m.operationId, definedIn: m.definedIn)
+                let target = CodeStore.getInstance().getMethod(m.operationId)
                 return ReplaceMigration(solvable: true, executeOn: target!, change: change as! ReplaceChange)
             }
             return ReplaceMigration(solvable: true, executeOn: target, change: change as! ReplaceChange)

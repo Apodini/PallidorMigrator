@@ -245,6 +245,7 @@ class MethodTests: XCTestCase {
         ("testDeletedMethod", testDeletedMethod),
         ("testRenamedMethod", testRenamedMethod),
         ("testReplacedMethod", testReplacedMethod),
-        ("testReplacedReturnValue", testReplacedReturnValue)
+        ("testReplacedReturnValue", testReplacedReturnValue),
+        ("testReplacedMethodInSameEndpoint", testReplacedMethodInSameEndpoint)
     ]
 }

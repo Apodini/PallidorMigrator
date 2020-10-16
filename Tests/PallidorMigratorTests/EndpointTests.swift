@@ -29,6 +29,7 @@ class EndpointTests: XCTestCase {
    """
     
     func testRenamed() {
+        CodeStore.initInstance(previous: [], current: [])
         let migrationResult = getMigrationResult(migration: renameEndpointChange, target: readResource(Resources.PetEndpointRenamed.rawValue))
         let result = APITemplate().render(migrationResult)
         

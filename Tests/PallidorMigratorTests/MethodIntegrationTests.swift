@@ -7,6 +7,62 @@ class MethodIntegrationTests: XCTestCase {
         CodeStore.clear()
     }
     
+    let renameMethodAndReplaceAndDeleteParameterChange = """
+   {
+       "lang" : "Swift",
+       "summary" : "Here would be a nice summary what changed between versions",
+       "api-spec": "OpenAPI",
+       "api-type": "REST",
+       "from-version" : "0.0.1b",
+       "to-version" : "0.0.2",
+       "changes" : [
+            {
+               "object":{
+                  "operation-id":"updatePetWithFormNew",
+                  "defined-in":"/pet"
+               },
+               "target":"Parameter",
+               "fallback-value" : {
+                   "name" : "status",
+                   "type" : "String",
+                   "required" : "true"
+               }
+            },
+            {
+                "object" : {
+                    "operation-id" : "updatePetWithFormNew",
+                    "defined-in" : "/pet"
+                },
+                "target" : "Parameter",
+                "replacement-id" : "betterId",
+                "type" : "String",
+                "custom-convert" : "function conversion(petId) { return 'Id#' + (petId + 1.86) }",
+                "custom-revert" : "function conversion(petId) { return Int(petId) }",
+                "replaced" : {
+                        "name" : "petId",
+                        "type" : "Int64",
+                        "required" : true
+                }
+            },
+           {
+               "object" : {
+                   "operation-id" : "updatePetWithFormNew",
+                   "defined-in" : "/pet"
+               },
+               "target" : "Signature",
+               "original-id" : "updatePetWithForm"
+           }
+       ]
+   }
+   """
+    
+    func testRenamedMethodAndReplacedAndDeletedParameter() {
+        let migrationResult = getMigrationResult(migration: renameMethodAndReplaceAndDeleteParameterChange, target: readResource(Resources.PetEndpointRenamedMethodAndReplacedParameter.rawValue))
+        let result = APITemplate().render(migrationResult)
+
+        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamedMethodAndReplacedDeletedParameter.rawValue))
+    }
+    
     let renameMethodAndDeleteParameterChange = """
    {
        "lang" : "Swift",
@@ -90,12 +146,14 @@ class MethodIntegrationTests: XCTestCase {
     }
     
     enum Resources: String {
-        case PetEndpointRenamedMethodAndReplacedReturnValue, PetEndpointRenamedMethodAndDeletedParameter
-        case ResultPetEndpointRenamedMethodAndReplacedReturnValue, ResultPetEndpointFacadeRenamedMethodAndDeletedParameter
+        case PetEndpointRenamedMethodAndReplacedReturnValue, PetEndpointRenamedMethodAndDeletedParameter, PetEndpointRenamedMethodAndReplacedParameter
+        case ResultPetEndpointRenamedMethodAndReplacedReturnValue, ResultPetEndpointFacadeRenamedMethodAndDeletedParameter,
+             ResultPetEndpointFacadeRenamedMethodAndReplacedDeletedParameter
     }
     
     static var allTests = [
         ("testRenamedMethodAndDeletedParameter", testRenamedMethodAndDeletedParameter),
-        ("testRenamedMethodAndReplacedReturnValue", testRenamedMethodAndReplacedReturnValue)
+        ("testRenamedMethodAndReplacedReturnValue", testRenamedMethodAndReplacedReturnValue),
+        ("testRenamedMethodAndReplacedAndDeletedParameter", testRenamedMethodAndReplacedAndDeletedParameter)
     ]
 }

@@ -47,6 +47,7 @@ class ErrorEnumTests: XCTestCase {
     
     static var allTests = [
         ("testErrorEnumDeletedCase", testErrorEnumDeletedCase),
-        ("testErrorEnumNoChange", testErrorEnumNoChange)
+        ("testErrorEnumNoChange", testErrorEnumNoChange),
+        ("testErrorEnumAddCase", testErrorEnumAddCase)
     ]
 }

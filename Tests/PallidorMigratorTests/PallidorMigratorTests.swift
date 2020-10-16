@@ -8,6 +8,7 @@ final class PallidorMigratorTests: XCTestCase {
         let oldVersion = SemanticVersion(versionString: "1.0.1")
         let newVersion = SemanticVersion(versionString: "1.0.11")
         let newerVersion = SemanticVersion(versionString: "1.2.0")
+        let majorNewVersion = SemanticVersion(versionString: "2.0.1")
         
         XCTAssertTrue(oldVersion < newVersion)
         XCTAssertTrue(oldVersion <= newVersion)
@@ -15,6 +16,10 @@ final class PallidorMigratorTests: XCTestCase {
         XCTAssertTrue(newerVersion >= oldVersion)
         XCTAssertTrue(newVersion > oldVersion)
         XCTAssertFalse(newVersion >= newerVersion)
+        XCTAssertTrue(majorNewVersion > newVersion)
+        XCTAssertTrue(majorNewVersion > newerVersion)
+        XCTAssertTrue(majorNewVersion > oldVersion)
+        XCTAssertFalse(majorNewVersion == newerVersion)
     }
     
     func testTypeIdentification() {

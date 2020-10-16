@@ -52,6 +52,11 @@ let package = Package(
                 .process("Resources/Endpoints/Input/PetEndpointRenamedMethodAndReplacedReturnValue.md"),
                 .process("Resources/Endpoints/Input/PetEndpointRenamedMethodAndDeletedParameter.md"),
                 .process("Resources/Endpoints/Input/PetEndpointRenamedAndReplacedMethod.md"),
+                .process("Resources/Endpoints/Input/PetEndpointRenamedAndRenamedMethod.md"),
+                .process("Resources/Endpoints/Input/PetEndpointRenamedMethodAndReplacedParameter.md"),
+                .process("Resources/Endpoints/Input/PetEndpointRenamedAndRenamedMethodAndReplacedParameter.md"),
+                .process("Resources/Endpoints/Input/PetEndpointRenamedAndReplacedAndDeletedMethod.md"),
+                
                 .process("Resources/Endpoints/Results/ResultPetEndpointFacadeAddedContentBody.md"),
                 .process("Resources/Endpoints/Results/ResultPetEndpointFacadeAddedParameter.md"),
                 .process("Resources/Endpoints/Results/ResultPetEndpointFacadeDeleted.md"),
@@ -69,6 +74,12 @@ let package = Package(
                 .process("Resources/Endpoints/Results/ResultPetEndpointRenamedMethodAndReplacedReturnValue.md"),
                 .process("Resources/Endpoints/Results/ResultPetEndpointFacadeRenamedMethodAndDeletedParameter.md"),
                 .process("Resources/Endpoints/Results/ResultPetEndpointFacadeRenamedAndReplacedMethod.md"),
+                .process("Resources/Endpoints/Results/ResultPetEndpointFacadeRenamedAndRenamedMethod.md"),
+                .process("Resources/Endpoints/Results/ResultPetEndpointFacadeRenamedAndDeletedMethod.md"),
+                .process("Resources/Endpoints/Results/ResultPetEndpointFacadeRenamedMethodAndReplacedDeletedParameter.md"),
+                .process("Resources/Endpoints/Results/ResultPetEndpointFacadeRenamedAndRenamedMethodAndReplacedParameter.md"),
+                .process("Resources/Endpoints/Results/ResultPetEndpointFacadeRenamedAndReplacedAndDeletedMethod.md"),
+                
                 .process("Resources/Models/Input/ModelPlaceholder.md"),
                 .process("Resources/Models/Input/ModelCustomerRenamedAndReplacedProperty.md"),
                 .process("Resources/Models/Input/ModelAddress.md"),
@@ -83,6 +94,7 @@ let package = Package(
                 .process("Resources/Models/Input/ModelPet.md"),
                 .process("Resources/Models/Input/ModelPetRenamedProperty.md"),
                 .process("Resources/Models/Input/ModelCustomerRenamedAndDeletedProperty.md"),
+                
                 .process("Resources/Models/Results/ResultModelAddressRenamed.md"),
                 .process("Resources/Models/Results/ResultModelApiResponseDeleted.md"),
                 .process("Resources/Models/Results/ResultModelCategoryRenamedProperty.md"),
@@ -101,6 +113,7 @@ let package = Package(
                 .process("Resources/Models/Results/ResultModelPetAddedAndDeletedProperty.md"),
                 .process("Resources/Models/Results/ResultModelCustomerRenamedAndReplacedProperty.md"),
                 .process("Resources/Models/Results/ResultModelCustomerRenamedAndDeletedProperty.md"),
+                
                 .process("Resources/Enums/Input/EnumMessageLevelFacade.md"),
                 .process("Resources/Enums/Input/EnumPlaceholder.md"),
                 .process("Resources/Enums/Input/EnumTimeMode.md"),
@@ -112,6 +125,7 @@ let package = Package(
                 .process("Resources/Enums/Input/ErrorEnumDeletedCase.md"),
                 .process("Resources/Enums/Input/ErrorEnumFacadeAddedCase.md"),
                 .process("Resources/Enums/Input/ErrorEnumFacadeDeletedCase.md"),
+                
                 .process("Resources/Enums/Results/ResultEnumMessageLevelReplaced.md"),
                 .process("Resources/Enums/Results/ResultEnumTimeMode.md"),
                 .process("Resources/Enums/Results/ResultEnumTimeModeDeleted.md"),

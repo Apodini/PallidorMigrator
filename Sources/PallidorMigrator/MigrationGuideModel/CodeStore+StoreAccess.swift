@@ -14,21 +14,23 @@ extension CodeStore {
     func insertDeleted(modifiable: Modifiable) {
         currentAPI.append(modifiable)
     }
+    
+    /// Inserts a modifiable into the code store
+    /// - Parameters:
+    ///   - modifiable: modifiable to insert
+    ///   - current: true if modifiable should be inserted into the current API
+    func insert(modifiable: Modifiable, in current: Bool = false) {
+        current ? currentAPI.append(modifiable) : previousFacade!.append(modifiable)
+    }
         
     /// Retrieves a method
     /// - Parameters:
     ///   - id: identifier of method (e.g. name)
-    ///   - definedIn: top level route of method (e.g. /pet)
     ///   - searchInCurrent: get method from current api, else previous facade (default)
     /// - Returns: Method if available
-    func getMethod(_ id: String, definedIn: String, searchInCurrent: Bool = false) -> WrappedMethod? {
-        let searchTarget = searchInCurrent ? currentAPI : previousFacade!
-        for m in searchTarget {
-            if let endpoint = m as? WrappedStruct, endpoint.id == definedIn {
-                return endpoint.methods.first(where: { $0.id == id })
-            }
-        }
-        return nil
+    func getMethod(_ id: String, searchInCurrent: Bool = false) -> WrappedMethod? {
+        let allMethods = getEndpoints(searchInCurrent: searchInCurrent).map({($0 as! WrappedStruct).methods}).joined()
+        return allMethods.first(where: {$0.id == id})
     }
     
     /// Retrieves a model

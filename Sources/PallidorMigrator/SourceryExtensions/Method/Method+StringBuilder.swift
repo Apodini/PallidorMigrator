@@ -35,7 +35,7 @@ extension WrappedMethod {
     
     /// `mapError()` method for error mapping
     var apiMethodErrorMap: String {
-        ".mapError({($0 as! OpenAPIError)})"
+        ".mapError({( OpenAPIError($0 as? _OpenAPIError)! )})"
     }
     
     /// default `receive()` & `eraseToAnyPublisher()` string

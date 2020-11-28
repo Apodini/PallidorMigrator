@@ -8,7 +8,7 @@ public struct PetAPI {
     public static func addPet(element: Pet , authorization: HTTPAuthorization  = NetworkManager.authorization!, contentType: String?  = NetworkManager.defaultContentType) -> AnyPublisher<Pet, Error> {
 
 return _PetAPI.addPet(element: element.to()!, authorization: authorization, contentType: contentType)
-.mapError({($0 as! OpenAPIError)})
+.mapError({( OpenAPIError($0 as? _OpenAPIError)! )})
 .map({Pet($0)!})
 .receive(on: DispatchQueue.main)
 .eraseToAnyPublisher()
@@ -17,7 +17,7 @@ return _PetAPI.addPet(element: element.to()!, authorization: authorization, cont
 public static func deletePet(api_key: String? , petId: Int64 , authorization: HTTPAuthorization  = NetworkManager.authorization!, contentType: String?  = NetworkManager.defaultContentType) -> AnyPublisher<String, Error> {
 
 return _PetAPI.deletePet(api_key: api_key, petId: petId, authorization: authorization, contentType: contentType)
-.mapError({($0 as! OpenAPIError)})
+.mapError({( OpenAPIError($0 as? _OpenAPIError)! )})
 .receive(on: DispatchQueue.main)
 .eraseToAnyPublisher()
 }
@@ -25,7 +25,7 @@ return _PetAPI.deletePet(api_key: api_key, petId: petId, authorization: authoriz
 public static func findPetsByStatus(status: String? , authorization: HTTPAuthorization  = NetworkManager.authorization!, contentType: String?  = NetworkManager.defaultContentType) -> AnyPublisher<[Pet], Error> {
 
 return _PetAPI.findPetsByStatus(status: status, authorization: authorization, contentType: contentType)
-.mapError({($0 as! OpenAPIError)})
+.mapError({( OpenAPIError($0 as? _OpenAPIError)! )})
 .map({$0.map({Pet($0)!})})
 .receive(on: DispatchQueue.main)
 .eraseToAnyPublisher()
@@ -34,7 +34,7 @@ return _PetAPI.findPetsByStatus(status: status, authorization: authorization, co
 public static func findPetsByTags(tags: [String]? , authorization: HTTPAuthorization  = NetworkManager.authorization!, contentType: String?  = NetworkManager.defaultContentType) -> AnyPublisher<[Pet], Error> {
 
 return _PetAPI.findPetsByTags(tags: tags, authorization: authorization, contentType: contentType)
-.mapError({($0 as! OpenAPIError)})
+.mapError({( OpenAPIError($0 as? _OpenAPIError)! )})
 .map({$0.map({Pet($0)!})})
 .receive(on: DispatchQueue.main)
 .eraseToAnyPublisher()
@@ -43,7 +43,7 @@ return _PetAPI.findPetsByTags(tags: tags, authorization: authorization, contentT
 public static func getPetById(petId: Int64 , authorization: HTTPAuthorization  = NetworkManager.authorization!, contentType: String?  = NetworkManager.defaultContentType) -> AnyPublisher<Pet, Error> {
 
 return _PetAPI.getPetById(petId: petId, authorization: authorization, contentType: contentType)
-.mapError({($0 as! OpenAPIError)})
+.mapError({( OpenAPIError($0 as? _OpenAPIError)! )})
 .map({Pet($0)!})
 .receive(on: DispatchQueue.main)
 .eraseToAnyPublisher()
@@ -52,7 +52,7 @@ return _PetAPI.getPetById(petId: petId, authorization: authorization, contentTyp
 public static func updatePetWithForm(petId: Int64 , name: String , status: String , authorization: HTTPAuthorization  = NetworkManager.authorization!, contentType: String?  = NetworkManager.defaultContentType) -> AnyPublisher<String, Error> {
 
 return _PetAPI.updatePetWithForm(petId: petId, name: name, status: status, authorization: authorization, contentType: contentType)
-.mapError({($0 as! OpenAPIError)})
+.mapError({( OpenAPIError($0 as? _OpenAPIError)! )})
 .receive(on: DispatchQueue.main)
 .eraseToAnyPublisher()
 }
@@ -60,7 +60,7 @@ return _PetAPI.updatePetWithForm(petId: petId, name: name, status: status, autho
 public static func uploadFile(petId: Int64 , additionalMetadata: String? , element: String? , authorization: HTTPAuthorization  = NetworkManager.authorization!, contentType: String?  = "application/octet-stream") -> AnyPublisher<ApiResponse, Error> {
 
 return _PetAPI.uploadFile(petId: petId, additionalMetadata: additionalMetadata, element: element, authorization: authorization, contentType: contentType)
-.mapError({($0 as! OpenAPIError)})
+.mapError({( OpenAPIError($0 as? _OpenAPIError)! )})
 .map({ApiResponse($0)!})
 .receive(on: DispatchQueue.main)
 .eraseToAnyPublisher()
@@ -87,7 +87,7 @@ let outputTmp = context.objectForKeyedSubscript("conversion").call(withArguments
 
 let outputDecoded = try! JSONDecoder().decode(OutputParam.self, from: outputTmp!.data(using: .utf8)!)
 return UserAPI.updateMyPet(element : outputDecoded.element, authorization: authorization, contentType: contentType)
-.mapError({($0 as! OpenAPIError)})
+.mapError({( OpenAPIError($0 as? _OpenAPIError)! )})
 .map({ (result) -> Pet in
     let context = JSContext()!
     let encoded = try! JSONEncoder().encode(result)

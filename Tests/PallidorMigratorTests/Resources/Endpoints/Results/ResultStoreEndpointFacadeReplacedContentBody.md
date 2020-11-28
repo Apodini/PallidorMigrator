@@ -8,7 +8,7 @@ public struct StoreAPI {
     public static func deleteOrder(orderId: Int64 , authorization: HTTPAuthorization?  = NetworkManager.authorization, contentType: String?  = NetworkManager.defaultContentType) -> AnyPublisher<String, Error> {
 
 return _StoreAPI.deleteOrder(orderId: orderId, authorization: authorization, contentType: contentType)
-.mapError({($0 as! OpenAPIError)})
+.mapError({( OpenAPIError($0 as? _OpenAPIError)! )})
 .receive(on: DispatchQueue.main)
 .eraseToAnyPublisher()
 }
@@ -16,7 +16,7 @@ return _StoreAPI.deleteOrder(orderId: orderId, authorization: authorization, con
 public static func getInventory(authorization: HTTPAuthorization  = NetworkManager.authorization!, contentType: String?  = NetworkManager.defaultContentType) -> AnyPublisher<[String:Int32], Error> {
 
 return _StoreAPI.getInventory(authorization: authorization, contentType: contentType)
-.mapError({($0 as! OpenAPIError)})
+.mapError({( OpenAPIError($0 as? _OpenAPIError)! )})
 .receive(on: DispatchQueue.main)
 .eraseToAnyPublisher()
 }
@@ -24,7 +24,7 @@ return _StoreAPI.getInventory(authorization: authorization, contentType: content
 public static func getOrderById(orderId: Int64 , authorization: HTTPAuthorization?  = NetworkManager.authorization, contentType: String?  = NetworkManager.defaultContentType) -> AnyPublisher<Order, Error> {
 
 return _StoreAPI.getOrderById(orderId: orderId, authorization: authorization, contentType: contentType)
-.mapError({($0 as! OpenAPIError)})
+.mapError({( OpenAPIError($0 as? _OpenAPIError)! )})
 .map({Order($0)!})
 .receive(on: DispatchQueue.main)
 .eraseToAnyPublisher()
@@ -42,7 +42,7 @@ let elementTmp = context.objectForKeyedSubscript("conversion").call(withArgument
 
 let element = try! JSONDecoder().decode(Customer.self, from: elementTmp!.data(using: .utf8)!)
 return _StoreAPI.placeOrder(element: element.to()!, authorization: authorization, contentType: contentType)
-.mapError({($0 as! OpenAPIError)})
+.mapError({( OpenAPIError($0 as? _OpenAPIError)! )})
 .map({Order($0)!})
 .receive(on: DispatchQueue.main)
 .eraseToAnyPublisher()

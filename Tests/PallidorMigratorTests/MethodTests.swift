@@ -222,6 +222,20 @@ class MethodTests: XCTestCase {
                   "name":"_",
                   "type":"[Pet]"
                }
+            },
+            {
+               "object":{
+                  "operation-id":"addPet",
+                  "defined-in":"/pet"
+               },
+               "target":"ReturnValue",
+               "replacement-id":"_",
+               "type":"Int32",
+               "custom-revert": "function conversion(o) { return JSON.stringify({ 'type' : 'object' } )}",
+               "replaced":{
+                  "name":"_",
+                  "type":"Pet"
+               }
             }
          ]
       }

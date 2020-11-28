@@ -282,7 +282,7 @@ extension WrappedMethod {
             .map({ (result) -> \(type) in
                 let context = JSContext()!
                 context.evaluateScript(\"""\n\(change.customRevert!)\n\""")
-                let encString = context.objectForKeyedSubscript("conversion").call(withArguments: [String(result)!])?.toString()
+                let encString = context.objectForKeyedSubscript("conversion").call(withArguments: [String(result)])?.toString()
                 return (try! JSONDecoder().decode(\(type.replacingOccurrences(of: "[", with: "[_")).self, from: encString!.data(using: .utf8)!)).map({\(type.itemType)($0)!})
             })
             """ :
@@ -290,7 +290,7 @@ extension WrappedMethod {
             .map({ (result) -> \(type) in
                 let context = JSContext()!
                 context.evaluateScript(\"""\n\(change.customRevert!)\n\""")
-                let encString = context.objectForKeyedSubscript("conversion").call(withArguments: [String(result)!])?.toString()
+                let encString = context.objectForKeyedSubscript("conversion").call(withArguments: [String(result)])?.toString()
                 return \(type)(try! JSONDecoder().decode(_\(type).self, from: encString!.data(using: .utf8)!))!
             })
             """)
@@ -299,7 +299,7 @@ extension WrappedMethod {
             .map({ (result) -> \(type) in
                 let context = JSContext()!
                 context.evaluateScript(\"""\n\(change.customRevert!)\n\""")
-                let encString = context.objectForKeyedSubscript("conversion").call(withArguments: [String(result)!])?.toString()
+                let encString = context.objectForKeyedSubscript("conversion").call(withArguments: [String(result)])?.toString()
                 \(type.isCollectionType
                 ? "return \(type)(try! JSONDecoder().decode(\(type).self, from: encString!.data(using: .utf8)!))!"
                 : "return \(type.upperFirst)(encString)!"

@@ -9,7 +9,14 @@ public struct PetAPI {
 
 return _PetAPI.addPet(element: element.to()!, authorization: authorization, contentType: contentType)
 .mapError({( OpenAPIError($0 as? _OpenAPIError)! )})
-.map({Pet($0)!})
+.map({ (result) -> Pet in
+    let context = JSContext()!
+    context.evaluateScript("""
+function conversion(o) { return JSON.stringify({ 'type' : 'object' } )}
+""")
+    let encString = context.objectForKeyedSubscript("conversion").call(withArguments: [String(result)])?.toString()
+    return Pet(try! JSONDecoder().decode(_Pet.self, from: encString!.data(using: .utf8)!))!
+})
 .receive(on: DispatchQueue.main)
 .eraseToAnyPublisher()
 }

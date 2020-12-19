@@ -131,14 +131,52 @@ class ModelIntegrationTests: XCTestCase {
         XCTAssertEqual(result, readResource(Resources.ResultModelCustomerRenamedAndDeletedProperty.rawValue))
     }
     
+    let renameModelAndRenamedPropertyChange = """
+   {
+       "lang" : "Swift",
+       "summary" : "Here would be a nice summary what changed between versions",
+       "api-spec": "OpenAPI",
+       "api-type": "REST",
+       "from-version" : "0.0.1b",
+       "to-version" : "0.0.2",
+       "changes" : [
+             {
+                 "object" : {
+                     "name" : "NewCategory"
+                 },
+                 "target" : "Property",
+                 "original-id" : "name",
+                 "renamed" : {
+                     "id" : "namenew"
+                 }
+             },
+           {
+               "object" : {
+                   "name" : "NewCategory"
+               },
+               "target" : "Signature",
+               "original-id" : "Category"
+           }
+       ]
+   }
+   """
+
+    func testRenamedModelAndRenamedProperty() {
+        let migrationResult = getMigrationResult(migration: renameModelAndRenamedPropertyChange, target: readResource(Resources.ModelCategoryRenamedAndPropertyRenamed.rawValue))
+        let result = ModelTemplate().render(migrationResult)
+
+        XCTAssertEqual(result, readResource(Resources.ResultModelCategoryRenamedAndRenamedProperty.rawValue))
+    }
+    
     enum Resources: String {
-        case ModelPet, ModelCustomerRenamedAndReplacedProperty, ModelCustomerRenamedAndDeletedProperty
-        case ResultModelPetAddedAndDeletedProperty, ResultModelCustomerRenamedAndReplacedProperty, ResultModelCustomerRenamedAndDeletedProperty
+        case ModelPet, ModelCustomerRenamedAndReplacedProperty, ModelCustomerRenamedAndDeletedProperty, ModelCategoryRenamedAndPropertyRenamed
+        case ResultModelPetAddedAndDeletedProperty, ResultModelCustomerRenamedAndReplacedProperty, ResultModelCustomerRenamedAndDeletedProperty, ResultModelCategoryRenamedAndRenamedProperty
     }
     
     static var allTests = [
         ("testRenamedModelAndDeletedProperty", testRenamedModelAndDeletedProperty),
         ("testRenamedModelAndReplacedProperty", testRenamedModelAndReplacedProperty),
-        ("testDeletedAndAddedProperty", testDeletedAndAddedProperty)
+        ("testDeletedAndAddedProperty", testDeletedAndAddedProperty),
+        ("testRenamedModelAndRenamedProperty", testRenamedModelAndRenamedProperty)
     ]
 }

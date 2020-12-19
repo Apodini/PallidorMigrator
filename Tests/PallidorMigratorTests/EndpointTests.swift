@@ -35,6 +35,18 @@ class EndpointTests: XCTestCase {
         
         XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamed.rawValue))
     }
+        
+    func testRenamedAndAddMethod() {
+        let fp = try! FileParser(contents: readResource(Resources.PetEndpointFacadeAddMethod.rawValue))
+        let code = try! fp.parse()
+        let facade = WrappedTypes(types: code.types)
+        
+        CodeStore.initInstance(previous: [facade.getModifiable()!], current: [])
+        let migrationResult = getMigrationResult(migration: renameEndpointChange, target: readResource(Resources.PetEndpointRenamed.rawValue))
+        let result = APITemplate().render(migrationResult)
+        
+        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamed.rawValue))
+    }
     
     let deleteEndpointChange = """
    {
@@ -124,7 +136,7 @@ class EndpointTests: XCTestCase {
     }
 
     enum Resources: String {
-        case PetEndpointRenamed, PetEndpointFacade, EndpointPlaceholder, PetEndpointRenamedMethodAndContentBody
+        case PetEndpointRenamed, PetEndpointFacade, EndpointPlaceholder, PetEndpointRenamedMethodAndContentBody, PetEndpointFacadeAddMethod
         case ResultPetEndpointFacadeRenamed, ResultPetEndpointFacadeDeleted, ResultPetEndpointFacadeRenamedMethodAndContentBody
     }
     

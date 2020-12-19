@@ -201,7 +201,7 @@ extension WrappedMethod {
                 """
             }
             
-            if replacementMethod.returnTypeName.actualName != methodToModify.returnTypeName.actualName {
+            if replacementMethod.returnTypeName.actualName.replacingOccurrences(of: "_", with: "") != methodToModify.returnTypeName.actualName {
                 let returnTypeChangeData = """
                 {
                     "object":{

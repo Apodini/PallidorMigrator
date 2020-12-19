@@ -205,6 +205,6 @@ class ModelPropertyTests: XCTestCase {
         ("testAddedComplexProperty", testAddedComplexProperty),
         ("testDeletedProperty", testDeletedProperty),
         ("testReplacedProperty", testReplacedProperty),
-        ("testRenamedProperty", testReplacedProperty)
+        ("testRenamedProperty", testRenamedProperty)
     ]
 }

@@ -63,6 +63,89 @@ class MethodIntegrationTests: XCTestCase {
         XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamedMethodAndReplacedDeletedParameter.rawValue))
     }
     
+    let renameMethodAndAddParameterChange = """
+   {
+       "lang" : "Swift",
+       "summary" : "Here would be a nice summary what changed between versions",
+       "api-spec": "OpenAPI",
+       "api-type": "REST",
+       "from-version" : "0.0.1b",
+       "to-version" : "0.0.2",
+       "changes" : [
+           {
+               "object" : {
+                   "operation-id" : "addMyPet",
+                   "defined-in" : "/pet"
+               },
+               "target" : "Signature",
+               "original-id" : "addPet"
+           },
+            {
+                "reason": "Security issue related change",
+                "object" : {
+                    "operation-id" : "addMyPet",
+                    "defined-in" : "/pet"
+                },
+                "target" : "Parameter",
+                "added" : [
+                    {
+                        "name" : "status",
+                        "type" : "String",
+                        "default-value" : "available"
+                    }
+                ]
+            }
+       ]
+   }
+   """
+    
+    func testRenameMethodAndAddedParameter() {
+        let migrationResult = getMigrationResult(migration: renameMethodAndAddParameterChange, target: readResource( Resources.PetEndpointRenamedMethodAndAddedParameter.rawValue))
+        let result = APITemplate().render(migrationResult)
+        
+        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamedMethodAndAddedParameter.rawValue))
+    }
+    
+    let renameMethodAndRenameParameterChange = """
+   {
+       "lang" : "Swift",
+       "summary" : "Here would be a nice summary what changed between versions",
+       "api-spec": "OpenAPI",
+       "api-type": "REST",
+       "from-version" : "0.0.1b",
+       "to-version" : "0.0.2",
+       "changes" : [
+             {
+                 "reason": "Security issue related change",
+                 "object" : {
+                     "operation-id" : "findMyPetsByStatus",
+                     "defined-in" : "/pet"
+                 },
+                 "target" : "Parameter",
+                 "original-id" : "status",
+                 "renamed" : {
+                     "id": "petStatus"
+                 }
+             },
+           {
+               "object" : {
+                   "operation-id" : "findMyPetsByStatus",
+                   "defined-in" : "/pet"
+               },
+               "target" : "Signature",
+               "original-id" : "findPetsByStatus"
+           }
+       ]
+   }
+   """
+    
+    func testRenamedMethodAndRenameParameter() {
+        let migrationResult = getMigrationResult(migration: renameMethodAndRenameParameterChange, target: readResource(Resources.PetEndpointRenamedMethodAndRenamedParameter.rawValue))
+        let result = APITemplate().render(migrationResult)
+        
+        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamedMethodAndRenamedParameter.rawValue))
+    }
+        
     let renameMethodAndDeleteParameterChange = """
    {
        "lang" : "Swift",
@@ -146,12 +229,14 @@ class MethodIntegrationTests: XCTestCase {
     }
     
     enum Resources: String {
-        case PetEndpointRenamedMethodAndReplacedReturnValue, PetEndpointRenamedMethodAndDeletedParameter, PetEndpointRenamedMethodAndReplacedParameter
+        case PetEndpointRenamedMethodAndReplacedReturnValue, PetEndpointRenamedMethodAndDeletedParameter, PetEndpointRenamedMethodAndReplacedParameter, PetEndpointRenamedMethodAndAddedParameter, PetEndpointRenamedMethodAndRenamedParameter
         case ResultPetEndpointRenamedMethodAndReplacedReturnValue, ResultPetEndpointFacadeRenamedMethodAndDeletedParameter,
-             ResultPetEndpointFacadeRenamedMethodAndReplacedDeletedParameter
+             ResultPetEndpointFacadeRenamedMethodAndReplacedDeletedParameter, ResultPetEndpointFacadeRenamedMethodAndAddedParameter, ResultPetEndpointFacadeRenamedMethodAndReplacedReturnValue, ResultPetEndpointFacadeRenamedMethodAndRenamedParameter
     }
     
     static var allTests = [
+        ("testRenameMethodAndAddedParameter", testRenameMethodAndAddedParameter),
+        ("testRenamedMethodAndRenameParameter", testRenamedMethodAndRenameParameter),
         ("testRenamedMethodAndDeletedParameter", testRenamedMethodAndDeletedParameter),
         ("testRenamedMethodAndReplacedReturnValue", testRenamedMethodAndReplacedReturnValue),
         ("testRenamedMethodAndReplacedAndDeletedParameter", testRenamedMethodAndReplacedAndDeletedParameter)

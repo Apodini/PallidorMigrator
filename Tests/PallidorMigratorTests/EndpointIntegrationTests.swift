@@ -279,10 +279,246 @@ class EndpointIntegrationTests: XCTestCase {
         
         XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamedAndRenamedMethodAndReplacedParameter.rawValue))
     }
+    
+    let renamedEndpointAndRenameMethodAndAddAndDeleteParameterChange = """
+   {
+       "lang" : "Swift",
+       "summary" : "Here would be a nice summary what changed between versions",
+       "api-spec": "OpenAPI",
+       "api-type": "REST",
+       "from-version" : "0.0.1b",
+       "to-version" : "0.0.2",
+       "changes" : [
+            {
+               "object":{
+                  "operation-id":"updatePetWithFormNew",
+                  "defined-in":"/pets"
+               },
+               "target":"Parameter",
+               "fallback-value" : {
+                   "name" : "status",
+                   "type" : "String",
+                   "required" : "true"
+               }
+            },
+           {
+               "reason": "Security issue related change",
+               "object" : {
+                   "operation-id" : "updatePetWithFormNew",
+                   "defined-in" : "/pets"
+               },
+               "target" : "Content-Body",
+               "added" : [
+                   {
+                       "name" : "_",
+                       "type" : "Pet",
+                       "default-value" : "{ 'name' : 'Mrs. Fluffy', 'photoUrls': ['xxx'] }"
+                   }
+               ]
+           },
+           {
+               "object" : {
+                   "operation-id" : "updatePetWithFormNew",
+                   "defined-in" : "/pets"
+               },
+               "target" : "Signature",
+               "original-id" : "updatePetWithForm"
+           },
+           {
+               "object" : {
+                   "route" : "/pets"
+               },
+               "target" : "Signature",
+               "original-id" : "/pet"
+           }
+       ]
+   }
+   """
+    
+    func testRenamedEndpointAndRenameMethodAndAddAndDeleteParameterChange() {
+        CodeStore.initInstance(previous: [], current: [])
 
+        let modified = getMigrationResult(migration: renamedEndpointAndRenameMethodAndAddAndDeleteParameterChange, target: readResource(Resources.PetEndpointRenamedAndRenamedMethodAndAddedAndDeletedParameter.rawValue))
+        
+        let result = APITemplate().render(modified)
+        
+        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamedMethodAndAddedAndDeletedParameter.rawValue))
+    }
+    
+    let renamedEndpointAndRenameMethodAndReplaceAndDeleteParameterAndReplaceReturnValueChange = """
+   {
+       "lang" : "Swift",
+       "summary" : "Here would be a nice summary what changed between versions",
+       "api-spec": "OpenAPI",
+       "api-type": "REST",
+       "from-version" : "0.0.1b",
+       "to-version" : "0.0.2",
+       "changes" : [
+            {
+               "object":{
+                  "operation-id":"updatePetWithFormNew",
+                  "defined-in":"/pets"
+               },
+               "target":"ReturnValue",
+               "replacement-id":"_",
+               "type":"Pet",
+               "custom-revert":"function conversion(response) { var response = JSON.parse(response) return JSON.stringify({ 'id' : response.code, 'name' : response.message, 'photoUrls': [response.type], 'status' : 'available', 'tags': [ { 'id': 27, 'name': 'tag2' } ] }) }",
+               "replaced":{
+                  "name":"_",
+                  "type":"String"
+               }
+            },
+            {
+               "object":{
+                  "operation-id":"updatePetWithFormNew",
+                  "defined-in":"/pets"
+               },
+               "target":"Parameter",
+               "fallback-value" : {
+                   "name" : "status",
+                   "type" : "String",
+                   "required" : "true"
+               }
+            },
+            {
+                "object" : {
+                    "operation-id" : "updatePetWithFormNew",
+                    "defined-in" : "/pets"
+                },
+                "target" : "Parameter",
+                "replacement-id" : "betterId",
+                "type" : "String",
+                "custom-convert" : "function conversion(petId) { return 'Id#' + (petId + 1.86) }",
+                "custom-revert" : "function conversion(petId) { return Int(petId) }",
+                "replaced" : {
+                        "name" : "petId",
+                        "type" : "Int64",
+                        "required" : true
+                }
+            },
+           {
+               "object" : {
+                   "operation-id" : "updatePetWithFormNew",
+                   "defined-in" : "/pets"
+               },
+               "target" : "Signature",
+               "original-id" : "updatePetWithForm"
+           },
+           {
+               "object" : {
+                   "route" : "/pets"
+               },
+               "target" : "Signature",
+               "original-id" : "/pet"
+           }
+       ]
+   }
+   """
+    
+    func testRenamedEndpointAndRenameMethodAndReplaceAndDeleteParameterAndReplaceReturnValueChange() {
+        CodeStore.initInstance(previous: [], current: [])
+
+        let modified = getMigrationResult(migration: renamedEndpointAndRenameMethodAndReplaceAndDeleteParameterAndReplaceReturnValueChange, target: readResource(Resources.PetEndpointRenamedAndRenamedMethodAndReplacedAndDeletedParameterAndReplacedReturnValue.rawValue))
+        
+        let result = APITemplate().render(modified)
+        
+        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamedAndRenamedMethodAndReplacedParameterAndReplacedReturnValue.rawValue))
+    }
+    
+    let renamedEndpointAndRenameMethodAndChangedParametersAndReplaceReturnValueChange = """
+   {
+       "lang" : "Swift",
+       "summary" : "Here would be a nice summary what changed between versions",
+       "api-spec": "OpenAPI",
+       "api-type": "REST",
+       "from-version" : "0.0.1b",
+       "to-version" : "0.0.2",
+       "changes" : [
+            {
+               "object":{
+                  "operation-id":"updatePetWithFormNew",
+                  "defined-in":"/pets"
+               },
+               "target":"ReturnValue",
+               "replacement-id":"_",
+               "type":"Pet",
+               "custom-revert":"function conversion(response) { var response = JSON.parse(response) return JSON.stringify({ 'id' : response.code, 'name' : response.message, 'photoUrls': [response.type], 'status' : 'available', 'tags': [ { 'id': 27, 'name': 'tag2' } ] }) }",
+               "replaced":{
+                  "name":"_",
+                  "type":"String"
+               }
+            },
+           {
+               "object" : {
+                   "operation-id" : "updatePetWithFormNew",
+                   "defined-in" : "/pets"
+               },
+               "target" : "Parameter",
+               "original-id" : "petName",
+               "renamed" : {
+                   "id": "name"
+               }
+           },
+            {
+               "object":{
+                  "operation-id":"updatePetWithFormNew",
+                  "defined-in":"/pets"
+               },
+               "target":"Parameter",
+               "fallback-value" : {
+                   "name" : "status",
+                   "type" : "String",
+                   "required" : "true"
+               }
+            },
+            {
+                "object" : {
+                    "operation-id" : "updatePetWithFormNew",
+                    "defined-in" : "/pets"
+                },
+                "target" : "Parameter",
+                "replacement-id" : "betterId",
+                "type" : "String",
+                "custom-convert" : "function conversion(petId) { return 'Id#' + (petId + 1.86) }",
+                "custom-revert" : "function conversion(petId) { return Int(petId) }",
+                "replaced" : {
+                        "name" : "petId",
+                        "type" : "Int64",
+                        "required" : true
+                }
+            },
+           {
+               "object" : {
+                   "operation-id" : "updatePetWithFormNew",
+                   "defined-in" : "/pets"
+               },
+               "target" : "Signature",
+               "original-id" : "updatePetWithForm"
+           },
+           {
+               "object" : {
+                   "route" : "/pets"
+               },
+               "target" : "Signature",
+               "original-id" : "/pet"
+           }
+       ]
+   }
+   """
+    
+    func testRenamedEndpointAndRenameMethodAndChangedParametersAndReplaceReturnValueChange() {
+        CodeStore.initInstance(previous: [], current: [])
+
+        let modified = getMigrationResult(migration: renamedEndpointAndRenameMethodAndChangedParametersAndReplaceReturnValueChange, target: readResource(Resources.PetEndpointRenamedAndRenamedMethodAndChangedParametersAndReplacedReturnValue.rawValue))
+        
+        let result = APITemplate().render(modified)
+        
+        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamedAndRenamedMethodAndChangedParametersAndReplacedReturnValue.rawValue))
+    }
+    
     enum Resources: String {
-        case PetEndpointRenamedAndReplacedMethod, PetEndpointFacadeReplacedMethod, PetEndpointRenamedAndRenamedMethod, PetEndpointRenamedAndRenamedMethodAndReplacedParameter, PetEndpointRenamedAndReplacedAndDeletedMethod
-        case ResultPetEndpointFacadeRenamedAndReplacedMethod, ResultPetEndpointFacadeRenamedAndRenamedMethod, ResultPetEndpointFacadeRenamedAndDeletedMethod, ResultPetEndpointFacadeRenamedAndRenamedMethodAndReplacedParameter, ResultPetEndpointFacadeRenamedAndReplacedAndDeletedMethod
+        case PetEndpointRenamedAndReplacedMethod, PetEndpointFacadeReplacedMethod, PetEndpointRenamedAndRenamedMethod, PetEndpointRenamedAndRenamedMethodAndReplacedParameter, PetEndpointRenamedAndReplacedAndDeletedMethod, PetEndpointRenamedAndRenamedMethodAndAddedAndDeletedParameter, PetEndpointRenamedAndRenamedMethodAndReplacedAndDeletedParameterAndReplacedReturnValue, PetEndpointRenamedAndRenamedMethodAndChangedParametersAndReplacedReturnValue
+        case ResultPetEndpointFacadeRenamedAndReplacedMethod, ResultPetEndpointFacadeRenamedAndRenamedMethod, ResultPetEndpointFacadeRenamedAndDeletedMethod, ResultPetEndpointFacadeRenamedAndRenamedMethodAndReplacedParameter, ResultPetEndpointFacadeRenamedAndReplacedAndDeletedMethod, ResultPetEndpointFacadeRenamedMethodAndAddedAndDeletedParameter, ResultPetEndpointFacadeRenamedAndRenamedMethodAndReplacedParameterAndReplacedReturnValue, ResultPetEndpointFacadeRenamedAndRenamedMethodAndChangedParametersAndReplacedReturnValue
     }
     
     static var allTests = [
@@ -290,7 +526,10 @@ class EndpointIntegrationTests: XCTestCase {
         ("testRenamedEndpointAndDeletedMethod", testRenamedEndpointAndDeletedMethod),
         ("testRenamedEndpointAndRenamedMethod", testRenamedEndpointAndRenamedMethod),
         ("testRenamedEndpointAndReplaceAndDeleteMethod", testRenamedEndpointAndReplaceAndDeleteMethod),
-        ("testRenamedEndpointAndRenameMethodAndReplaceAndDeleteParameterChange", testRenamedEndpointAndRenameMethodAndReplaceAndDeleteParameterChange)
+        ("testRenamedEndpointAndRenameMethodAndReplaceAndDeleteParameterChange", testRenamedEndpointAndRenameMethodAndReplaceAndDeleteParameterChange),
+        ("testRenamedEndpointAndRenameMethodAndReplaceAndDeleteParameterAndReplaceReturnValueChange", testRenamedEndpointAndRenameMethodAndReplaceAndDeleteParameterAndReplaceReturnValueChange),
+        ("testRenamedEndpointAndRenameMethodAndAddAndDeleteParameterChange", testRenamedEndpointAndRenameMethodAndAddAndDeleteParameterChange),
+        ("testRenamedEndpointAndRenameMethodAndChangedParametersAndReplaceReturnValueChange", testRenamedEndpointAndRenameMethodAndChangedParametersAndReplaceReturnValueChange)
         
     ]
 }

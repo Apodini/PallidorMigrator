@@ -7,6 +7,141 @@ class MethodParameterTests: XCTestCase {
         CodeStore.clear()
     }
     
+    let replaceMNParameterChange = """
+   {
+       "lang" : "Swift",
+       "summary" : "Here would be a nice summary what changed between versions",
+       "api-spec": "OpenAPI",
+       "api-type": "REST",
+       "from-version" : "0.0.1b",
+       "to-version" : "0.0.2",
+       "changes" : [
+           {
+               "object":{
+                  "operation-id":"updatePetWithForm",
+                  "defined-in":"/pet"
+               },
+               "target" : "Signature",
+               "replacement-id" : "updatePetWithForm",
+               "custom-convert" : "function conversion(input) { return JSON.stringify({ 'name': input.name, 'petAndStatus': { 'petId': input.petId, 'status': input.status }} )}",
+               "replaced" : {
+                  "operation-id":"updatePetWithForm",
+                  "defined-in":"/pet"
+                }
+           }
+       ]
+
+   }
+   """
+    
+    func testReplacedMNParametersOfMethod() {
+        let fp = try! FileParser(contents: readResource(Resources.PetEndpointReplaceParameter32.rawValue))
+        let code = try! fp.parse()
+        let current = WrappedTypes(types: code.types)
+        
+        let fp2 = try! FileParser(contents: readResource(Resources.PetEndpointFacadeReplacedMethod.rawValue))
+        let code2 = try! fp2.parse()
+        let facade = WrappedTypes(types: code2.types)
+        
+        CodeStore.initInstance(previous: [facade.getModifiable()!], current: [current.getModifiable()!])
+        
+        _ = getMigrationResult(migration: replaceMNParameterChange, target: readResource(Resources.PetEndpointReplaceParameter32.rawValue))
+        
+        let result = APITemplate().render(CodeStore.getInstance().getEndpoint("/pet", searchInCurrent: true)!)
+        
+        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacade32ParameterChange.rawValue))
+    }
+    
+    let replaceM1ParameterChange = """
+   {
+       "lang" : "Swift",
+       "summary" : "Here would be a nice summary what changed between versions",
+       "api-spec": "OpenAPI",
+       "api-type": "REST",
+       "from-version" : "0.0.1b",
+       "to-version" : "0.0.2",
+       "changes" : [
+           {
+               "object":{
+                  "operation-id":"updatePetWithForm",
+                  "defined-in":"/pet"
+               },
+               "target" : "Signature",
+               "replacement-id" : "updatePetWithForm",
+               "custom-convert" : "function conversion(input) { return JSON.stringify({ 'name': input.name, 'petId': input.petId } )}",
+               "replaced" : {
+                  "operation-id":"updatePetWithForm",
+                  "defined-in":"/pet"
+                }
+           }
+       ]
+
+   }
+   """
+    
+    func testReplacedM1ParametersOfMethod() {
+        let fp = try! FileParser(contents: readResource(Resources.PetEndpointReplaceParameterMN.rawValue))
+        let code = try! fp.parse()
+        let current = WrappedTypes(types: code.types)
+        
+        let fp2 = try! FileParser(contents: readResource(Resources.PetEndpointFacadeReplacedMethod.rawValue))
+        let code2 = try! fp2.parse()
+        let facade = WrappedTypes(types: code2.types)
+        
+        CodeStore.initInstance(previous: [facade.getModifiable()!], current: [current.getModifiable()!])
+        
+        _ = getMigrationResult(migration: replace1NParameterChange, target: readResource(Resources.PetEndpointReplaceParameterMN.rawValue))
+        
+        let result = APITemplate().render(CodeStore.getInstance().getEndpoint("/pet", searchInCurrent: true)!)
+        
+        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacade1NParameterChange.rawValue))
+    }
+    
+    let replace1NParameterChange = """
+   {
+       "lang" : "Swift",
+       "summary" : "Here would be a nice summary what changed between versions",
+       "api-spec": "OpenAPI",
+       "api-type": "REST",
+       "from-version" : "0.0.1b",
+       "to-version" : "0.0.2",
+       "changes" : [
+           {
+               "object":{
+                  "operation-id":"updatePet",
+                  "defined-in":"/pet"
+               },
+               "target" : "Signature",
+               "replacement-id" : "updatePet",
+               "custom-convert" : "function conversion(input) { return JSON.stringify({ 'name': input.name, 'petId': input.petId, 'status': input.status } )}",
+               "replaced" : {
+                  "operation-id":"updatePet",
+                  "defined-in":"/pet"
+                }
+           }
+       ]
+
+   }
+   """
+    
+    func testReplaced1NParametersOfMethod() {
+        let fp = try! FileParser(contents: readResource(Resources.PetEndpointReplaceParameterMN.rawValue))
+        let code = try! fp.parse()
+        let current = WrappedTypes(types: code.types)
+        
+        let fp2 = try! FileParser(contents: readResource(Resources.PetEndpointFacadeReplacedMethod.rawValue))
+        let code2 = try! fp2.parse()
+        let facade = WrappedTypes(types: code2.types)
+        
+        CodeStore.initInstance(previous: [facade.getModifiable()!], current: [current.getModifiable()!])
+        
+        _ = getMigrationResult(migration: replace1NParameterChange, target: readResource(Resources.PetEndpointReplaceParameterMN.rawValue))
+        
+        let result = APITemplate().render(CodeStore.getInstance().getEndpoint("/pet", searchInCurrent: true)!)
+        
+        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacade1NParameterChange.rawValue))
+    }
+    
     let addParameterChange = """
    {
        "lang" : "Swift",
@@ -224,9 +359,9 @@ class MethodParameterTests: XCTestCase {
     }
     
     enum Resources: String {
-        case PetEndpointAddedParameter, UserEndpointDeletedParameter, PetEndpointRenamedParameter, PetEndpointReplacedParameter, StoreEndpointReplaceContentBody, PetEndpointAddedContentBody
+        case PetEndpointAddedParameter, UserEndpointDeletedParameter, PetEndpointRenamedParameter, PetEndpointReplacedParameter, StoreEndpointReplaceContentBody, PetEndpointAddedContentBody, PetEndpointReplacedMethod, PetEndpointFacadeReplacedMethod, PetEndpointReplaceParameterMN, PetEndpointReplaceParameter32
 
-        case ResultPetEndpointFacadeAddedParameter, ResultUserEndpointFacadeDeletedParameter, ResultPetEndpointFacadeRenamedParameter, ResultPetEndpointFacadeReplacedParameter, ResultStoreEndpointFacadeReplacedContentBody, ResultPetEndpointFacadeAddedContentBody
+        case ResultPetEndpointFacadeAddedParameter, ResultUserEndpointFacadeDeletedParameter, ResultPetEndpointFacadeRenamedParameter, ResultPetEndpointFacadeReplacedParameter, ResultStoreEndpointFacadeReplacedContentBody, ResultPetEndpointFacadeAddedContentBody, ResultPetEndpointFacadeReplacedMethodInSameEndpoint, ResultPetEndpointFacadeM1ParameterChange, ResultPetEndpointFacade1NParameterChange, ResultPetEndpointFacade32ParameterChange
     }
     
     static var allTests = [
@@ -235,6 +370,9 @@ class MethodParameterTests: XCTestCase {
         ("testRenamedParameter", testRenamedParameter),
         ("testReplacedParameter", testReplacedParameter),
         ("testReplacedContentBodyStoreEndpoint", testReplacedContentBodyStoreEndpoint),
-        ("testAddedContentBodyPetEndpoint", testAddedContentBodyPetEndpoint)
+        ("testAddedContentBodyPetEndpoint", testAddedContentBodyPetEndpoint),
+        ("testReplacedM1ParametersOfMethod", testReplacedM1ParametersOfMethod),
+        ("testReplacedMNParametersOfMethod", testReplacedMNParametersOfMethod),
+        ("testReplaced1NParametersOfMethod", testReplaced1NParametersOfMethod)
     ]
 }

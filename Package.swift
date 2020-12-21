@@ -64,6 +64,7 @@ let package = Package(
                 .process("Resources/Endpoints/Input/PetEndpointRenamedAndRenamedMethodAndChangedParametersAndReplacedReturnValue.md"),
                 .process("Resources/Endpoints/Input/PetEndpointReplaceParameterMN.md"),
                 .process("Resources/Endpoints/Input/PetEndpointReplaceParameter32.md"),
+                .process("Resources/Endpoints/Input/PetEndpointDefaultParameter.md"),
                 
                             
                 .process("Resources/Endpoints/Results/ResultPetEndpointFacadeRenamedMethodAndRenamedParameter.md"),
@@ -97,6 +98,8 @@ let package = Package(
                 .process("Resources/Endpoints/Results/ResultPetEndpointFacadeM1ParameterChange.md"),
                 .process("Resources/Endpoints/Results/ResultPetEndpointFacade1NParameterChange.md"),
                 .process("Resources/Endpoints/Results/ResultPetEndpointFacade32ParameterChange.md"),
+                .process("Resources/Endpoints/Results/ResultPetEndpointFacadeDefaultParameter.md"),
+                
                             
                 
                 .process("Resources/Models/Input/ModelPlaceholder.md"),

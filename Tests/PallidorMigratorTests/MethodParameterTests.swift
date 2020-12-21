@@ -358,10 +358,30 @@ class MethodParameterTests: XCTestCase {
         XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeAddedContentBody.rawValue))
     }
     
-    enum Resources: String {
-        case PetEndpointAddedParameter, UserEndpointDeletedParameter, PetEndpointRenamedParameter, PetEndpointReplacedParameter, StoreEndpointReplaceContentBody, PetEndpointAddedContentBody, PetEndpointReplacedMethod, PetEndpointFacadeReplacedMethod, PetEndpointReplaceParameterMN, PetEndpointReplaceParameter32
+    let emptyChange = """
+   {
+       "lang" : "Swift",
+       "summary" : "Here would be a nice summary what changed between versions",
+       "api-spec": "OpenAPI",
+       "api-type": "REST",
+       "from-version" : "0.0.1b",
+       "to-version" : "0.0.2",
+       "changes" : []
 
-        case ResultPetEndpointFacadeAddedParameter, ResultUserEndpointFacadeDeletedParameter, ResultPetEndpointFacadeRenamedParameter, ResultPetEndpointFacadeReplacedParameter, ResultStoreEndpointFacadeReplacedContentBody, ResultPetEndpointFacadeAddedContentBody, ResultPetEndpointFacadeReplacedMethodInSameEndpoint, ResultPetEndpointFacadeM1ParameterChange, ResultPetEndpointFacade1NParameterChange, ResultPetEndpointFacade32ParameterChange
+   }
+   """
+    
+    func testDefaultParameterPetEndpoint() {
+        let migrationResult = getMigrationResult(migration: emptyChange, target: readResource(Resources.PetEndpointDefaultParameter.rawValue))
+        let result = APITemplate().render(migrationResult)
+        
+        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeDefaultParameter.rawValue))
+    }
+    
+    enum Resources: String {
+        case PetEndpointAddedParameter, UserEndpointDeletedParameter, PetEndpointRenamedParameter, PetEndpointReplacedParameter, StoreEndpointReplaceContentBody, PetEndpointAddedContentBody, PetEndpointReplacedMethod, PetEndpointFacadeReplacedMethod, PetEndpointReplaceParameterMN, PetEndpointReplaceParameter32, PetEndpointDefaultParameter
+
+        case ResultPetEndpointFacadeAddedParameter, ResultUserEndpointFacadeDeletedParameter, ResultPetEndpointFacadeRenamedParameter, ResultPetEndpointFacadeReplacedParameter, ResultStoreEndpointFacadeReplacedContentBody, ResultPetEndpointFacadeAddedContentBody, ResultPetEndpointFacadeReplacedMethodInSameEndpoint, ResultPetEndpointFacadeM1ParameterChange, ResultPetEndpointFacade1NParameterChange, ResultPetEndpointFacade32ParameterChange, ResultPetEndpointFacadeDefaultParameter
     }
     
     static var allTests = [
@@ -373,6 +393,7 @@ class MethodParameterTests: XCTestCase {
         ("testAddedContentBodyPetEndpoint", testAddedContentBodyPetEndpoint),
         ("testReplacedM1ParametersOfMethod", testReplacedM1ParametersOfMethod),
         ("testReplacedMNParametersOfMethod", testReplacedMNParametersOfMethod),
-        ("testReplaced1NParametersOfMethod", testReplaced1NParametersOfMethod)
+        ("testReplaced1NParametersOfMethod", testReplaced1NParametersOfMethod),
+        ("testDefaultParameterPetEndpoint", testDefaultParameterPetEndpoint)
     ]
 }

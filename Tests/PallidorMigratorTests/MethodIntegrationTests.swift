@@ -9,7 +9,6 @@ class MethodIntegrationTests: XCTestCase {
     
     let renameMethodAndReplaceAndDeleteParameterChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -65,7 +64,6 @@ class MethodIntegrationTests: XCTestCase {
     
     let renameMethodAndAddParameterChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -108,7 +106,6 @@ class MethodIntegrationTests: XCTestCase {
     
     let renameMethodAndRenameParameterChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -148,7 +145,6 @@ class MethodIntegrationTests: XCTestCase {
         
     let renameMethodAndDeleteParameterChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -187,7 +183,6 @@ class MethodIntegrationTests: XCTestCase {
     
     let renameMethodAndReplacedReturnValueChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",

@@ -9,7 +9,6 @@ class ModelIntegrationTests: XCTestCase {
     
     let deletedAndAddedProperty = """
     {
-        "lang" : "Swift",
         "summary" : "Here would be a nice summary what changed between versions",
         "api-spec": "OpenAPI",
         "api-type": "REST",
@@ -54,7 +53,6 @@ class ModelIntegrationTests: XCTestCase {
     
     let renameModelAndReplacePropertyChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -95,7 +93,6 @@ class ModelIntegrationTests: XCTestCase {
     
     let renameModelAndDeletePropertyChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -133,7 +130,6 @@ class ModelIntegrationTests: XCTestCase {
     
     let renameModelAndRenamedPropertyChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",

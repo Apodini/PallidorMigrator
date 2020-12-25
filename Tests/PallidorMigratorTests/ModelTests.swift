@@ -16,7 +16,6 @@ class ModelTests: XCTestCase {
     
     let deleteModelChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -52,7 +51,6 @@ class ModelTests: XCTestCase {
     
     let replaceModelChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -83,7 +81,6 @@ class ModelTests: XCTestCase {
     
     let renameModelChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",

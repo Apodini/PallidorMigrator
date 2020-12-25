@@ -88,6 +88,11 @@ extension WrappedMethodParameter {
         case .parameter:
             let replaced = change.replaced as! Parameter
             
+            if(self.name == replaced.name && self.hasDefaultValue) {
+                self.defaultValue = replaced.defaultValue
+                break
+            }
+            
             self.paramConversionString = { () in
                 """
                 context.evaluateScript(\"""\n\(change.customConvert!)\n\""")

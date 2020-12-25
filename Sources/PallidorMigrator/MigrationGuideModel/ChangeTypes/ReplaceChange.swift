@@ -67,8 +67,16 @@ class ReplaceChange: Change {
             throw ReplacementDecodingError.missingConversion(reason: "Target return value requires conversion JS-method (revert): `function conversion(replaced) { JSON.stringify( { replacement... } ) }`")
         }
         
-        if type != nil && target != .returnValue && (customConvert == nil || customRevert == nil) {
+        if type != nil && target != .returnValue && (customConvert == nil || customRevert == nil) && !isDefaultValueChange() {
             throw ReplacementDecodingError.missingConversion(reason: "Custom type requires two conversion JS-methods: `function conversion(replaced) { JSON.stringify( { replacement... } ) }`")
         }
+    }
+    
+    private func isDefaultValueChange() -> Bool {
+        guard let replaced = self.replaced, self.target == .parameter else {
+            return false
+        }
+        
+        return replaced.id == replacementId && (customConvert == nil || customRevert == nil)
     }
 }

@@ -9,7 +9,6 @@ class ModelPropertyTests: XCTestCase {
     
     let addSinglePrimitivePropertyChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -45,7 +44,6 @@ class ModelPropertyTests: XCTestCase {
     
     let addSingleComplexPropertyChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -81,7 +79,6 @@ class ModelPropertyTests: XCTestCase {
     
     let deletePropertyChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -115,7 +112,6 @@ class ModelPropertyTests: XCTestCase {
     
     let replacePropertyTypeChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -150,7 +146,6 @@ class ModelPropertyTests: XCTestCase {
     
     let renamePropertyChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",

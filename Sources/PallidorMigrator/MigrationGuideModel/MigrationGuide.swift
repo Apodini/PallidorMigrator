@@ -11,8 +11,6 @@ import Foundation
 class MigrationGuide: Decodable {
     /// textual summary of changes between versions
     var summary: String
-    /// supported language
-    var lang: SupportedLanguage
     /// supported specification type
     var specType: SpecificationType
     /// supported service type
@@ -26,7 +24,6 @@ class MigrationGuide: Decodable {
     
     private enum CodingKeys: String, CodingKey {
         case summary
-        case lang
         case changes
         case specType = "api-spec"
         case versionFrom = "from-version"
@@ -37,7 +34,6 @@ class MigrationGuide: Decodable {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.summary = try container.decode(String.self, forKey: .summary)
-        self.lang = try container.decode(SupportedLanguage.self, forKey: .lang)
         self.specType = try container.decode(SpecificationType.self, forKey: .specType)
         self.serviceType = try container.decode(ServiceType.self, forKey: .serviceType)
         self.versionFrom = SemanticVersion(versionString: try container.decode(String.self, forKey: .versionFrom))

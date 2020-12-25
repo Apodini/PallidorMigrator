@@ -6,7 +6,6 @@ import SourceryFramework
 extension XCTestCase {
     var noChange: String { """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",

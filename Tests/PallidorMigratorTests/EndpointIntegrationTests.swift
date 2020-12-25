@@ -10,7 +10,6 @@ class EndpointIntegrationTests: XCTestCase {
     
     let renameEndpointAndReplaceAndDeleteMethodChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -73,7 +72,6 @@ class EndpointIntegrationTests: XCTestCase {
     
     let renameEndpointAndReplaceMethodChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -128,7 +126,6 @@ class EndpointIntegrationTests: XCTestCase {
     
     let renameEndpointAndDeletedMethodChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -176,7 +173,6 @@ class EndpointIntegrationTests: XCTestCase {
     
     let renameEndpointAndRenameMethodChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -216,7 +212,6 @@ class EndpointIntegrationTests: XCTestCase {
     
     let renamedEndpointAndRenameMethodAndReplaceAndDeleteParameterChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -282,7 +277,6 @@ class EndpointIntegrationTests: XCTestCase {
     
     let renamedEndpointAndRenameMethodAndAddAndDeleteParameterChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -347,7 +341,6 @@ class EndpointIntegrationTests: XCTestCase {
     
     let renamedEndpointAndRenameMethodAndReplaceAndDeleteParameterAndReplaceReturnValueChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -427,7 +420,6 @@ class EndpointIntegrationTests: XCTestCase {
     
     let renamedEndpointAndRenameMethodAndChangedParametersAndReplaceReturnValueChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",

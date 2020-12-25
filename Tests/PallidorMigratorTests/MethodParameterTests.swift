@@ -9,7 +9,6 @@ class MethodParameterTests: XCTestCase {
     
     let replaceMNParameterChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -54,7 +53,6 @@ class MethodParameterTests: XCTestCase {
     
     let replaceM1ParameterChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -99,7 +97,6 @@ class MethodParameterTests: XCTestCase {
     
     let replace1NParameterChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -144,7 +141,6 @@ class MethodParameterTests: XCTestCase {
     
     let addParameterChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -181,7 +177,6 @@ class MethodParameterTests: XCTestCase {
     
     let deleteParameterChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -213,7 +208,6 @@ class MethodParameterTests: XCTestCase {
     
     let renameMethodParameterChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -246,7 +240,6 @@ class MethodParameterTests: XCTestCase {
     
     let replaceMethodParameterChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -285,7 +278,6 @@ class MethodParameterTests: XCTestCase {
     /// represented as `element` parameter
      let replaceMethodContentBodyChange = """
     {
-        "lang" : "Swift",
         "summary" : "Here would be a nice summary what changed between versions",
         "api-spec": "OpenAPI",
         "api-type": "REST",
@@ -323,7 +315,6 @@ class MethodParameterTests: XCTestCase {
     
     let addContentBodyChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -358,21 +349,35 @@ class MethodParameterTests: XCTestCase {
         XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeAddedContentBody.rawValue))
     }
     
-    let emptyChange = """
+    let replaceDefaultValueChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
        "from-version" : "0.0.1b",
        "to-version" : "0.0.2",
-       "changes" : []
+       "changes" : [
+           {
+               "object" : {
+                   "operation-id" : "findPetsByStatus",
+                   "defined-in" : "/pet"
+               },
+               "target" : "Parameter",
+               "replacement-id" : "status",
+               "type" : "String",
+               "replaced" : {
+                       "name" : "status",
+                       "type" : "String",
+                       "default-value" : "available"
+               }
+           }
+        ]
 
    }
    """
     
     func testDefaultParameterPetEndpoint() {
-        let migrationResult = getMigrationResult(migration: emptyChange, target: readResource(Resources.PetEndpointDefaultParameter.rawValue))
+        let migrationResult = getMigrationResult(migration: replaceDefaultValueChange, target: readResource(Resources.PetEndpointDefaultParameter.rawValue))
         let result = APITemplate().render(migrationResult)
         
         XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeDefaultParameter.rawValue))

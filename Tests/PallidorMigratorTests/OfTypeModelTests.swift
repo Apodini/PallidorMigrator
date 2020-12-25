@@ -16,7 +16,6 @@ class OfTypeModelTests: XCTestCase {
     
     let renameOfTypeModelChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -43,7 +42,6 @@ class OfTypeModelTests: XCTestCase {
     
     let deleteOfTypeEnumCaseChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -73,7 +71,6 @@ class OfTypeModelTests: XCTestCase {
     
     let deleteOfTypeChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -112,7 +109,6 @@ class OfTypeModelTests: XCTestCase {
     
     let replaceOfTypeModelChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",

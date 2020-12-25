@@ -16,7 +16,6 @@ class EnumTests: XCTestCase {
     
     let deleteEnumCaseChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -53,7 +52,6 @@ class EnumTests: XCTestCase {
     
     let deleteEnumChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -91,7 +89,6 @@ class EnumTests: XCTestCase {
     
     let renameEnumChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -118,7 +115,6 @@ class EnumTests: XCTestCase {
     
     let replaceEnumChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",

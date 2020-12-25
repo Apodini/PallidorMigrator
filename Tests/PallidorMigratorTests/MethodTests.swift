@@ -9,7 +9,6 @@ class MethodTests: XCTestCase {
     
     let renameMethodChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -41,7 +40,6 @@ class MethodTests: XCTestCase {
     
     let deleteMethodChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -84,7 +82,6 @@ class MethodTests: XCTestCase {
     
     let replaceMethodChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -140,7 +137,6 @@ class MethodTests: XCTestCase {
     
     let replaceMethodInSameEndpointChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",

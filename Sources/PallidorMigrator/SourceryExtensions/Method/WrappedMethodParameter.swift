@@ -67,7 +67,9 @@ class WrappedMethodParameter: Modifiable {
     
     /// String representation of parameter in method signature
     lazy var signatureString : () -> String = { () in
-        "\(self.name): \(self.actualTypeName!.name) \(self.hasDefaultValue ? " = \(self.defaultValue!)" :"")"
+        let isString = self.actualTypeName!.name.unwrapped.isString && self.id != "contentType"
+        let defaultValue = "\(self.hasDefaultValue ? " = \(isString ? "\"\(self.defaultValue!)\"" : "\(self.defaultValue!)")" :"")"
+        return "\(self.name): \(self.actualTypeName!.name) \(defaultValue)"
     }
     
     /// String for parameter conversion

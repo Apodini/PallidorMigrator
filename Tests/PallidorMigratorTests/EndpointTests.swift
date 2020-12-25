@@ -10,7 +10,6 @@ class EndpointTests: XCTestCase {
     
     let renameEndpointChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -28,7 +27,7 @@ class EndpointTests: XCTestCase {
    }
    """
     
-    func testRenamed() {
+    func testEndpointRenamed() {
         CodeStore.initInstance(previous: [], current: [])
         let migrationResult = getMigrationResult(migration: renameEndpointChange, target: readResource(Resources.PetEndpointRenamed.rawValue))
         let result = APITemplate().render(migrationResult)
@@ -50,7 +49,6 @@ class EndpointTests: XCTestCase {
     
     let deleteEndpointChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -89,7 +87,6 @@ class EndpointTests: XCTestCase {
     
     let renameMethodAndChangeContentBodyChange = """
    {
-       "lang" : "Swift",
        "summary" : "Here would be a nice summary what changed between versions",
        "api-spec": "OpenAPI",
        "api-type": "REST",
@@ -142,7 +139,7 @@ class EndpointTests: XCTestCase {
     
     static var allTests = [
         ("testDeleted", testDeleted),
-        ("testRenamed", testRenamed),
+        ("testEndpointRenamed", testEndpointRenamed),
         ("testRenameMethodAndChangeContentBodyChange", testRenameMethodAndChangeContentBodyChange)
     ]
 }

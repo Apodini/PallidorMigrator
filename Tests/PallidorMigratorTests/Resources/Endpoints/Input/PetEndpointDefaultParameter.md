@@ -12,7 +12,7 @@ Responses:
    - 200: successful operation
    - 400: Invalid status value
 */
-static func findPetsByStatus(status: String? = "available", authorization: HTTPAuthorization = NetworkManager.authorization!, contentType: String? = NetworkManager.defaultContentType) -> AnyPublisher<[_Pet], Error> {
+static func findPetsByStatus(status: String? = "pending", authorization: HTTPAuthorization = NetworkManager.authorization!, contentType: String? = NetworkManager.defaultContentType) -> AnyPublisher<[_Pet], Error> {
 var path = NetworkManager.basePath! + "/pet/findByStatus"
     
 path += "?\(status != nil ? "&status=\(status?.description ?? "")" : "")"

@@ -51,6 +51,46 @@ class ModelIntegrationTests: XCTestCase {
         XCTAssertEqual(result, readResource(Resources.ResultModelPetAddedAndDeletedProperty.rawValue))
     }
     
+    let renameModelAndAddPropertyChange = """
+    {
+        "summary" : "Here would be a nice summary what changed between versions",
+        "api-spec": "OpenAPI",
+        "api-type": "REST",
+        "from-version" : "0.0.1b",
+        "to-version" : "0.0.2",
+        "changes" : [
+           {
+               "object" : {
+                   "name" : "MyPet"
+               },
+               "target" : "Property",
+               "added" : [
+                   {
+                       "name" : "category",
+                       "type" : "Category",
+                       "default-value" : "{ 'id' : 42, 'name' : 'SuperPet' }"
+                   }
+               ]
+           },
+           {
+               "object" : {
+                   "name" : "MyPet"
+               },
+               "target" : "Signature",
+               "original-id" : "Pet"
+           }
+        ]
+
+    }
+    """
+    
+    func testRenamedModelAndAddProperty() {
+        let migrationResult = getMigrationResult(migration: renameModelAndAddPropertyChange, target: readResource(Resources.ModelPetRenamedAndAddedProperty.rawValue))
+        let result = ModelTemplate().render(migrationResult)
+
+        XCTAssertEqual(result, readResource(Resources.ResultModelPetRenamedAndAddedProperty.rawValue))
+    }
+    
     let renameModelAndReplacePropertyChange = """
    {
        "summary" : "Here would be a nice summary what changed between versions",
@@ -165,8 +205,8 @@ class ModelIntegrationTests: XCTestCase {
     }
     
     enum Resources: String {
-        case ModelPet, ModelCustomerRenamedAndReplacedProperty, ModelCustomerRenamedAndDeletedProperty, ModelCategoryRenamedAndPropertyRenamed
-        case ResultModelPetAddedAndDeletedProperty, ResultModelCustomerRenamedAndReplacedProperty, ResultModelCustomerRenamedAndDeletedProperty, ResultModelCategoryRenamedAndRenamedProperty
+        case ModelPet, ModelCustomerRenamedAndReplacedProperty, ModelCustomerRenamedAndDeletedProperty, ModelCategoryRenamedAndPropertyRenamed, ModelPetRenamedAndAddedProperty
+        case ResultModelPetAddedAndDeletedProperty, ResultModelCustomerRenamedAndReplacedProperty, ResultModelCustomerRenamedAndDeletedProperty, ResultModelCategoryRenamedAndRenamedProperty, ResultModelPetRenamedAndAddedProperty
     }
     
     static var allTests = [

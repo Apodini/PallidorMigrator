@@ -65,6 +65,7 @@ let package = Package(
                 .process("Resources/Endpoints/Input/PetEndpointReplaceParameterMN.md"),
                 .process("Resources/Endpoints/Input/PetEndpointReplaceParameter32.md"),
                 .process("Resources/Endpoints/Input/PetEndpointDefaultParameter.md"),
+                .process("Resources/Endpoints/Input/PetEndpointRequiringParameter.md"),
                 
                             
                 .process("Resources/Endpoints/Results/ResultPetEndpointFacadeRenamedMethodAndRenamedParameter.md"),
@@ -99,7 +100,7 @@ let package = Package(
                 .process("Resources/Endpoints/Results/ResultPetEndpointFacade1NParameterChange.md"),
                 .process("Resources/Endpoints/Results/ResultPetEndpointFacade32ParameterChange.md"),
                 .process("Resources/Endpoints/Results/ResultPetEndpointFacadeDefaultParameter.md"),
-                
+                .process("Resources/Endpoints/Results/ResultPetEndpointFacadeRequiredParameter.md"),
                             
                 
                 .process("Resources/Models/Input/ModelPlaceholder.md"),
@@ -117,6 +118,8 @@ let package = Package(
                 .process("Resources/Models/Input/ModelPetRenamedProperty.md"),
                 .process("Resources/Models/Input/ModelCustomerRenamedAndDeletedProperty.md"),
                 .process("Resources/Models/Input/ModelCategoryRenamedAndPropertyRenamed.md"),
+                .process("Resources/Models/Input/ModelPetRenamedAndAddedProperty.md"),
+                
                 
                 .process("Resources/Models/Results/ResultModelCategoryRenamedAndRenamedProperty.md"),
                 .process("Resources/Models/Results/ResultModelAddressRenamed.md"),
@@ -137,6 +140,7 @@ let package = Package(
                 .process("Resources/Models/Results/ResultModelPetAddedAndDeletedProperty.md"),
                 .process("Resources/Models/Results/ResultModelCustomerRenamedAndReplacedProperty.md"),
                 .process("Resources/Models/Results/ResultModelCustomerRenamedAndDeletedProperty.md"),
+                .process("Resources/Models/Results/ResultModelPetRenamedAndAddedProperty.md"),
                 
                 .process("Resources/Enums/Input/EnumMessageLevelFacade.md"),
                 .process("Resources/Enums/Input/EnumPlaceholder.md"),

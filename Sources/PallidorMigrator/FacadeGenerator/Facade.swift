@@ -13,7 +13,7 @@ protocol Facade {
     var migrationSet: MigrationSet? { get set }
     var modifiables: [Modifiable] { get set }
     var targetDirectory: Path { get set }
-    
+
     /// Persists modifiables to files
     /// - Throws: error if writing fails
     /// - Returns: `[URL]` of file URLs

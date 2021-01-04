@@ -12,4 +12,10 @@ final class AddMigration: Migration {
     internal init(solvable: Bool, executeOn: Modifiable, change: AddChange) {
         super.init(solvable: solvable, executeOn: executeOn, change: change)
     }
+    convenience init(solvable: Bool, executeOn: Modifiable, change: Changing) {
+        guard let change = change as? AddChange else {
+            fatalError("Change malformed: AddChange")
+        }
+        self.init(solvable: solvable, executeOn: executeOn, change: change)
+    }
 }

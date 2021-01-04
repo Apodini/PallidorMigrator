@@ -66,7 +66,9 @@ function conversion(petId) { return (petId + 1.86) }
 
 let petIdEncoded = String(petId)
 
-let betterIdTmp = context.objectForKeyedSubscript("conversion").call(withArguments: [petIdEncoded])?.toString()
+let betterIdTmp = context
+                        .objectForKeyedSubscript("conversion")
+                        .call(withArguments: [petIdEncoded])?.toString()
 
 let betterId = Double(betterIdTmp!)!
 return _PetAPI.updatePetWithForm(betterId: betterId, name: name, status: status, authorization: authorization, contentType: contentType)

@@ -23,7 +23,7 @@ case .psdInstallmentSchedule(let of):
 }
 
 public init(from decoder: Decoder) throws {
-    
+
     if let psiInstallmentSchedule = try? PsiInstallmentSchedule.init(from: decoder) {
     self = .psiInstallmentSchedule(psiInstallmentSchedule)
     return
@@ -32,7 +32,7 @@ if let psdInstallmentSchedule = try? PsdInstallmentSchedule.init(from: decoder) 
     self = .psdInstallmentSchedule(psdInstallmentSchedule)
     return
 }
-    
+
     throw APIEncodingError.canNotEncodeOfType(OneOf.self)
 }
 
@@ -44,7 +44,7 @@ case .psdInstallmentSchedule(let ofType):
 return _PayInstallSched.OneOf.psdInstallmentSchedule(ofType.to()!)
         }
     }
-    
+
     init?(_ from: _PayInstallSched.OneOf?) {
         if let from = from {
             switch from {

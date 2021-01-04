@@ -15,7 +15,9 @@ return _PetAPI.addMyPet(element: element.to()!, authorization: authorization, co
     context.evaluateScript("""
 function conversion(response) { var response = JSON.parse(response) return JSON.stringify({ 'id' : response.code, 'name' : response.message, 'photoUrls': [response.type], 'status' : 'available', 'tags': [ { 'id': 27, 'name': 'tag2' } ] }) }
 """)
-    let encString = context.objectForKeyedSubscript("conversion").call(withArguments: [String(data: encoded, encoding: .utf8)!])?.toString()
+    let encString = context
+            .objectForKeyedSubscript("conversion")
+            .call(withArguments: [String(data: encoded, encoding: .utf8)!])?.toString()
     return Pet(try! JSONDecoder().decode(_Pet.self, from: encString!.data(using: .utf8)!))!
 })
 .receive(on: DispatchQueue.main)

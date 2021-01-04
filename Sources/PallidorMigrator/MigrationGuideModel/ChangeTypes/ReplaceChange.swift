@@ -19,7 +19,7 @@ class ReplaceChange: Change {
     var customRevert: String?
     /// Type of replacement
     var type: String?
-    
+
     private enum CodingKeys: String, CodingKey {
         case replacementId = "replacement-id"
         case customConvert = "custom-convert"
@@ -27,20 +27,20 @@ class ReplaceChange: Change {
         case type
         case replaced
     }
-    
+
     private enum ReplacementDecodingError: Error {
         case missingConversion(reason: String)
         case unsupported(reason: String)
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         self.replacementId = try container.decode(String.self, forKey: .replacementId)
         self.customConvert = try? container.decode(String.self, forKey: .customConvert)
         self.customRevert = try? container.decode(String.self, forKey: .customRevert)
         self.type = try? container.decode(String.self, forKey: .type)
-        
+
         if let value = try? container.decode(Property.self, forKey: .replaced) {
             self.replaced = value
         } else if let value = try? container.decode(Method.self, forKey: .replaced) {
@@ -53,30 +53,34 @@ class ReplaceChange: Change {
             let value = try? container.decode(ContentType.self, forKey: .replaced)
             self.replaced = value
         }
-        
+
         try super.init(from: decoder)
-        
+
         try validate()
-        
+
         self.changeType = .replace
     }
-    
-    // TODO: refactor - dont make sense right now
+
     override func validate() throws {
         if target == .returnValue && customRevert == nil {
-            throw ReplacementDecodingError.missingConversion(reason: "Target return value requires conversion JS-method (revert): `function conversion(replaced) { JSON.stringify( { replacement... } ) }`")
+            throw ReplacementDecodingError.missingConversion(reason: """
+            Target return value requires conversion JS-method (revert): `function conversion(replaced) { JSON.stringify( { replacement... } ) }`
+            """)
         }
-        
+
         if type != nil && target != .returnValue && (customConvert == nil || customRevert == nil) && !isDefaultValueChange() {
-            throw ReplacementDecodingError.missingConversion(reason: "Custom type requires two conversion JS-methods: `function conversion(replaced) { JSON.stringify( { replacement... } ) }`")
+            throw ReplacementDecodingError
+            .missingConversion(reason: """
+            Custom type requires two conversion JS-methods: `function conversion(replaced) { JSON.stringify( { replacement... } ) }`
+            """)
         }
     }
-    
+
     private func isDefaultValueChange() -> Bool {
         guard let replaced = self.replaced, self.target == .parameter else {
             return false
         }
-        
+
         return replaced.id == replacementId && (customConvert == nil || customRevert == nil)
     }
 }

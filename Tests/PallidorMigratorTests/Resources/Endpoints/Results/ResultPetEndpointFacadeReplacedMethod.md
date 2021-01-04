@@ -83,7 +83,9 @@ function conversion(o) { return JSON.stringify({ 'type' : 'PSI' } )}
 
 let inputEncoded = try! JSONEncoder().encode(InputParam(element : element))
 
-let outputTmp = context.objectForKeyedSubscript("conversion").call(withArguments: [inputEncoded])?.toString()
+let outputTmp = context
+            .objectForKeyedSubscript("conversion")
+            .call(withArguments: [inputEncoded])?.toString()
 
 let outputDecoded = try! JSONDecoder().decode(OutputParam.self, from: outputTmp!.data(using: .utf8)!)
 return UserAPI.updateMyPet(element : outputDecoded.element, authorization: authorization, contentType: contentType)
@@ -94,7 +96,9 @@ return UserAPI.updateMyPet(element : outputDecoded.element, authorization: autho
     context.evaluateScript("""
 function conversion(o) { return JSON.stringify({ 'type': '', 'of' : { 'type': 'PSI'} } )}
 """)
-    let encString = context.objectForKeyedSubscript("conversion").call(withArguments: [String(data: encoded, encoding: .utf8)!])?.toString()
+    let encString = context
+            .objectForKeyedSubscript("conversion")
+            .call(withArguments: [String(data: encoded, encoding: .utf8)!])?.toString()
     return Pet(try! JSONDecoder().decode(_Pet.self, from: encString!.data(using: .utf8)!))!
 })
 .receive(on: DispatchQueue.main)

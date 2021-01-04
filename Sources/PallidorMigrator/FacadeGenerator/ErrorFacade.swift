@@ -12,26 +12,31 @@ import SourceryFramework
 /// Used to write modified error enum templates to swift files
 struct ErrorFacade: Facade {
     var migrationSet: MigrationSet?
-    
+
     /// here the modifiables array contains only two values: _APIError & APIError
     var modifiables: [Modifiable]
     var targetDirectory: Path
-    
+
     /// Persists error enums to files
     /// - Throws: error if writing fails
     /// - Returns: `[URL]` of file URLs
     func persist() throws -> [URL] {
         let template = ErrorEnumTemplate()
-        let newErrorEnum = modifiables[0] as! WrappedEnum
-       
+
+        guard let newErrorEnum = modifiables[0] as? WrappedEnum else {
+            fatalError("Could not detect enum.")
+        }
+
         if modifiables.count == 2 {
-            let facadeErrorEnum = modifiables[1] as! WrappedEnum
-            for c in newErrorEnum.compareCases(facadeErrorEnum) {
-                facadeErrorEnum.modify(change: c)
+            guard let facadeErrorEnum = modifiables[1] as? WrappedEnum else {
+                fatalError("Could not detect error enum.")
+            }
+            for targetCase in newErrorEnum.compareCases(facadeErrorEnum) {
+                facadeErrorEnum.modify(change: targetCase)
             }
             return [try template.write(facadeErrorEnum, to: targetDirectory + Path("APIErrors.swift"))!]
         }
-        
+
         return [try template.write(newErrorEnum, to: targetDirectory + Path("APIErrors.swift"))!]
     }
 }

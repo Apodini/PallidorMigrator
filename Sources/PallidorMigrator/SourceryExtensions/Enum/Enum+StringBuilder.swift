@@ -11,9 +11,11 @@ import SourceryRuntime
 extension WrappedEnum {
     /// Declaration string for enum cases
     var casesString: String {
-        isOfType ? self.cases.map({ $0.ofCase }).joined(separator: "\n") : self.cases.map({ $0.defaultCase() }).skipEmptyJoined(separator: "\n")
+        isOfType ?
+            self.cases.map { $0.ofCase }.joined(separator: "\n") :
+            self.cases.map { $0.defaultCase() }.skipEmptyJoined(separator: "\n")
     }
-    
+
     /// Representation of an internal enum
     var internalEnum: String {
        !isOfType ? defaultInternal()
@@ -24,6 +26,11 @@ extension WrappedEnum {
 extension WrappedEnumCase {
     /// Declaration string for ofType enum case
     var ofCase: String {
-        "\(self.annotationString ?? "")case \(name)\(hasAssociatedValue ? "(\(associatedValues.map({ $0.typeName.name }).joined(separator: ", ")))" : "")"
+        """
+\(self.annotationString ?? "")case \(name)\(
+    hasAssociatedValue ? """
+(\(associatedValues.map { $0.typeName.name }.joined(separator: ", ")))
+""" : "")
+"""
     }
 }

@@ -11,15 +11,15 @@ import Foundation
 class Model: ContentType {
     /// identifier of model
     var name: String
-    
+
     private enum CodingKeys: String, CodingKey {
         case name
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.name = try container.decode(String.self, forKey: .name)
-        
+
         try super.init(from: decoder)
         self.id = name
     }

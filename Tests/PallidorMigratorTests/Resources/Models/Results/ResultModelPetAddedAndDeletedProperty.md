@@ -18,7 +18,7 @@ case sold = "sold"
     func to() -> _Pet.Status? {
         _Pet.Status(rawValue : self.rawValue)
     }
-    
+
     init?(_ from: _Pet.Status?) {
         if let from = from {
             self.init(rawValue: from.rawValue)

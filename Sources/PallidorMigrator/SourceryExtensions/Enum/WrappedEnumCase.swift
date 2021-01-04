@@ -10,17 +10,27 @@ import SourceryRuntime
 
 /// Wraps the EnumCase of Sourcery
 class WrappedEnumCase: Modifiable {
-    internal init(name: String, rawValue: String? = nil, hasAssociatedValue: Bool, associatedValues: [WrappedAssociatedValue]) {
+    internal init(
+        name: String,
+        rawValue: String? = nil,
+        hasAssociatedValue: Bool,
+        associatedValues: [WrappedAssociatedValue]
+    ) {
         self.name = name
         self.rawValue = rawValue
         self.hasAssociatedValue = hasAssociatedValue
         self.associatedValues = associatedValues
     }
-    
+
     convenience init(from: EnumCase) {
-        self.init(name: from.name.removePrefix, rawValue: from.rawValue, hasAssociatedValue: from.hasAssociatedValue, associatedValues: from.associatedValues.map({ WrappedAssociatedValue(from: $0) }))
+        self.init(
+            name: from.name.removePrefix,
+            rawValue: from.rawValue,
+            hasAssociatedValue: from.hasAssociatedValue,
+            associatedValues: from.associatedValues.map { WrappedAssociatedValue(from: $0) }
+        )
     }
-    
+
     /// name of case
     var name: String
     /// raw value of case
@@ -29,22 +39,25 @@ class WrappedEnumCase: Modifiable {
     var hasAssociatedValue: Bool
     /// list of associated values
     var associatedValues: [WrappedAssociatedValue]
-    
+
     /// string representation of annotation (varies for external/internal enum types)
     var annotationString: String?
-    
+
     var id: String { self.name }
-    
+
     var modified: Bool = false
-    
+
     var annotation: Annotation?
-    
+
     func modify(change: Change) {
         self.modified = true
         switch change.changeType {
         case .delete:
             self.annotation = .unavailable(msg: "This case is unavailable by API version: xxx")
-            self.annotationString = "\(self.annotation!)\n"
+            guard let annotation = self.annotation else {
+                fatalError("Annotation was not set correctly.")
+            }
+            self.annotationString = "\(annotation)\n"
             self.errorFrom = { () in "" }
             self.ofEncoding = { () in "" }
             self.ofDecoding = { _ in "" }
@@ -54,25 +67,42 @@ class WrappedEnumCase: Modifiable {
             fatalError("EnumCase: Change not implemented")
         }
     }
-    
+
     /// `from()` string for error enum
     lazy var errorFrom : () -> String = {
         """
-          case .\(self.name)(\(self.associatedValues.map({ "let \($0.typeName.name.lowerFirst)" }).joined(separator: ", "))):
-            \(self.associatedValues.count > 1 ? "self = .\(self.name)(\(self.codeType), \(self.errorTypeFrom))" : "self = .\(self.name)(\(self.codeType))")
+          case .\(self.name)(\(self
+                                .associatedValues.map {
+                                    "let \($0.typeName.name.lowerFirst)"
+                                }
+                                .joined(separator: ", "))):
+            \(self.associatedValues.count > 1 ?
+                "self = .\(self.name)(\(self.codeType), \(self.errorTypeFrom))" :
+                "self = .\(self.name)(\(self.codeType))")
           """
     }
-    
+
     /// declaration string for error enum
     lazy var errorCase : () -> String = {
-        "\(self.annotationString ?? "")case \(self.name)(\(self.associatedValues.map({ TypeStore.nonPersistentTypes[$0.typeName.name] ?? $0.typeName.name }).joined(separator: ", ")))"
+        """
+\(self.annotationString ?? "")case \(self.name)(\(
+    self.associatedValues.map {
+        TypeStore.nonPersistentTypes[$0.typeName.name] ?? $0.typeName.name
     }
-    
+    .joined(separator: ", ")))
+"""
+    }
+
     /// declaration string for default enums
     lazy var defaultCase : () -> String = {
-        "\(self.annotationString ?? "")case \(self.name)\(self.hasAssociatedValue ? "(\(self.associatedValues.map({ $0.typeName.name }).joined(separator: ", ")))" : "")\((self.rawValue != nil) ? " = \"\(self.rawValue!)\"": "")"
+        """
+\(self.annotationString ?? "")case \(self.name)\(
+    self.hasAssociatedValue ? """
+(\(self.associatedValues.map { $0.typeName.name }.joined(separator: ", ")))
+""" : "")\((self.rawValue != nil) ? " = \"\(self.rawValue ?? "")\"": "")
+"""
     }
-    
+
     /// `to()` string for an `OfType` internal enum
     lazy var ofTo : (_ definedIn: String) -> String = { (_ definedIn: String) in
         """
@@ -80,7 +110,7 @@ class WrappedEnumCase: Modifiable {
         return \(definedIn).\(self.name)(ofType.to()!)
         """
     }
-    
+
     /// `from()` string for an `OfType` internal enum
     lazy var ofFrom : () -> String = { () in
         """
@@ -89,7 +119,7 @@ class WrappedEnumCase: Modifiable {
         break
         """
     }
-    
+
     /// decoding string for an `OfType` internal enum
     lazy var ofDecoding : (_ definedIn: String) -> String = { (_ definedIn: String) in
         """
@@ -99,7 +129,7 @@ class WrappedEnumCase: Modifiable {
         }
         """
     }
-    
+
     /// encoding string for an `OfType` internal enum
     lazy var ofEncoding : () -> String = {
         """

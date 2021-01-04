@@ -14,14 +14,16 @@ struct ModelFacade: Facade {
     var modifiables: [Modifiable]
     var targetDirectory: Path
     var migrationSet: MigrationSet?
-    
+
     /// Persists models to files
     /// - Throws: error if writing fails
     /// - Returns: `[URL]` of file URLs
     func persist() throws -> [URL] {
-        try self.modifiables.map { m -> URL in
+        try self.modifiables.map { target -> URL in
             let template = ModelTemplate()
-            let model = try migrationSet!.activate(for: m) as! WrappedClass
+            guard let model = try migrationSet!.activate(for: target) as? WrappedClass else {
+                fatalError("Could not migrate model.")
+            }
             return try template.write(model, to: targetDirectory.persistentPath + Path("\(model.localName).swift"))!
         }
     }

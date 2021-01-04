@@ -5,12 +5,10 @@
 //  Copyright © 2020 TUM LS1. All rights reserved.
 //
 
-
 import Foundation
 
 /// object affected by change
 enum ObjectType {
-    case service(String)
     case endpoint(Endpoint)
     case model(Model)
     case method(Method)

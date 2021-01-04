@@ -23,7 +23,7 @@ case .psdInstallmentSchedule(let of):
 }
 
 public init(from decoder: Decoder) throws {
-    
+
     if let psiInstallmentSchedule = try? PsiInstallmentSchedule.init(from: decoder) {
     self = .psiInstallmentSchedule(psiInstallmentSchedule)
     return
@@ -32,7 +32,7 @@ if let psdInstallmentSchedule = try? PsdInstallmentSchedule.init(from: decoder) 
     self = .psdInstallmentSchedule(psdInstallmentSchedule)
     return
 }
-    
+
     throw APIEncodingError.canNotEncodeOfType(OneOf.self)
 }
 
@@ -44,7 +44,7 @@ case .psdInstallmentSchedule(let ofType):
 return _PaymentInstallmentSchedule.OneOf.psdInstallmentSchedule(ofType.to()!)
         }
     }
-    
+
     init?(_ from: _PaymentInstallmentSchedule.OneOf?) {
         if let from = from {
             switch from {
@@ -74,7 +74,9 @@ init?(_ from : _PsiInstallmentSchedule?) {
     context.evaluateScript("""
     function conversion(o) { return JSON.stringify({ 'type': '', 'of' : { 'type': 'PSI'} } )}
     """)
-    let encodedResult = context.objectForKeyedSubscript("conversion").call(withArguments: [String(data: fromEncoded, encoding: .utf8)!])?.toString()
+    let encodedResult = context
+            .objectForKeyedSubscript("conversion")
+            .call(withArguments: [String(data: fromEncoded, encoding: .utf8)!])?.toString()
     let from = try! JSONDecoder().decode(PaymentInstallmentSchedule.self, from: encodedResult!.data(using: .utf8)!)
     self.type = from.type
 self.of = from.of
@@ -89,7 +91,9 @@ let selfEncoded = try! JSONEncoder().encode(self)
 context.evaluateScript("""
 function conversion(o) { return JSON.stringify({ 'type' : 'PSI' } )}
 """)
-let encodedResult = context.objectForKeyedSubscript("conversion").call(withArguments: [String(data: selfEncoded, encoding: .utf8)!])?.toString()
+let encodedResult = context
+        .objectForKeyedSubscript("conversion")
+        .call(withArguments: [String(data: selfEncoded, encoding: .utf8)!])?.toString()
 return try! JSONDecoder().decode(_PsiInstallmentSchedule.self, from: encodedResult!.data(using: .utf8)!)
 }
 

@@ -13,26 +13,28 @@ import PathKit
 /// Template which represents the code structure for an enum
 struct EnumTemplate: CodeTemplate {
     func render(_ modifiable: Modifiable) -> String {
-        let e = modifiable as! WrappedEnum
-        TypeStore.nonPersistentTypes["_\(e.localName)"] = e.localName
-        let annotation = e.annotation != nil ? "\n\(e.annotation!.description)" : ""
-        let imports = e.specialImports.isEmpty ? "" : "\n\(e.specialImports.joined(separator: "\n"))"
+        guard let facadeEnum = modifiable as? WrappedEnum else {
+            fatalError("EnumTemplate requires enum.")
+        }
+        TypeStore.nonPersistentTypes["_\(facadeEnum.localName)"] = facadeEnum.localName
+        let annotation = facadeEnum.annotation != nil ? "\n\(facadeEnum.annotation!.description)" : ""
+        let imports = facadeEnum.specialImports.isEmpty ? "" : "\n\(facadeEnum.specialImports.joined(separator: "\n"))"
         return """
         import Foundation\(imports)
         \(annotation)
-        public enum \(e.localName): \(e.inheritedTypes.mapJoined(separator: ", ")) {
-            \(e.externalEnum())
+        public enum \(facadeEnum.localName): \(facadeEnum.inheritedTypes.joined(separator: ", ")) {
+            \(facadeEnum.externalEnum())
         }
         """
     }
-    
+
     func write(_ modifiable: Modifiable, to path: Path) throws -> URL? {
         let content = render(modifiable)
-        
+
         guard !content.isEmpty else {
             return nil
         }
-        
+
         let outputPath = URL(fileURLWithPath: path.string)
         try content.write(to: outputPath, atomically: true, encoding: .utf8)
         return outputPath

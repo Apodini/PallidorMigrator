@@ -12,4 +12,10 @@ final class DeleteMigration: Migration {
     internal init(solvable: Bool, executeOn: Modifiable, change: DeleteChange) {
         super.init(solvable: solvable, executeOn: executeOn, change: change)
     }
+    convenience init(solvable: Bool, executeOn: Modifiable, change: Changing) {
+        guard let change = change as? DeleteChange else {
+            fatalError("Change malformed: DeleteChange")
+        }
+        self.init(solvable: solvable, executeOn: executeOn, change: change)
+    }
 }

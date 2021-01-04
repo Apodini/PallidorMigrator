@@ -14,15 +14,15 @@ class Migration: Migrating {
         self.change = change
         self.executeOn = executeOn
     }
-    
+
     var solvable: Bool
-    
+
     var change: Change
-    
+
     var executeOn: Modifiable
-    
+
     var executed: Bool = false
-    
+
     func execute() throws {
         guard solvable else {
             throw RuleError.notSupported(msg: "Unsupported rule: \(executeOn.id) modified by \(change.changeType)")
@@ -32,7 +32,7 @@ class Migration: Migrating {
             executed = true
         }
     }
-    
+
     private enum RuleError: Error {
         case notSupported(msg: String)
     }

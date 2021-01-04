@@ -13,14 +13,16 @@ struct EnumFacade: Facade {
     var modifiables: [Modifiable]
     var targetDirectory: Path
     var migrationSet: MigrationSet?
-    
+
     /// Persists enums to files
     /// - Throws: error if writing fails
     /// - Returns: `[URL]` of file URLs
     func persist() throws -> [URL] {
-        try self.modifiables.map { e -> URL in
+        try self.modifiables.map { target -> URL in
             let template = EnumTemplate()
-            let migratedEnum = try migrationSet!.activate(for: e) as! WrappedEnum
+            guard let migratedEnum = try migrationSet!.activate(for: target) as? WrappedEnum else {
+                fatalError("Could not migrate enum.")
+            }
             return try template.write(migratedEnum, to: targetDirectory.persistentPath + Path("\(migratedEnum.localName).swift"))!
         }
     }

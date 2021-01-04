@@ -14,7 +14,9 @@ return _PetAPI.addPet(element: element.to()!, authorization: authorization, cont
     context.evaluateScript("""
 function conversion(o) { return JSON.stringify({ 'type' : 'object' } )}
 """)
-    let encString = context.objectForKeyedSubscript("conversion").call(withArguments: [String(result)])?.toString()
+    let encString = context
+                .objectForKeyedSubscript("conversion")
+                .call(withArguments: [String(result)])?.toString()
     return Pet(try! JSONDecoder().decode(_Pet.self, from: encString!.data(using: .utf8)!))!
 })
 .receive(on: DispatchQueue.main)
@@ -39,8 +41,14 @@ return _PetAPI.findPetsByStatus(status: status, authorization: authorization, co
     context.evaluateScript("""
 function conversion(response) { var response = JSON.parse(response) return JSON.stringify({ 'id' : response.code, 'name' : response.message, 'photoUrls': [response.type], 'status' : 'available', 'tags': [ { 'id': 27, 'name': 'tag2' } ] }) }
 """)
-    let encString = context.objectForKeyedSubscript("conversion").call(withArguments: [String(data: encoded, encoding: .utf8)!])?.toString()
-    return (try! JSONDecoder().decode([_Pet].self, from: encString!.data(using: .utf8)!)).map({Pet($0)!})
+    let encString = context
+            .objectForKeyedSubscript("conversion")
+            .call(withArguments: [String(data: encoded, encoding: .utf8)!])?.toString()
+    return (try! JSONDecoder()
+                .decode(
+                        [_Pet].self,
+                        from: encString!.data(using: .utf8)!))
+                .map({Pet($0)!})
 })
 .receive(on: DispatchQueue.main)
 .eraseToAnyPublisher()
@@ -74,7 +82,9 @@ return _PetAPI.updatePet(element: element.to()!, authorization: authorization, c
     context.evaluateScript("""
 function conversion(response) { var response = JSON.parse(response) return JSON.stringify({ 'id' : response.code, 'name' : response.message, 'photoUrls': [response.type], 'status' : 'available', 'tags': [ { 'id': 27, 'name': 'tag2' } ] }) }
 """)
-    let encString = context.objectForKeyedSubscript("conversion").call(withArguments: [String(data: encoded, encoding: .utf8)!])?.toString()
+    let encString = context
+            .objectForKeyedSubscript("conversion")
+            .call(withArguments: [String(data: encoded, encoding: .utf8)!])?.toString()
     return Pet(try! JSONDecoder().decode(_Pet.self, from: encString!.data(using: .utf8)!))!
 })
 .receive(on: DispatchQueue.main)

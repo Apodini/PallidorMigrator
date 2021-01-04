@@ -20,50 +20,49 @@ class Change: Changing {
     var object: ObjectType
     var target: TargetType
     var changeType: ChangeType = .nil
-    
+
     private enum CodingKeys: CodingKey {
         case reason, object, target
     }
-    
+
     private enum ObjectTypeDecodingError: Error {
         case failedToDecode
         case unsupported(msg: String)
     }
-    
+
     required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-    
+
         reason = try? values.decode(String.self, forKey: .reason)
         target = try values.decode(TargetType.self, forKey: .target)
-                
+
         if let value = try? values.decode(Method.self, forKey: .object) {
             object = .method(value)
             try self.validate()
             return
         }
-        
+
         if let value = try? values.decode(Endpoint.self, forKey: .object) {
             object = .endpoint(value)
             try self.validate()
             return
         }
-        
+
         if let value = try? values.decode(Model.self, forKey: .object) {
             object = .model(value)
             try self.validate()
             return
         }
-        
+
         if let value = try? values.decode(EnumModel.self, forKey: .object) {
             object = .enum(value)
             try self.validate()
             return
         }
-        
-        
+
         throw ObjectTypeDecodingError.failedToDecode
     }
-    
+
     func validate() throws {
         switch object {
         case .model:

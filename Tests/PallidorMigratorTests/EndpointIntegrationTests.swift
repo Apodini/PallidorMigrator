@@ -3,7 +3,6 @@ import SourceryFramework
 @testable import PallidorMigrator
 
 class EndpointIntegrationTests: XCTestCase {
-    
     override func tearDown() {
         CodeStore.clear()
     }
@@ -200,7 +199,6 @@ class EndpointIntegrationTests: XCTestCase {
    """
     
     func testRenamedEndpointAndRenamedMethod() {
-        
         CodeStore.initInstance(previous: [], current: [])
 
         let modified = getMigrationResult(migration: renameEndpointAndRenameMethodChange, target: readResource(Resources.PetEndpointRenamedAndRenamedMethod.rawValue))
@@ -522,6 +520,5 @@ class EndpointIntegrationTests: XCTestCase {
         ("testRenamedEndpointAndRenameMethodAndReplaceAndDeleteParameterAndReplaceReturnValueChange", testRenamedEndpointAndRenameMethodAndReplaceAndDeleteParameterAndReplaceReturnValueChange),
         ("testRenamedEndpointAndRenameMethodAndAddAndDeleteParameterChange", testRenamedEndpointAndRenameMethodAndAddAndDeleteParameterChange),
         ("testRenamedEndpointAndRenameMethodAndChangedParametersAndReplaceReturnValueChange", testRenamedEndpointAndRenameMethodAndChangedParametersAndReplaceReturnValueChange)
-        
     ]
 }

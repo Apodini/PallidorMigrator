@@ -11,17 +11,31 @@ import SourceryRuntime
 extension WrappedTypeName {
     /// maps the publisher success type from api to facade type
     var mappedPublisherType: String {
-        let unmappedType = name.replacingOccurrences(of: "AnyPublisher<", with: "").replacingOccurrences(of: ", Error>", with: "")
+        let unmappedType = name
+            .replacingOccurrences(
+                of: "AnyPublisher<",
+                with: ""
+            )
+            .replacingOccurrences(of: ", Error>", with: "")
         return "AnyPublisher<\(unmappedType.replacingOccurrences(of: "_", with: "").unwrapped), Error>"
     }
-    
+
     /// success type without `AnyPublisher` wrapper
     var mappedPublisherSuccessType: String {
-        mappedPublisherType.replacingOccurrences(of: "AnyPublisher<", with: "").replacingOccurrences(of: ", Error>", with: "")
+        mappedPublisherType
+            .replacingOccurrences(
+                of: "AnyPublisher<",
+                with: ""
+            )
+            .replacingOccurrences(of: ", Error>", with: "")
     }
-    
+
     /// removes optional and collection characters from type name
     var underlyingType: String {
-        isOptional && isArray ? "\(name.unwrapped.dropLast().dropFirst())" : (isOptional ? "\(name.unwrapped)" : (isArray ? "\(name.dropLast().dropFirst())" : name))
+        isOptional && isArray ?
+            "\(name.unwrapped.dropLast().dropFirst())" :
+            (isOptional ?
+                "\(name.unwrapped)" :
+                (isArray ? "\(name.dropLast().dropFirst())" : name))
     }
 }

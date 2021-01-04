@@ -11,16 +11,14 @@ import Foundation
 enum Annotation: CustomStringConvertible {
     /// representation of annotation in template
     var description: String {
-        get {
-            switch self {
-            case .deprecated(msg: let msg):
-                return "@available(*, deprecated, message: \"\(msg)\")"
-            case .unavailable(msg: let msg):
-                return "@available(*, unavailable, message: \"\(msg)\")"
-            }
+        switch self {
+        case .deprecated(msg: let msg):
+            return "@available(*, deprecated, message: \"\(msg)\")"
+        case .unavailable(msg: let msg):
+            return "@available(*, unavailable, message: \"\(msg)\")"
         }
     }
-    
+
     /// if modifiable is still available but should not be used anymore
     case deprecated(msg: String)
     /// if modifiable was removed

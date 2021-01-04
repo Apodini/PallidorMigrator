@@ -21,31 +21,43 @@ extension WrappedEnum {
         changes.append(contentsOf: delChanges)
         return changes
     }
-    
-    
+
     /// Checks for added cases
     /// - Parameter rhs: comparing enum
     /// - Returns: AddChange
     private func compareAddedCases(_ rhs: WrappedEnum) -> Change {
         var cases = [EnumModel.Case]()
-        
-        for c in self.cases {
-            if !rhs.cases.contains(where: { $0.name == c.name }) {
-                cases.append(EnumModel.Case(case: c.name))
+
+        for targetCase in self.cases {
+            if !rhs.cases.contains(where: { $0.name == targetCase.name }) {
+                cases.append(EnumModel.Case(case: targetCase.name))
             }
         }
-        let eModel = EnumModel(enumName: self.localName.replacingOccurrences(of: "_", with: ""), cases: cases)
-        return AddChange(added: cases, reason: "Added new cases", object: .enum(eModel), target: .case)
+        let eModel = EnumModel(
+            enumName: self.localName.replacingOccurrences(of: "_", with: ""),
+            cases: cases
+        )
+        return AddChange(
+            added: cases,
+            reason: "Added new cases",
+            object: .enum(eModel),
+            target: .case
+        )
     }
-    
-    
+
     /// Checks for deleted cases
     /// - Parameter rhs: comparing enum
     /// - Returns: DeleteChange
     private func compareDeletedCases(_ rhs: WrappedEnum) -> [Change] {
         let delChange = rhs.compareAddedCases(self)
         if case let .enum(model) = delChange.object {
-            return model.cases.map({ DeleteChange(fallbackValue: $0, reason: "Deleted case", object: .enum(model), target: .case) })
+            return model.cases.map {
+                                    DeleteChange(
+                                        fallbackValue: $0,
+                                        reason: "Deleted case",
+                                        object: .enum(model),
+                                        target: .case)
+            }
         }
         return []
     }

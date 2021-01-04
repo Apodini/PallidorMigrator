@@ -14,7 +14,7 @@ extension CodeStore {
     func insertDeleted(modifiable: Modifiable) {
         currentAPI.append(modifiable)
     }
-    
+
     /// Inserts a modifiable into the code store
     /// - Parameters:
     ///   - modifiable: modifiable to insert
@@ -22,17 +22,24 @@ extension CodeStore {
     func insert(modifiable: Modifiable, in current: Bool = false) {
         current ? currentAPI.append(modifiable) : previousFacade!.append(modifiable)
     }
-        
+
     /// Retrieves a method
     /// - Parameters:
     ///   - id: identifier of method (e.g. name)
     ///   - searchInCurrent: get method from current api, else previous facade (default)
     /// - Returns: Method if available
     func getMethod(_ id: String, searchInCurrent: Bool = false) -> WrappedMethod? {
-        let allMethods = getEndpoints(searchInCurrent: searchInCurrent).map({($0 as! WrappedStruct).methods}).joined()
-        return allMethods.first(where: {$0.id == id})
+        let allMethods = getEndpoints(searchInCurrent: searchInCurrent)
+            .map { endp -> [WrappedMethod] in
+                guard let endpoint = endp as? WrappedStruct else {
+                    fatalError("Could not parse to endpoint")
+                }
+                return endpoint.methods
+            }
+            .joined()
+        return allMethods.first(where: { $0.id == id })
     }
-    
+
     /// Retrieves a model
     /// - Parameters:
     ///   - id: identifier of model (e.g. name)
@@ -40,14 +47,14 @@ extension CodeStore {
     /// - Returns: Model if available
     func getModel(_ id: String, searchInCurrent: Bool = false) -> WrappedClass? {
         let searchTarget = searchInCurrent ? currentAPI : previousFacade!
-        for m in searchTarget {
-            if let model = m as? WrappedClass, model.id == id {
+        for searchModel in searchTarget {
+            if let model = searchModel as? WrappedClass, model.id == id {
                 return model
             }
         }
         return nil
     }
-    
+
     /// Retrieves an Enum
     /// - Parameters:
     ///   - id: identifier of enum (e.g. name)
@@ -55,14 +62,14 @@ extension CodeStore {
     /// - Returns: Enum if available
     func getEnum(_ id: String, searchInCurrent: Bool = false) -> WrappedEnum? {
         let searchTarget = searchInCurrent ? currentAPI : previousFacade!
-        for m in searchTarget {
-            if let enumModel = m as? WrappedEnum, enumModel.id == id {
+        for searchEnum in searchTarget {
+            if let enumModel = searchEnum as? WrappedEnum, enumModel.id == id {
                 return enumModel
             }
         }
         return nil
     }
-    
+
     /// Retrieves an Endpoint
     /// - Parameters:
     ///   - id: identifier of endpoint (e.g. top level route)
@@ -70,36 +77,41 @@ extension CodeStore {
     /// - Returns: Endpoint if available
     func getEndpoint(_ id: String, searchInCurrent: Bool = false) -> WrappedStruct? {
         let searchTarget = searchInCurrent ? currentAPI : previousFacade!
-        for m in searchTarget {
-            if let endpoint = m as? WrappedStruct, endpoint.id == id {
+        for searchEndpoint in searchTarget {
+            if let endpoint = searchEndpoint as? WrappedStruct, endpoint.id == id {
                 return endpoint
             }
         }
         return nil
     }
-    
-    
+
     /// Retrieves all models from CodeStore
     /// - Parameter searchInCurrent: from current api (default) or previous facade
     /// - Returns: List of all models
     func getModels(searchInCurrent: Bool = true) -> [Modifiable] {
         let modifiables = searchInCurrent ? currentAPI : previousFacade
-        return modifiables!.filter({ ($0 as? WrappedClass) != nil })
+        return modifiables!.filter { ($0 as? WrappedClass) != nil }
     }
-    
+
     /// Retrieves all endpoints from CodeStore
     /// - Parameter searchInCurrent: from current api (default) or previous facade
     /// - Returns: List of all endpoints
     func getEndpoints(searchInCurrent: Bool = true) -> [Modifiable] {
         let modifiables = searchInCurrent ? currentAPI : previousFacade
-        return modifiables!.filter({ ($0 as? WrappedStruct) != nil })
+        return modifiables!.filter { ($0 as? WrappedStruct) != nil }
     }
-    
+
     /// Retrieves all enums from CodeStore
     /// - Parameter searchInCurrent: from current api (default) or previous facade
     /// - Returns: List of all enums
     func getEnums(searchInCurrent: Bool = true) -> [Modifiable] {
         let modifiables = searchInCurrent ? currentAPI : previousFacade
-        return modifiables!.filter({ ($0 as? WrappedEnum) != nil && ($0 as! WrappedEnum).localName.removePrefix != "OpenAPIError" })
+        return modifiables!.filter { modifiable in
+            guard let wrappedEnum = modifiable as? WrappedEnum,
+                  wrappedEnum.localName.removePrefix != "OpenAPIError" else {
+                return false
+            }
+            return true
+        }
     }
 }

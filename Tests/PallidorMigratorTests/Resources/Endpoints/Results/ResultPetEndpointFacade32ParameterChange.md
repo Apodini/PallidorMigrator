@@ -33,7 +33,9 @@ function conversion(input) { return JSON.stringify({ 'name': input.name, 'petAnd
 
 let inputEncoded = try! JSONEncoder().encode(InputParam(petId : petId, name : name, status : status))
 
-let outputTmp = context.objectForKeyedSubscript("conversion").call(withArguments: [inputEncoded])?.toString()
+let outputTmp = context
+            .objectForKeyedSubscript("conversion")
+            .call(withArguments: [inputEncoded])?.toString()
 
 let outputDecoded = try! JSONDecoder().decode(OutputParam.self, from: outputTmp!.data(using: .utf8)!)
 return PetAPI.updatePetWithForm(name : outputDecoded.name, petAndStatus : outputDecoded.petAndStatus, authorization: authorization, contentType: contentType)

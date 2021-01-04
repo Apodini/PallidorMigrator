@@ -17,26 +17,25 @@ class Method: ContentType {
     var contentBody: Parameter?
     /// return value as stated in open api document (no name required)
     var returnValue: ReturnValue?
-    
+
     private enum CodingKeys: String, CodingKey {
         case operationId = "operation-id"
         case definedIn = "defined-in"
         case returnValue
         case contentBody = "content-body"
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.operationId = try container.decode(String.self, forKey: .operationId)
         self.definedIn = try container.decode(String.self, forKey: .definedIn)
-        
+
         self.contentBody = try? container.decode(Parameter.self, forKey: .contentBody)
-        
-        
+
         self.returnValue = try? container.decode(ReturnValue.self, forKey: .returnValue)
 
         try super.init(from: decoder)
-        
+
         self.id = "\(definedIn).\(operationId)"
     }
 }

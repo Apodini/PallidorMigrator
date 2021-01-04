@@ -36,12 +36,14 @@ struct OutputParam : Codable {
 let context = JSContext()!
 
 context.evaluateScript("""
-function conversion(input) { return JSON.stringify({ 'name': input.name, 'petId': input.petId, 'status': input.status } )}
+function conversion(input) { return JSON.stringify({ 'name': input.name, 'petId': input.petId } )}
 """)
 
 let inputEncoded = try! JSONEncoder().encode(InputParam(petId : petId, name : name, status : status))
 
-let outputTmp = context.objectForKeyedSubscript("conversion").call(withArguments: [inputEncoded])?.toString()
+let outputTmp = context
+            .objectForKeyedSubscript("conversion")
+            .call(withArguments: [inputEncoded])?.toString()
 
 let outputDecoded = try! JSONDecoder().decode(OutputParam.self, from: outputTmp!.data(using: .utf8)!)
 return PetAPI.updatePetWithForm(element : outputDecoded.element, authorization: authorization, contentType: contentType)

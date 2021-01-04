@@ -1,4 +1,6 @@
-# Apodini SwiftLint file Apodini
+# SwiftLint file LS1 TUM
+# Created by Paul Schmiedmayer on 08/16/18.
+# Copyright © 2020 Paul Schmiedmayer. All rights reserved.
   
 # The whitelist_rules configuration also includes rules that are enabled by default to provide a good overview of all rules.
 whitelist_rules:
@@ -89,7 +91,7 @@ whitelist_rules:
     # Force casts should be avoided.
   - force_try
     # Force tries should be avoided.
-  - force_unwrapping
+    # - force_unwrapping
     # Force unwrapping should be avoided.
   - function_body_length
     # Functions bodies should not span too many lines.
@@ -321,8 +323,8 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   - R.generated.swift
 
 closure_body_length: # Closure bodies should not span too many lines.
-  - 35 # warning - default: 20
-  - 35 # error - default: 100
+  - 40 # warning - default: 20
+  - 40 # error - default: 100
 
 enum_case_associated_values_count: # Number of associated values in an enum case should be low
   - 5 # warning - default: 5
@@ -342,8 +344,8 @@ function_parameter_count: # Number of function parameters should be low.
 
 identifier_name:
   excluded: # excluded names
-    - id
     - ok
+    - id
     - or
 
 large_tuple: # Tuples shouldn't have too many members. Create a custom type instead.

@@ -14,11 +14,11 @@ class WrappedAssociatedValue {
         self.localName = localName
         self.typeName = typeName
     }
-    
+
     convenience init(from: AssociatedValue) {
         self.init(localName: from.localName?.removePrefix, typeName: WrappedTypeName(from: from.typeName))
     }
-    
+
     /// name of associated value
     var localName: String?
     /// type of associated value

@@ -15,7 +15,7 @@ protocol Modifiable {
     var modified: Bool { get set }
     /// annotation for this modifiable (if available)
     var annotation: Annotation? { get set }
-    
+
     /// Modifies the source code type according to the change as stated in migration guide.
     /// Is called from within the migration process of `MigrationSet`
     /// - Parameter change: change as stated in migration guide

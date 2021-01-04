@@ -11,53 +11,64 @@ import SourceryRuntime
 /// Wraps struct types of Sourcery
 class WrappedStruct: Modifiable {
     var annotation: Annotation?
-    
+
     var id: String {
         "/\(localName.replacingOccurrences(of: "API", with: "").replacingOccurrences(of: "_", with: "").lowercased())"
     }
-    
+
     var modified: Bool = false
-    
+
     func modify(change: Change) {
         self.modified = true
-        
+
         switch change.changeType {
         case .replace:
             specialImports.insert("import JavaScriptCore")
-            break
         case .rename:
-            if case .signature = change.target, case .endpoint = change.object {
-                handleEndpointRenameChange(change as! RenameChange)
+            guard let change = change as? RenameChange else {
+                fatalError("Change is malformed: RenameChange")
             }
-            break
+            if case .signature = change.target, case .endpoint = change.object {
+                handleEndpointRenameChange(change)
+            }
         case .delete:
-            if case .signature = change.target, case .endpoint = change.object {
-                handleEndpointDeletedChange(change as! DeleteChange)
+            guard let change = change as? DeleteChange else {
+                fatalError("Change is malformed: DeleteChange")
             }
-            break
+            if case .signature = change.target, case .endpoint = change.object {
+                handleEndpointDeletedChange(change)
+            }
         default:
-            print("API modify: not a replace or rename change.")
+            guard case .method = change.object else {
+                fatalError("Change type not supported on target endpoint.")
+            }
         }
-        
-        for m in methods {
-            if case .method(let n) = change.object {
-                if n.operationId == m.id {
-                    m.modify(change: change)
-                }
+
+        delegateChangeToMethods(change)
+    }
+
+    fileprivate func delegateChangeToMethods(_ change: Change) {
+        for method in methods {
+            if case .method(let target) = change.object, target.operationId == method.id {
+                method.modify(change: change)
             }
         }
     }
-    
+
     internal init(localName: String, variables: [WrappedVariable], methods: [WrappedMethod]) {
         self.localName = localName
         self.variables = variables
         self.methods = methods
     }
-    
+
     convenience init(from: SourceryRuntime.Struct) {
-        self.init(localName: from.localName.removePrefix, variables: from.variables.map({ WrappedVariable(from: $0) }), methods: from.methods.map({ WrappedMethod(from: $0) }))
+        self.init(
+            localName: from.localName.removePrefix,
+            variables: from.variables.map { WrappedVariable(from: $0) },
+            methods: from.methods.map { WrappedMethod(from: $0) }
+        )
     }
-    
+
     /// contains additional imports besides Foundation if necessary
     var specialImports = Set<String>()
     /// name of struct
@@ -68,8 +79,8 @@ class WrappedStruct: Modifiable {
     var methods: [WrappedMethod]
 }
 
-extension WrappedStruct : NSCopying {
+extension WrappedStruct: NSCopying {
     func copy(with zone: NSZone? = nil) -> Any {
-        return WrappedStruct(localName: localName, variables: variables, methods: methods)
+        WrappedStruct(localName: localName, variables: variables, methods: methods)
     }
 }

@@ -11,16 +11,16 @@ import PathKit
 extension Path {
     /// returns the persistent variant of the current path
     public var persistentPath: Path {
-        get {
             let folder = self.lastComponent
-            var persPath = self.parent()
-            persPath = persPath + Path("Persistent" + folder)
-            
+            let persPath = self.parent() + Path("Persistent" + folder)
+
             if !persPath.exists {
-                try! persPath.mkdir()
+                do {
+                    try persPath.mkdir()
+                } catch {
+                    fatalError("Failed to create directory at \(persPath.string)")
+                }
             }
-            
             return persPath
-        }
     }
 }

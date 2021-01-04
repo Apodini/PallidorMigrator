@@ -11,16 +11,16 @@ import Foundation
 protocol Changing: Decodable {
     /// optional reason of change if stated in migration guide
     var reason: String? { get set }
-    
+
     /// changed object (e.g. model, endpoint, method)
     var object: ObjectType { get set }
-    
+
     /// change target (e.g. signature, parameter, etc.)
     var target: TargetType { get set }
-    
+
     /// type of change (DELETED, ADDED, etc.)
     var changeType: ChangeType { get set }
-    
+
     /// validation method to determine if change can be executed
     func validate() throws
 }

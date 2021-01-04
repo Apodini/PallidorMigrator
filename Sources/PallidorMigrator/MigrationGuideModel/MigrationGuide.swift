@@ -21,7 +21,7 @@ class MigrationGuide: Decodable {
     var versionFrom: SemanticVersion
     /// current version
     var versionTo: SemanticVersion
-    
+
     private enum CodingKeys: String, CodingKey {
         case summary
         case changes
@@ -30,7 +30,7 @@ class MigrationGuide: Decodable {
         case versionTo = "to-version"
         case serviceType = "api-type"
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.summary = try container.decode(String.self, forKey: .summary)
@@ -38,11 +38,11 @@ class MigrationGuide: Decodable {
         self.serviceType = try container.decode(ServiceType.self, forKey: .serviceType)
         self.versionFrom = SemanticVersion(versionString: try container.decode(String.self, forKey: .versionFrom))
         self.versionTo = SemanticVersion(versionString: try container.decode(String.self, forKey: .versionTo))
-        
+
         self.changes = [Change]()
-        
+
         var changesContainer = try container.nestedUnkeyedContainer(forKey: .changes)
-        
+
         while !changesContainer.isAtEnd {
             if let value = try? changesContainer.decode(AddChange.self) {
                 self.changes.append(value)
@@ -66,26 +66,24 @@ class MigrationGuide: Decodable {
             }
         }
     }
-    
+
     /// Identifies deleted items and prepares the facade for their deletion
     /// - Parameter change: change in which sth. was deleted
     private func addDeleted(change: DeleteChange) {
         var modifiable: Modifiable?
         switch change.object {
-        case .endpoint(let ep):
+        case .endpoint(let endpoint):
             if case .signature = change.target {
                 let codeStore = CodeStore.getInstance()
-                modifiable = codeStore.getEndpoint(ep.route)
+                modifiable = codeStore.getEndpoint(endpoint.route)
                 codeStore.insertDeleted(modifiable: modifiable!)
             }
-            break
         case .model(let model):
             if case .signature = change.target {
                 let codeStore = CodeStore.getInstance()
                 modifiable = codeStore.getModel(model.name)
                 codeStore.insertDeleted(modifiable: modifiable!)
             }
-            break
         case .enum(let enumModel):
             if case .signature = change.target {
                 let codeStore = CodeStore.getInstance()
@@ -97,12 +95,13 @@ class MigrationGuide: Decodable {
                 let codeStore = CodeStore.getInstance()
                 modifiable = codeStore.getMethod(method.operationId)
                 let endpoint = codeStore.getEndpoint(method.definedIn, searchInCurrent: true)
-                endpoint!.methods.append(modifiable as! WrappedMethod)
+                guard let wrappedMethod = modifiable as? WrappedMethod else {
+                    fatalError("Method is malformed - operation id might be invalid")
+                }
+                endpoint!.methods.append(wrappedMethod)
             }
-            break
-        case .service:
-            break
         }
+
         if let modifiable = modifiable {
             modifiable.modify(change: change)
         }

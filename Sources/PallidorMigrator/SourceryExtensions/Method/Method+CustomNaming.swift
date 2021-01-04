@@ -15,7 +15,7 @@ extension WrappedMethod {
         \(shortName)(\(self.parameterString()))
         """
     }
-    
+
     /// only operation id without parameters and round brackets
     var shortName: String {
         String(name[name.startIndex..<name.firstIndex(of: "(")!])

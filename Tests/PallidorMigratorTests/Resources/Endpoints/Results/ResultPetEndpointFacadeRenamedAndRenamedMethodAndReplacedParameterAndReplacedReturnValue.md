@@ -66,7 +66,9 @@ function conversion(petId) { return 'Id#' + (petId + 1.86) }
 
 let petIdEncoded = String(petId)
 
-let betterIdTmp = context.objectForKeyedSubscript("conversion").call(withArguments: [petIdEncoded])?.toString()
+let betterIdTmp = context
+                        .objectForKeyedSubscript("conversion")
+                        .call(withArguments: [petIdEncoded])?.toString()
 
 let betterId = betterIdTmp!
 return _PetsAPI.updatePetWithFormNew(betterId: betterId, name: name, authorization: authorization, contentType: contentType)
@@ -77,7 +79,9 @@ return _PetsAPI.updatePetWithFormNew(betterId: betterId, name: name, authorizati
     context.evaluateScript("""
 function conversion(response) { var response = JSON.parse(response) return JSON.stringify({ 'id' : response.code, 'name' : response.message, 'photoUrls': [response.type], 'status' : 'available', 'tags': [ { 'id': 27, 'name': 'tag2' } ] }) }
 """)
-    let encString = context.objectForKeyedSubscript("conversion").call(withArguments: [String(data: encoded, encoding: .utf8)!])?.toString()
+    let encString = context
+            .objectForKeyedSubscript("conversion")
+            .call(withArguments: [String(data: encoded, encoding: .utf8)!])?.toString()
     return String(encString)!
 })
 .receive(on: DispatchQueue.main)

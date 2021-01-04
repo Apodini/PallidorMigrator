@@ -11,22 +11,23 @@ extension WrappedStruct {
     /// handle renaming an endpoint
     /// - Parameter change: RenameChange affecting this endpoint
     internal func handleEndpointRenameChange(_ change: RenameChange) {
-        
         let rename = Endpoint.endpointName(from: change.originalId)
-        
+
         if let facadeEndpoint = CodeStore.getInstance().getEndpoint(change.originalId) {
-            let renamed = facadeEndpoint.copy() as! WrappedStruct
+            guard let renamed = facadeEndpoint.copy() as? WrappedStruct else {
+                fatalError("Endpoint cloning failed.")
+            }
             renamed.localName = rename
             CodeStore.getInstance().insert(modifiable: renamed)
         }
-        
+
         self.localName = rename
-       
-        for m in methods {
-            m.modify(change: change)
+
+        for method in methods {
+            method.modify(change: change)
         }
     }
-    
+
     /// handle deleting an endpoint
     /// - Parameter change: DeleteChange affecting this endpoint
     internal func handleEndpointDeletedChange(_ change: DeleteChange) {

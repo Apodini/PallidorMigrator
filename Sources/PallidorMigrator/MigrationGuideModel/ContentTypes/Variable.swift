@@ -21,7 +21,7 @@ class Variable: ContentType {
     var defaultValue: String?
     /// required as stated in open api document
     var required: Bool
-    
+
     private enum CodingKeys: String, CodingKey {
         case type
         case name
@@ -29,19 +29,18 @@ class Variable: ContentType {
         case isCustomType = "is-custom"
         case defaultValue = "default-value"
     }
-    
-        
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.type = try container.decode(String.self, forKey: .type)
         self.name = try container.decode(String.self, forKey: .name)
         self.required = (try? container.decode(Bool.self, forKey: .required)) ?? false
         self.defaultValue = try? container.decode(String.self, forKey: .defaultValue)
-        
+
         self.type = "\(self.type)\(required ? "" : "?")"
-        
+
         try super.init(from: decoder)
-        
+
         self.id = name
     }
 }

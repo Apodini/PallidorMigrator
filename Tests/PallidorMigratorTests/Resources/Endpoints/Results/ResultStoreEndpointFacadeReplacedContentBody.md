@@ -38,7 +38,9 @@ function conversion(placeholder) { return placeholder }
 
 let elementEncoded = try! JSONEncoder().encode(element)
 
-let elementTmp = context.objectForKeyedSubscript("conversion").call(withArguments: [String(data: elementEncoded, encoding: .utf8)!])?.toString()
+let elementTmp = context
+        .objectForKeyedSubscript("conversion")
+        .call(withArguments: [String(data: elementEncoded, encoding: .utf8)!])?.toString()
 
 let element = try! JSONDecoder().decode(Customer.self, from: elementTmp!.data(using: .utf8)!)
 return _StoreAPI.placeOrder(element: element.to()!, authorization: authorization, contentType: contentType)

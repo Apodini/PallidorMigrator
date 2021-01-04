@@ -9,6 +9,6 @@ import Foundation
 import SourceryRuntime
 
 /// Temporary storage of non persistent type names.
-struct TypeStore {
+enum TypeStore {
     static var nonPersistentTypes = [String: String]()
 }

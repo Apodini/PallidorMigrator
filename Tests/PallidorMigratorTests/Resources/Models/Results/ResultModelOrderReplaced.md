@@ -31,7 +31,9 @@ init?(_ from : _NewOrder?) {
     context.evaluateScript("""
     function conversion(o) { return JSON.stringify({ 'id' : o.id, 'petId' : o.petId, 'quantity': o.quantity, 'complete' : 'false', 'status' : 'available' }) }
     """)
-    let encodedResult = context.objectForKeyedSubscript("conversion").call(withArguments: [String(data: fromEncoded, encoding: .utf8)!])?.toString()
+    let encodedResult = context
+            .objectForKeyedSubscript("conversion")
+            .call(withArguments: [String(data: fromEncoded, encoding: .utf8)!])?.toString()
     let from = try! JSONDecoder().decode(Order.self, from: encodedResult!.data(using: .utf8)!)
     self.complete = from.complete
 self.id = from.id
@@ -50,7 +52,9 @@ let selfEncoded = try! JSONEncoder().encode(self)
 context.evaluateScript("""
 function conversion(o) { return JSON.stringify({ 'id' : o.id, 'petId' : o.petId, 'quantity': o.quantity  }) }
 """)
-let encodedResult = context.objectForKeyedSubscript("conversion").call(withArguments: [String(data: selfEncoded, encoding: .utf8)!])?.toString()
+let encodedResult = context
+        .objectForKeyedSubscript("conversion")
+        .call(withArguments: [String(data: selfEncoded, encoding: .utf8)!])?.toString()
 return try! JSONDecoder().decode(_NewOrder.self, from: encodedResult!.data(using: .utf8)!)
 }
 

@@ -18,30 +18,37 @@ class WrappedTypeName {
         self.isVoid = isVoid
         self.isPrimitive = isPrimitive
     }
-    
+
     /// name of type
-    public var name: String
+    var name: String
     /// name of actual type
-    public var actualName: String
+    var actualName: String
     /// true if type is optional
-    public var isOptional: Bool
+    var isOptional: Bool
     /// true if type is array
-    public var isArray: Bool
+    var isArray: Bool
     /// true if type is void
-    public var isVoid: Bool
+    var isVoid: Bool
     /// true if type is primitive
-    public var isPrimitive: Bool
+    var isPrimitive: Bool
     /// true if type is a type alias
-    public var isTypeAlias: Bool {
+    var isTypeAlias: Bool {
         name != actualName
     }
     /// true if type is a primitive type
-    public var isPrimitiveType: Bool {
+    var isPrimitiveType: Bool {
         isTypeAlias ? actualName.isPrimitiveType : name.isPrimitiveType
     }
-    
-    public convenience init(from: TypeName) {
+
+    convenience init(from: TypeName) {
         let persistentName = from.isArray ? from.name.replacingOccurrences(of: "_", with: "") : from.name.removePrefix
-        self.init(name: persistentName, actualName: persistentName, isOptional: from.isOptional, isArray: from.isArray, isVoid: from.isVoid, isPrimitive: persistentName.isPrimitiveType)
+        self.init(
+            name: persistentName,
+            actualName: persistentName,
+            isOptional: from.isOptional,
+            isArray: from.isArray,
+            isVoid: from.isVoid,
+            isPrimitive: persistentName.isPrimitiveType
+        )
     }
 }

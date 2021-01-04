@@ -12,18 +12,18 @@ extension WrappedEnum {
     /// body of error enum
     var errorEnum: String {
         """
-        \(cases.map({ $0.errorCase() }).joined(separator: "\n"))
-                
+        \(cases.map { $0.errorCase() }.joined(separator: "\n"))
+
         init?(_ from: _\(localName)?) {
             if let from = from {
                 switch from {
-                    \(cases.map({ $0.errorFrom() }).skipEmptyJoined(separator: "\n"))
+                    \(cases.map { $0.errorFrom() }.skipEmptyJoined(separator: "\n"))
                 }
             } else {
                 return nil
             }
         }
-        
+
         """
     }
 }
@@ -33,9 +33,11 @@ extension WrappedEnumCase {
     var codeType: String {
         associatedValues[0].typeName.name.lowerFirst // currently always `int`
     }
-    
+
     /// returns the error type of an error enum case
     var errorTypeFrom: String {
-        associatedValues[1].typeName.name.isPrimitiveType ? associatedValues[1].typeName.name.lowerFirst : "\(associatedValues[1].typeName.name)(\(associatedValues[1].typeName.name.lowerFirst))!"
+        associatedValues[1].typeName.name.isPrimitiveType ?
+            associatedValues[1].typeName.name.lowerFirst :
+            "\(associatedValues[1].typeName.name)(\(associatedValues[1].typeName.name.lowerFirst))!"
     }
 }

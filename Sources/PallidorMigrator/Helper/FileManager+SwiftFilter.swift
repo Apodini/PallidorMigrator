@@ -14,6 +14,6 @@ extension FileManager {
     /// - Returns: list of all file names
     open func swiftFilesInDirectory(atPath path: String) throws -> [String] {
         let filePaths = try FileManager.default.contentsOfDirectory(atPath: path)
-        return filePaths.filter({ $0.contains(".swift") })
+        return filePaths.filter { $0.contains(".swift") }
     }
 }

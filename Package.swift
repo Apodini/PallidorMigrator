@@ -28,8 +28,10 @@ let package = Package(
             ]),
         .testTarget(
             name: "PallidorMigratorTests",
-            dependencies: ["PallidorMigrator",
-                           .product(name: "SourceryFramework", package: "Sourcery")],
+            dependencies: [
+                "PallidorMigrator",
+                .product(name: "SourceryFramework", package: "Sourcery")
+            ],
             resources: [
                 .process("Resources/Endpoints/Input/EndpointPlaceholder.md"),
                 .process("Resources/Endpoints/Input/PetEndpoint.md"),
@@ -161,8 +163,7 @@ let package = Package(
                 .process("Resources/Enums/Results/ResultEnumTimeModeRenamed.md"),
                 .process("Resources/Enums/Results/ResultErrorEnum.md"),
                 .process("Resources/Enums/Results/ResultErrorEnumAddedCase.md"),
-                .process("Resources/Enums/Results/ResultErrorEnumDeletedCase.md"),
-                
+                .process("Resources/Enums/Results/ResultErrorEnumDeletedCase.md")
             ]
         )
     ]

@@ -13,21 +13,21 @@ class AddChange: Change {
         self.added = added
         super.init(reason: reason, object: object, target: target, changeType: .add)
     }
-    
+
     /// list of additional items
     var added: [ContentType]
-    
+
     private enum CodingKeys: String, CodingKey {
-        case added = "added"
+        case added
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         self.added = [ContentType]()
-        
+
         var addedContainer = try container.nestedUnkeyedContainer(forKey: .added)
-        
+
         while !addedContainer.isAtEnd {
             if let value = try? addedContainer.decode(Variable.self) {
                 self.added.append(value)
@@ -37,8 +37,7 @@ class AddChange: Change {
                 self.added.append(value)
             }
         }
-        
-        
+
         try super.init(from: decoder)
         self.changeType = .add
     }

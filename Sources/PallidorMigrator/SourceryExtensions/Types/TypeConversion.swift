@@ -8,15 +8,14 @@
 import Foundation
 
 /// Helper for converting types for en-/decoding
-struct TypeConversion {
+enum TypeConversion {
     /// Provides conversion string for type
     /// - Parameter from: type which needs to be converted
     /// - Returns: conversion string
     static func toString(data from: String) -> String {
         "String(data: \(from), encoding: .utf8)!"
     }
-    
-    
+
     /// Provides encoding string
     /// - Parameters:
     ///   - id: name of variable
@@ -27,15 +26,15 @@ struct TypeConversion {
         if type.isPrimitiveType && !type.isCollectionType {
             return "String(\(id)\(required ? "" : "!"))"
         }
-        
+
         if type.isPrimitiveType {
             return "JSONEncoder().encode(\(id))"
         }
-        
+
         /// complex objects (wether in collection or not) need to conform to `Codable`
         return "try! JSONEncoder().encode(\(id))"
     }
-    
+
     /// Provides decoding string
     /// - Parameters:
     ///   - id: name of variable
@@ -45,15 +44,14 @@ struct TypeConversion {
         guard !type.isString else {
             return "\(id)!"
         }
-        
+
         if type.isPrimitiveType && !type.isCollectionType {
             return "\(type.unwrapped.upperFirst)(\(id)!)!"
         }
-        
+
         return "try! JSONDecoder().decode(\(type.unwrapped).self, from: \(id)!.data(using: .utf8)!)"
     }
-    
-    
+
     /// Get initializer string for default values.
     /// - Parameters:
     ///   - type: type of default value
@@ -63,13 +61,13 @@ struct TypeConversion {
         if type.isDouble || type.isInteger {
             return "\(defaultValue)"
         }
-        
+
         if type.isCollectionType || !type.isPrimitiveType {
             return """
             (try! JSONDecoder().decode(\(type.unwrapped).self, from: "\(defaultValue)".data(using: .utf8)!))
             """
         }
-        
+
         return "\"\(defaultValue)\""
     }
 }

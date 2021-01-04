@@ -81,7 +81,9 @@ function conversion(o) { return JSON.stringify({ 'type' : 'PSI' } )}
 
 let inputEncoded = try! JSONEncoder().encode(InputParam(element : element))
 
-let outputTmp = context.objectForKeyedSubscript("conversion").call(withArguments: [inputEncoded])?.toString()
+let outputTmp = context
+            .objectForKeyedSubscript("conversion")
+            .call(withArguments: [inputEncoded])?.toString()
 
 let outputDecoded = try! JSONDecoder().decode(OutputParam.self, from: outputTmp!.data(using: .utf8)!)
 return _PetsAPI.updatePetWithForm(element: element.to()!, authorization: authorization, contentType: contentType)
@@ -91,7 +93,9 @@ return _PetsAPI.updatePetWithForm(element: element.to()!, authorization: authori
     context.evaluateScript("""
 function conversion(o) { return JSON.stringify({ 'type': '', 'of' : { 'type': 'PSI'} } )}
 """)
-    let encString = context.objectForKeyedSubscript("conversion").call(withArguments: [String(result)])?.toString()
+    let encString = context
+                .objectForKeyedSubscript("conversion")
+                .call(withArguments: [String(result)])?.toString()
     return Pet(try! JSONDecoder().decode(_Pet.self, from: encString!.data(using: .utf8)!))!
 })
 .receive(on: DispatchQueue.main)

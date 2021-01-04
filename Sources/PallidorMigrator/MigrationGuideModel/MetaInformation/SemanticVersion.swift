@@ -15,31 +15,31 @@ class SemanticVersion: Comparable {
         self.minor = Int(versions[1])!
         self.patch = String(versions[2])
     }
-    
+
     static func < (lhs: SemanticVersion, rhs: SemanticVersion) -> Bool {
         if lhs.major > rhs.major {
             return false
         }
-        
+
         if lhs.major == rhs.major && lhs.minor > rhs.minor {
             return false
         }
-        
+
         if lhs.major == rhs.major && lhs.minor == rhs.minor && lhs.patch >= rhs.patch {
             return false
         }
-        
+
         return true
     }
-    
+
     static func <= (lhs: SemanticVersion, rhs: SemanticVersion) -> Bool {
         lhs == rhs || lhs < rhs
     }
-    
+
     static func == (lhs: SemanticVersion, rhs: SemanticVersion) -> Bool {
         lhs.major == rhs.major && lhs.minor == rhs.minor && lhs.patch == rhs.patch
     }
-    
+
     /// MAJOR.x.x
     var major: Int
     /// x.MINOR.x

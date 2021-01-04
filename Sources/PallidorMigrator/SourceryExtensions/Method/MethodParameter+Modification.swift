@@ -13,57 +13,79 @@ extension WrappedMethodParameter {
     func handleAddChange(_ change: AddChange) {
         switch change.target {
         case .parameter:
-            let param = change.added.first(where: { $0.id == self.name })! as! Parameter
-            self.defaultValue = param.defaultValue!
-            
-            signatureString = { () in
-                "\(self.name): \(self.actualTypeName != nil ? self.actualTypeName!.name : self.typeName.name)\(self.isOptional ? "" : "?") = nil"
+            guard let param = change.added.first(where: { $0.id == self.name })! as? Parameter else {
+                fatalError("Added parameter is malformed.")
             }
-            
-            //only content type is complex -> query & path params must be primitives
-            self.endpointCall = { () in
-                "\(self.name): \(self.name) ?? \(TypeConversion.getDefaultValueInit(type: self.typeName.name, defaultValue: self.defaultValue!))"
-            }
-            break
+            handleAddedParameter(param)
         case .contentBody:
-            let element = change.added.first! as! Parameter
-            if !self.typeName.isPrimitiveType {
-                self.paramConversionString = { () in
-                    """
+            guard let element = change.added.first! as? Parameter else {
+                fatalError("Added parameter is malformed.")
+            }
+            handleAddedContentBody(element)
+
+        default:
+            fatalError("MethodParameter: AddChange unknown target.")
+        }
+    }
+
+    fileprivate func handleAddedParameter(_ param: Parameter) {
+        self.defaultValue = param.defaultValue
+
+        signatureString = { () in
+            """
+                \(self.name): \(self.actualTypeName != nil ?
+                                    self.actualTypeName!.name :
+                                    self.typeName.name)\(self.isOptional ? "" : "?") = nil
+                """
+        }
+
+        //only content type is complex -> query & path params must be primitives
+        self.endpointCall = { () in
+            """
+\(self.name): \(self.name) ?? \(TypeConversion
+                                    .getDefaultValueInit(type: self.typeName.name, defaultValue: self.defaultValue!))
+"""
+        }
+    }
+
+    fileprivate func handleAddedContentBody(_ element: Parameter) {
+        if !self.typeName.isPrimitiveType {
+            self.paramConversionString = { () in
+                """
                     var \(self.id) = \(self.id)
-                    
+
                     if \(self.id) == nil {
                         let \(self.id)Tmp : String? = \"""
                             \(element.defaultValue!)
                         \"""
-                    
-                        \(self.id) = \(TypeConversion.getDecodingString(id: "\(self.id)Tmp", type: self.typeName.name))
+
+                        \(self.id) = \(TypeConversion
+                                        .getDecodingString(id: "\(self.id)Tmp", type: self.typeName.name))
                     }
                     """
-                }
+            }
 
-                self.endpointCall = { () in
-                    self.typeName.isArray ?
-                        "element: element!.map({$0.to()!})" : "element: element!.to()!"
-                }
-            } else {
-                self.paramConversionString = { () in
-                    TypeConversion.getDefaultValueInit(type: self.typeName.actualName, defaultValue: element.defaultValue!)
-                }
-                self.endpointCall = { () in
-                    self.typeName.isArray ?
-                        "element: element.map({$0.to()!})" : "element: element!"
-                }
+            self.endpointCall = { () in
+                self.typeName.isArray ?
+                    "element: element!.map({$0.to()!})" : "element: element!.to()!"
             }
-            self.signatureString = { () in
-                "\(self.name): \(self.typeName.name)? = nil"
+        } else {
+            self.paramConversionString = { () in
+                TypeConversion.getDefaultValueInit(
+                    type: self.typeName.actualName,
+                    defaultValue: element.defaultValue!
+                )
             }
-            break
-        default:
-            print("MethodParameter: AddChange unknown target.")
+            self.endpointCall = { () in
+                self.typeName.isArray ?
+                    "element: element.map({$0.to()!})" : "element: element!"
+            }
+        }
+        self.signatureString = { () in
+            "\(self.name): \(self.typeName.name)? = nil"
         }
     }
-    
+
     /// handle renaming a method parameter
     /// - Parameter change: RenameChange affecting this parameter
     func handleRenameChange(_ change: RenameChange) {
@@ -72,7 +94,7 @@ extension WrappedMethodParameter {
             "\(change.renamed!.id!): \(self.name)"
         }
     }
-    
+
     /// handle deleting a method parameter
     /// - Parameter change: DeleteChange affecting this parameter
     func handleDeleteChange(_ change: DeleteChange) {
@@ -80,60 +102,83 @@ extension WrappedMethodParameter {
         self.actualTypeName!.actualName = self.actualTypeName!.actualName.wrapped
         self.endpointCall = { () in "" }
     }
-    
+
     /// handle replacing a method parameter
     /// - Parameter change: ReplaceChange affecting this parameter
     func handleReplacementChange(_ change: ReplaceChange) {
+        guard let replaced = change.replaced as? Parameter else {
+            fatalError("Replacement parameter malformed.")
+        }
         switch change.target {
         case .parameter:
-            let replaced = change.replaced as! Parameter
-            
-            if(self.name == replaced.name && self.hasDefaultValue) {
-                self.defaultValue = replaced.defaultValue
-                break
-            }
-            
-            self.paramConversionString = { () in
-                """
-                context.evaluateScript(\"""\n\(change.customConvert!)\n\""")
-                
-                let \(self.id)Encoded = \(TypeConversion.getEncodingString(id: self.id, type: self.typeName.name, required: replaced.required))
-                
-                let \(change.replacementId)Tmp = context.objectForKeyedSubscript("conversion").call(withArguments: [\(self.id)Encoded])?.toString()
-                
-                let \(change.replacementId) = \(TypeConversion.getDecodingString(id: "\(change.replacementId)Tmp", type: change.type!))
-                """
-            }
-            
-            //only content type is complex -> query & path params must be primitives
-            self.endpointCall = { () in
-                "\(change.replacementId): \(change.replacementId)"
-            }
-            break
+            handleReplacedParameter(replaced, change)
         case .contentBody:
-            let replaced = change.replaced as! Parameter
-            self.paramConversionString = { () in
-                """
+            handleReplacedContentBody(change, replaced)
+        default:
+            fatalError("Target type unsupported for ReplaceChanges on methods.")
+        }
+    }
+
+    fileprivate func handleReplacedParameter(_ replaced: Parameter, _ change: ReplaceChange) {
+        guard self.name != change.replacementId else {
+            self.defaultValue = replaced.defaultValue
+            return
+        }
+
+        self.paramConversionString = { () in
+            """
                 context.evaluateScript(\"""\n\(change.customConvert!)\n\""")
-                
-                let \(self.id)Encoded = \(TypeConversion.getEncodingString(id: self.id, type: self.typeName.name, required: replaced.required))
-                
-                let \(self.id)Tmp = context.objectForKeyedSubscript("conversion").call(withArguments: [String(data: \(self.id)Encoded, encoding: .utf8)!])?.toString()
-                
+
+                let \(self.id)Encoded = \(TypeConversion.getEncodingString(
+                    id: self.id,
+                    type: self.typeName.name,
+                    required: replaced.required
+                ))
+
+                let \(change.replacementId)Tmp = context
+                                        .objectForKeyedSubscript("conversion")
+                                        .call(withArguments: [\(self.id)Encoded])?.toString()
+
+                let \(change.replacementId) = \(TypeConversion
+                                                    .getDecodingString(
+                                                        id: "\(change.replacementId)Tmp",
+                                                        type: change.type!
+                                                    ))
+                """
+        }
+
+        //only content type is complex -> query & path params must be primitives
+        self.endpointCall = { () in
+            "\(change.replacementId): \(change.replacementId)"
+        }
+    }
+
+    fileprivate func handleReplacedContentBody(_ change: ReplaceChange, _ replaced: Parameter) {
+        self.paramConversionString = { () in
+            """
+                context.evaluateScript(\"""\n\(change.customConvert!)\n\""")
+
+                let \(self.id)Encoded = \(TypeConversion
+                                            .getEncodingString(
+                                                id: self.id,
+                                                type: self.typeName.name,
+                                                required: replaced.required
+                                            ))
+
+                let \(self.id)Tmp = context
+                        .objectForKeyedSubscript("conversion")
+                        .call(withArguments: [String(data: \(self.id)Encoded, encoding: .utf8)!])?.toString()
+
                 let \(self.id) = \(TypeConversion.getDecodingString(id: "\(self.id)Tmp", type: change.type!))
                 """
-            }
+        }
 
-            self.endpointCall = { () in
-                self.typeName.isArray ?
-                    "element: element.map({$0.to()!})" : "element: element.to()!"
-            }
-            self.signatureString = { () in
-                "\(self.name): \(replaced.type)"
-            }
-            break
-        default:
-            break
+        self.endpointCall = { () in
+            self.typeName.isArray ?
+                "element: element.map({$0.to()!})" : "element: element.to()!"
+        }
+        self.signatureString = { () in
+            "\(self.name): \(replaced.type)"
         }
     }
 }

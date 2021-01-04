@@ -88,11 +88,11 @@ class MethodParameterTests: XCTestCase {
         
         CodeStore.initInstance(previous: [facade.getModifiable()!], current: [current.getModifiable()!])
         
-        _ = getMigrationResult(migration: replace1NParameterChange, target: readResource(Resources.PetEndpointReplaceParameterMN.rawValue))
+        _ = getMigrationResult(migration: replaceM1ParameterChange, target: readResource(Resources.PetEndpointReplaceParameterMN.rawValue))
         
         let result = APITemplate().render(CodeStore.getInstance().getEndpoint("/pet", searchInCurrent: true)!)
         
-        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacade1NParameterChange.rawValue))
+        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeM1ParameterChange.rawValue))
     }
     
     let replace1NParameterChange = """

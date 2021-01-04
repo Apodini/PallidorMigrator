@@ -13,7 +13,7 @@ protocol CodeTemplate {
     /// renders the modifiable to its corresponding string representation in source code
     /// - Parameter modifiable: modifiable
     func render(_ modifiable: Modifiable) -> String
-    
+
     /// writes the rendered source code string representation to disk
     /// - Parameter modifiable: modifiable
     func write(_ modifiable: Modifiable, to path: Path) throws -> URL?

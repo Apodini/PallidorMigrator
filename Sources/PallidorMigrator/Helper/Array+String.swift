@@ -12,14 +12,7 @@ extension Array where Element == String {
     /// - Parameter separator: separator String
     /// - Returns: Joined String
     public func skipEmptyJoined(separator: String = "") -> String {
-        self.filter({ !$0.isEmpty }).joined(separator: separator)
-    }
-    
-    /// Combines join and map function
-    /// - Parameter separator: separator String
-    /// - Returns: Joined String
-    public func mapJoined(separator: String = "") -> String {
-        self.map({ $0 }).joined(separator: separator)
+        self.filter { !$0.isEmpty }.joined(separator: separator)
     }
 }
 
@@ -28,6 +21,9 @@ extension Array where Element == String? {
     /// - Parameter separator: separator String
     /// - Returns: Joined String
     public func skipEmptyJoined(separator: String = "") -> String {
-        (self.filter({ $0 != nil && !$0!.isEmpty }) as! [String]).joined(separator: separator)
+        guard let arr = self.filter({ $0 != nil && !$0!.isEmpty }) as? [String] else {
+            fatalError("Could not parse to [String]")
+        }
+        return arr.joined(separator: separator)
     }
 }

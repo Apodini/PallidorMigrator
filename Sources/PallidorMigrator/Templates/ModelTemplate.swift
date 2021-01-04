@@ -13,36 +13,38 @@ import PathKit
 /// Template which represents the code structure for a model
 struct ModelTemplate: CodeTemplate {
     func render(_ modifiable: Modifiable) -> String {
-        let c = modifiable as! WrappedClass
-        let enums = c.nestedEnums ?? [WrappedEnum]()
-        TypeStore.nonPersistentTypes["_\(c.localName)"] = "\(c.localName)"
-        
+        guard let facadeModel = modifiable as? WrappedClass else {
+            fatalError("ModelTemplate requires classes.")
+        }
+        let enums = facadeModel.nestedEnums ?? [WrappedEnum]()
+        TypeStore.nonPersistentTypes["_\(facadeModel.localName)"] = "\(facadeModel.localName)"
+
         return """
         import Foundation
-        \(c.specialImports.mapJoined("\n"))
-        \(c.annotation?.description ?? "")
-        public class \(c.localName)\(c.isGeneric ? c.genericAnnotation : "") \(!c.inheritedTypes.isEmpty ? " : \(c.inheritedTypes.skipEmptyJoined(separator: ", "))" : "") {
-        \(c.variables.map({ $0.declaration() }).joined(separator: "\n"))
-        
-        \(enums.filter({ !$0.ignore }).map({ $0.internalEnum }).joined(separator: "\n"))
-        
-        \(c.initializer())
-        
-        \(c.facadeFrom())
-        
-        \(c.facadeTo())
-        
+        \(facadeModel.specialImports.joined(separator: "\n"))
+        \(facadeModel.annotation?.description ?? "")
+        public class \(facadeModel.localName)\(facadeModel.isGeneric ? facadeModel.genericAnnotation : "") \(!facadeModel.inheritedTypes.isEmpty ? " : \(facadeModel.inheritedTypes.skipEmptyJoined(separator: ", "))" : "") {
+        \(facadeModel.variables.map { $0.declaration() }.joined(separator: "\n"))
+
+        \(enums.filter { !$0.ignore }.map { $0.internalEnum }.joined(separator: "\n"))
+
+        \(facadeModel.initializer())
+
+        \(facadeModel.facadeFrom())
+
+        \(facadeModel.facadeTo())
+
         }
         """
     }
-    
-    public func write(_ modifiable: Modifiable, to path: Path) throws -> URL? {
+
+    func write(_ modifiable: Modifiable, to path: Path) throws -> URL? {
         let content = render(modifiable)
-        
+
         guard !content.isEmpty else {
             return nil
         }
-        
+
         let outputPath = URL(fileURLWithPath: path.string)
         try content.write(to: outputPath, atomically: true, encoding: .utf8)
         return outputPath

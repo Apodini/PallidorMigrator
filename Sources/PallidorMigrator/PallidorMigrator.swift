@@ -83,7 +83,7 @@ public struct PallidorMigrator {
             }
             errorFacade = ErrorFacade(modifiables: [newErrors, previousErrors], targetDirectory: targetDirectory)
         } else {
-            guard let newErrors = codeStore.getEnum("OpenAPIError") else {
+            guard let newErrors = codeStore.getEnum("_OpenAPIError") else {
                 fatalError("Previous errors could not be retrieved.")
             }
             errorFacade = ErrorFacade(modifiables: [newErrors], targetDirectory: targetDirectory)

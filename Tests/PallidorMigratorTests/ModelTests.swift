@@ -1,3 +1,9 @@
+// Identifier_name linting rule is disabled
+// because enum cases reflect the names of corresponding test files
+// Force try is disabled for lines that refer to fetching and parsing
+// source code with Sourcery.
+// Line length exceeds due to convert/revert definition in migration guide
+// swiftlint:disable identifier_name line_length
 import XCTest
 import SourceryFramework
 @testable import PallidorMigrator
@@ -5,6 +11,7 @@ import SourceryFramework
 class ModelTests: XCTestCase {
     override func tearDown() {
         CodeStore.clear()
+        super.tearDown()
     }
     
     func testNoChangeToPetModel() {
@@ -34,16 +41,28 @@ class ModelTests: XCTestCase {
    """
     
     func testDeletedModel() {
+        // swiftlint:disable:next force_try
         let fp = try! FileParser(contents: readResource(Resources.ModelApiResponseFacadeDeleted.rawValue))
+        // swiftlint:disable:next force_try
         let code = try! fp.parse()
         let types = WrappedTypes(types: code.types)
-        let facade = types.getModifiable()!
+        
+        guard let facade = types.getModifiable() else {
+            fatalError("Could not retrieve previous modifiable.")
+        }
         
         CodeStore.initInstance(previous: [facade], current: [])
         
-        _ = getMigrationResult(migration: deleteModelChange, target: readResource(Resources.ModelPlaceholder.rawValue))
+        _ = getMigrationResult(
+            migration: deleteModelChange,
+            target: readResource(Resources.ModelPlaceholder.rawValue)
+        )
         
-        let migrationResult = CodeStore.getInstance().getModel(facade.id, searchInCurrent: true)!
+        guard let migrationResult = CodeStore.getInstance()
+                .getModel(facade.id, searchInCurrent: true) else {
+            fatalError("Could not retrieve migrated modifiable.")
+        }
+
         let result = ModelTemplate().render(migrationResult)
 
         XCTAssertEqual(result, readResource(Resources.ResultModelApiResponseDeleted.rawValue))
@@ -72,7 +91,11 @@ class ModelTests: XCTestCase {
    """
     
     func testReplacedModel() {
-        let migrationResult = getMigrationResult(migration: replaceModelChange, target: readResource(Resources.ModelOrderFacadeReplaced.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: replaceModelChange,
+            target: readResource(Resources.ModelOrderFacadeReplaced.rawValue)
+        )
+
         let result = ModelTemplate().render(migrationResult)
 
         XCTAssertEqual(result, readResource(Resources.ResultModelOrderReplaced.rawValue))
@@ -113,7 +136,10 @@ class ModelTests: XCTestCase {
    """
 
     func testRenamedModel() {
-        let migrationResult = getMigrationResult(migration: renameModelChange, target: readResource(Resources.ModelAddressRenamed.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: renameModelChange,
+            target: readResource(Resources.ModelAddressRenamed.rawValue)
+        )
         let result = ModelTemplate().render(migrationResult)
 
         XCTAssertEqual(result, readResource(Resources.ResultModelAddressRenamed.rawValue))

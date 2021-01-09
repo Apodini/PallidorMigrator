@@ -10,21 +10,33 @@ import Foundation
 extension String {
     /// returns the value but uppercases the first letter
     public var upperFirst: String {
-        self.first!.uppercased() + self.dropFirst()
+        guard let first = self.first else {
+            fatalError("Tried to uppercase empty string.")
+        }
+        return first.uppercased() + self.dropFirst()
     }
 
     /// returns the value but lowercases the first letter
     public var lowerFirst: String {
-        self.first!.lowercased() + self.dropFirst()
+        guard let first = self.first else {
+            fatalError("Tried to lowercase empty string.")
+        }
+        return first.lowercased() + self.dropFirst()
     }
 
     /// removes a leading `_` from the string if one exists
     public var removePrefix: String {
-        self.first! == "_" ? String(self.dropFirst()) : self
+        guard let first = self.first else {
+            fatalError("Tried to remove prefix from empty string.")
+        }
+        return first == "_" ? String(self.dropFirst()) : self
     }
 
     /// adds a leading `_` from the string if none exists
     public var addPrefix: String {
-        self.first! != "_" ? "_\(self)" : self
+        guard let first = self.first else {
+            fatalError("Tried to add prefix to empty string.")
+        }
+        return first != "_" ? "_\(self)" : self
     }
 }

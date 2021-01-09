@@ -17,11 +17,26 @@ extension XCTestCase {
    """ }
     
     func getMigrationResult(migration: String, target: String) -> Modifiable {
-        let sut = try! PallidorMigrator(targetDirectory: "", migrationGuidePath: nil, migrationGuideContent: migration)
-        let fp = try! FileParser(contents: target)
-        let code = try! fp.parse()
-        let types = WrappedTypes(types: code.types)
-        return try! sut.migrationSet.activate(for: types.getModifiable())
+        guard let sut = try? PallidorMigrator(
+                targetDirectory: "",
+                migrationGuidePath: nil,
+                migrationGuideContent: migration) else {
+            fatalError("Failed to initialize SUT.")
+        }
+       
+        // swiftlint:disable:next force_try
+        let fileParser = try! FileParser(contents: target)
+        // swiftlint:disable:next force_try
+        let code = try! fileParser.parse()
+        guard let types = WrappedTypes(types: code.types).getModifiable() else {
+            fatalError("Could not retrieve types.")
+        }
+        
+        guard let result = try? sut.migrationSet.activate(for: types) else {
+            fatalError("Migration failed.")
+        }
+        
+        return result
     }
     
     func readResource(_ resource: String) -> String {
@@ -34,7 +49,6 @@ extension XCTestCase {
             return String((try String(contentsOf: fileURL, encoding: .utf8)).dropLast())
         } catch {
             XCTFail("Could not read the resource")
-            print(error)
         }
         
         return ""

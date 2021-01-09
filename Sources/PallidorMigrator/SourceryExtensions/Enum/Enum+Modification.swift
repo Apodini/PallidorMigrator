@@ -37,7 +37,10 @@ extension WrappedEnum {
             func to() -> _\(change.replacementId)? {
                 let context = JSContext()!
                 context.evaluateScript(\"""
-                \(change.customConvert!)
+                \(
+                    // must provide convert method due to migration guide constraints
+                    // swiftlint:disable:next force_unwrapping
+                    change.customConvert!)
                 \""")
                 let toTmp = context
                     .objectForKeyedSubscript("conversion")
@@ -49,7 +52,10 @@ extension WrappedEnum {
                 if let from = from {
                     let context = JSContext()!
                     context.evaluateScript(\"""
-                    \(change.customRevert!)
+                    \(
+                        // must provide revert method due to migration guide constraints
+                        // swiftlint:disable:next force_unwrapping
+                        change.customRevert!)
                     \""")
                     let fromTmp = context
                         .objectForKeyedSubscript("conversion")
@@ -98,9 +104,12 @@ extension WrappedEnum {
     internal func handleDeletedChange(change: DeleteChange) {
         switch change.target {
         case .case:
-            if let targetCase = self.cases.first(where: {
-                                            (self.isOfType && $0.name == change.fallbackValue!.id!.lowerFirst)
-                                                || $0.name == change.fallbackValue!.id
+            // must provide fallback value due to migration guide constraints
+            if let targetCase =
+                self.cases
+                .first(where: { (self.isOfType && $0.name ==
+                                    change.fallbackValue!.id!.lowerFirst) // swiftlint:disable:this force_unwrapping
+                                                || $0.name == change.fallbackValue!.id // swiftlint:disable:this force_unwrapping
             }) {
                 targetCase.modify(change: change)
             }
@@ -108,7 +117,10 @@ extension WrappedEnum {
             self.annotation = .unavailable(msg: "Enum was removed in API version xxx")
             self.defaultInternal = {
                 """
-                \(self.annotation!)
+                \(
+                    // is always set at this point
+                    // swiftlint:disable:next force_unwrapping
+                    self.annotation!)
                 public enum \(self.localName) : \(self.inheritedTypes.joined(separator: ", ")) { }
                 """
             }

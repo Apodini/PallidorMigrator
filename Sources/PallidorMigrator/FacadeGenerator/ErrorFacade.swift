@@ -34,9 +34,22 @@ struct ErrorFacade: Facade {
             for targetCase in newErrorEnum.compareCases(facadeErrorEnum) {
                 facadeErrorEnum.modify(change: targetCase)
             }
-            return [try template.write(facadeErrorEnum, to: targetDirectory + Path("APIErrors.swift"))!]
+            guard let result = try? template.write(
+                    facadeErrorEnum,
+                    to: targetDirectory + Path("APIErrors.swift")
+            ) else {
+                fatalError("Could not write ErrorEnum to file.")
+            }
+            return [result]
+        }
+        
+        guard let result = try? template.write(
+                newErrorEnum,
+                to: targetDirectory + Path("APIErrors.swift")
+        ) else {
+            fatalError("Could not write new Error Enum to file.")
         }
 
-        return [try template.write(newErrorEnum, to: targetDirectory + Path("APIErrors.swift"))!]
+        return [result]
     }
 }

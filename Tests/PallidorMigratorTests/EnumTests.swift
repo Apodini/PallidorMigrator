@@ -1,3 +1,8 @@
+// Identifier_name linting rule is disabled
+// because enum cases reflect the names of corresponding test files
+// Force try is disabled for lines that refer to fetching and parsing
+// source code with Sourcery.
+// swiftlint:disable identifier_name
 import XCTest
 import SourceryFramework
 @testable import PallidorMigrator
@@ -5,10 +10,14 @@ import SourceryFramework
 class EnumTests: XCTestCase {
     override func tearDown() {
         CodeStore.clear()
+        super.tearDown()
     }
     
     func testNoChangeEnum() {
-        let migrationResult = getMigrationResult(migration: noChange, target: readResource(Resources.EnumTimeMode.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: noChange,
+            target: readResource(Resources.EnumTimeMode.rawValue)
+        )
         let result = EnumTemplate().render(migrationResult)
 
         XCTAssertEqual(result, readResource(Resources.ResultEnumTimeMode.rawValue))
@@ -37,14 +46,21 @@ class EnumTests: XCTestCase {
    """
     
     func testDeletedCase() {
+        // swiftlint:disable:next force_try
         let fp = try! FileParser(contents: readResource(Resources.EnumTimeModeFacade.rawValue))
+        // swiftlint:disable:next force_try
         let code = try! fp.parse()
         let types = WrappedTypes(types: code.types)
-        let facade = types.getModifiable()!
+        guard let facade = types.getModifiable() else {
+            fatalError("Could not retrieve previous modifiable.")
+        }
         
         CodeStore.initInstance(previous: [facade], current: [])
         
-        let migrationResult = getMigrationResult(migration: deleteEnumCaseChange, target: readResource(Resources.EnumTimeModeDeletedCase.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: deleteEnumCaseChange,
+            target: readResource(Resources.EnumTimeModeDeletedCase.rawValue)
+        )
         let result = EnumTemplate().render(migrationResult)
 
         XCTAssertEqual(result, readResource(Resources.ResultEnumTimeModeDeletedCase.rawValue))
@@ -71,17 +87,28 @@ class EnumTests: XCTestCase {
    """
     
     func testDeleted() {
+        // swiftlint:disable:next force_try
         let fp = try! FileParser(contents: readResource(Resources.EnumTimeModeFacade.rawValue))
+        // swiftlint:disable:next force_try
         let code = try! fp.parse()
         let types = WrappedTypes(types: code.types)
-        let facade = types.getModifiable()!
+        guard let facade = types.getModifiable() else {
+            fatalError("Could not retrieve previous modifiable.")
+        }
         
         CodeStore.initInstance(previous: [facade], current: [])
         
-        /// irrelevant result
-        _ = getMigrationResult(migration: deleteEnumChange, target: readResource(Resources.EnumPlaceholder.rawValue))
+        // irrelevant result
+        _ = getMigrationResult(
+            migration: deleteEnumChange,
+            target: readResource(Resources.EnumPlaceholder.rawValue)
+        )
 
-        let migrationResult = CodeStore.getInstance().getEnum(facade.id, searchInCurrent: true)!
+        guard let migrationResult = CodeStore
+                .getInstance()
+                .getEnum(facade.id, searchInCurrent: true) else {
+            fatalError("Migration failed.")
+        }
         let result = EnumTemplate().render(migrationResult)
         
         XCTAssertEqual(result, readResource(Resources.ResultEnumTimeModeDeleted.rawValue))
@@ -107,7 +134,10 @@ class EnumTests: XCTestCase {
    """
     
     func testRenamed() {
-        let migrationResult = getMigrationResult(migration: renameEnumChange, target: readResource(Resources.EnumTimeModeRenamed.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: renameEnumChange,
+            target: readResource(Resources.EnumTimeModeRenamed.rawValue)
+        )
         let result = EnumTemplate().render(migrationResult)
 
         XCTAssertEqual(result, readResource(Resources.ResultEnumTimeModeRenamed.rawValue))
@@ -140,7 +170,10 @@ class EnumTests: XCTestCase {
    """
     
     func testReplaced() {
-        let migrationResult = getMigrationResult(migration: replaceEnumChange, target: readResource(Resources.EnumMessageLevelFacade.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: replaceEnumChange,
+            target: readResource(Resources.EnumMessageLevelFacade.rawValue)
+        )
         let result = EnumTemplate().render(migrationResult)
 
         XCTAssertEqual(result, readResource(Resources.ResultEnumMessageLevelReplaced.rawValue))

@@ -91,7 +91,7 @@ whitelist_rules:
     # Force casts should be avoided.
   - force_try
     # Force tries should be avoided.
-    # - force_unwrapping
+  - force_unwrapping
     # Force unwrapping should be avoided.
   - function_body_length
     # Functions bodies should not span too many lines.

@@ -17,7 +17,10 @@ struct EnumTemplate: CodeTemplate {
             fatalError("EnumTemplate requires enum.")
         }
         TypeStore.nonPersistentTypes["_\(facadeEnum.localName)"] = facadeEnum.localName
-        let annotation = facadeEnum.annotation != nil ? "\n\(facadeEnum.annotation!.description)" : ""
+        let annotation = facadeEnum.annotation != nil ?
+            // preceeded by nil check
+            // swiftlint:disable:next force_unwrapping
+            "\n\(facadeEnum.annotation!.description)" : ""
         let imports = facadeEnum.specialImports.isEmpty ? "" : "\n\(facadeEnum.specialImports.joined(separator: "\n"))"
         return """
         import Foundation\(imports)

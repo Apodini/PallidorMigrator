@@ -1,3 +1,9 @@
+// Identifier_name linting rule is disabled
+// because enum cases reflect the names of corresponding test files
+// Force try is disabled for lines that refer to fetching and parsing
+// source code with Sourcery. 
+// Line length exceeds due to convert/revert definition in migration guide
+// swiftlint:disable identifier_name line_length
 import XCTest
 import SourceryFramework
 @testable import PallidorMigrator
@@ -5,6 +11,7 @@ import SourceryFramework
 class ModelPropertyTests: XCTestCase {
     override func tearDown() {
         CodeStore.clear()
+        super.tearDown()
     }
     
     let addSinglePrimitivePropertyChange = """
@@ -36,7 +43,10 @@ class ModelPropertyTests: XCTestCase {
     
     /// simulates that `city` property was added after initial facade generation
     func testAddedProperty() {
-        let migrationResult = getMigrationResult(migration: addSinglePrimitivePropertyChange, target: readResource(Resources.ModelAddress.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: addSinglePrimitivePropertyChange,
+            target: readResource(Resources.ModelAddress.rawValue)
+        )
         let result = ModelTemplate().render(migrationResult)
         
         XCTAssertEqual(result, readResource(Resources.ResultModelAddressAddedSimpleProperty.rawValue))
@@ -71,7 +81,10 @@ class ModelPropertyTests: XCTestCase {
     
     /// simulates that `category` property was added after initial facade generation
     func testAddedComplexProperty() {
-        let migrationResult = getMigrationResult(migration: addSingleComplexPropertyChange, target: readResource(Resources.ModelPet.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: addSingleComplexPropertyChange,
+            target: readResource(Resources.ModelPet.rawValue)
+        )
         let result = ModelTemplate().render(migrationResult)
         
         XCTAssertEqual(result, readResource(Resources.ResultModelPetAddedComplexProperty.rawValue))
@@ -104,7 +117,10 @@ class ModelPropertyTests: XCTestCase {
     /// simulates a removed property `weight : String` from `Pet`
     /// - provides a fallback-value
     func testDeletedProperty() {
-        let migrationResult = getMigrationResult(migration: deletePropertyChange, target: readResource(Resources.ModelPet.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: deletePropertyChange,
+            target: readResource(Resources.ModelPet.rawValue)
+        )
         let result = ModelTemplate().render(migrationResult)
         
         XCTAssertEqual(result, readResource(Resources.ResultModelPetDeletedProperty.rawValue))
@@ -138,7 +154,10 @@ class ModelPropertyTests: XCTestCase {
    """
     
     func testReplacedProperty() {
-        let migrationResult = getMigrationResult(migration: replacePropertyTypeChange, target: readResource(Resources.ModelCustomerReplacedProperty.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: replacePropertyTypeChange,
+            target: readResource(Resources.ModelCustomerReplacedProperty.rawValue)
+        )
         let result = ModelTemplate().render(migrationResult)
         
         XCTAssertEqual(result, readResource(Resources.ResultModelCustomerReplacedProperty.rawValue))
@@ -179,12 +198,18 @@ class ModelPropertyTests: XCTestCase {
     
     /// renames two properties from different models (`Pet` & `Category`)
     func testRenamedProperty() {
-        let migrationResultPet = getMigrationResult(migration: renamePropertyChange, target: readResource(Resources.ModelPetRenamedProperty.rawValue))
+        let migrationResultPet = getMigrationResult(
+            migration: renamePropertyChange,
+            target: readResource(Resources.ModelPetRenamedProperty.rawValue)
+        )
         let resultPet = ModelTemplate().render(migrationResultPet)
         
         XCTAssertEqual(resultPet, readResource(Resources.ResultModelPetRenamedProperty.rawValue))
         
-        let migrationResultCategory = getMigrationResult(migration: renamePropertyChange, target: readResource(Resources.ModelCategoryRenamedProperty.rawValue))
+        let migrationResultCategory = getMigrationResult(
+            migration: renamePropertyChange,
+            target: readResource(Resources.ModelCategoryRenamedProperty.rawValue)
+        )
         let resultCategory = ModelTemplate().render(migrationResultCategory)
         
         XCTAssertEqual(resultCategory, readResource(Resources.ResultModelCategoryRenamedProperty.rawValue))

@@ -31,7 +31,12 @@ extension WrappedClass {
         }
 
         let property = WrappedVariable(
+            // must provide ID due to migration guide constraints
+            // swiftlint:disable:next force_unwrapping
             name: deletedProperty.id!,
+            // must provide default value due to migration guide constraints
+            // for DeleteChanges
+            // swiftlint:disable:next force_unwrapping
             defaultValue: deletedProperty.defaultValue!,
             isMutable: true,
             isEnum: false,
@@ -79,17 +84,27 @@ extension WrappedClass {
     internal func handleReplacedProperty(_ replaceChange: ReplaceChange) {
         specialImports.insert("import JavaScriptCore")
 
-        let replacement = self.variables.first(where: { $0.id == replaceChange.replacementId })
+        guard let replacement = self
+                .variables
+                .first(where: { $0.id == replaceChange.replacementId }) else {
+            fatalError("No replacement provided for replacing model.")
+        }
 
-        replacement!.modify(change: replaceChange)
+        replacement.modify(change: replaceChange)
     }
 
     /// handle renaming a property
     /// - Parameter renameChange: RenameChange affecting a property of this model
     internal func handleRenameProperty(_ renameChange: RenameChange) {
-        let renamed = self.variables.first(where: { $0.id == renameChange.renamed!.id })
+        guard let renamed = self
+                .variables
+                // must provide renamed object due to migration guide constraints
+                // swiftlint:disable:next force_unwrapping
+                .first(where: { $0.id == renameChange.renamed!.id }) else {
+            fatalError("Renamed model not provided.")
+        }
 
-        renamed!.modify(change: renameChange)
+        renamed.modify(change: renameChange)
     }
 
     /// handle renaming a model
@@ -158,7 +173,10 @@ extension WrappedClass {
                 let context = JSContext()!
                 let fromEncoded = try! JSONEncoder().encode(from)
                 context.evaluateScript(\"""
-                \(replaceChange.customRevert!)
+                \(
+                    // must provide revert method due to migration guide constraints
+                    // swiftlint:disable:next force_unwrapping
+                    replaceChange.customRevert!)
                 \""")
                 let encodedResult = context
                         .objectForKeyedSubscript("conversion")
@@ -178,7 +196,10 @@ extension WrappedClass {
             let context = JSContext()!
             let selfEncoded = try! JSONEncoder().encode(self)
             context.evaluateScript(\"""
-            \(replaceChange.customConvert!)
+            \(
+                // must provide convert method due to migration guide constraints
+                // swiftlint:disable:next force_unwrapping
+                replaceChange.customConvert!)
             \""")
             let encodedResult = context
                     .objectForKeyedSubscript("conversion")

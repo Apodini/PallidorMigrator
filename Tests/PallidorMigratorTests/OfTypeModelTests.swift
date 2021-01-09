@@ -1,3 +1,8 @@
+// Identifier_name linting rule is disabled
+// because enum cases reflect the names of corresponding test files
+// Force try is disabled for lines that refer to fetching and parsing
+// source code with Sourcery. 
+// swiftlint:disable identifier_name
 import XCTest
 import SourceryFramework
 @testable import PallidorMigrator
@@ -5,10 +10,14 @@ import SourceryFramework
 class OfTypeModelTests: XCTestCase {
     override func tearDown() {
         CodeStore.clear()
+        super.tearDown()
     }
     
     func testOfTypeModelNoChange() {
-        let migrationResult = getMigrationResult(migration: noChange, target: readResource(Resources.ModelOfType.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: noChange,
+            target: readResource(Resources.ModelOfType.rawValue)
+        )
         let result = ModelTemplate().render(migrationResult)
 
         XCTAssertEqual(result, readResource(Resources.ResultModelOfType.rawValue))
@@ -34,7 +43,10 @@ class OfTypeModelTests: XCTestCase {
    """
     
     func testOfTypeModelRenamed() {
-        let migrationResult = getMigrationResult(migration: renameOfTypeModelChange, target: readResource(Resources.ModelOfTypeRenamed.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: renameOfTypeModelChange,
+            target: readResource(Resources.ModelOfTypeRenamed.rawValue)
+        )
         let result = ModelTemplate().render(migrationResult)
 
         XCTAssertEqual(result, readResource(Resources.ResultModelOfTypeRenamed.rawValue))
@@ -63,7 +75,10 @@ class OfTypeModelTests: XCTestCase {
    """
     
     func testOfTypeModelDeletedCase() {
-        let migrationResult = getMigrationResult(migration: deleteOfTypeEnumCaseChange, target: readResource(Resources.ModelOfTypeFacade.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: deleteOfTypeEnumCaseChange,
+            target: readResource(Resources.ModelOfTypeFacade.rawValue)
+        )
         let result = ModelTemplate().render(migrationResult)
 
         XCTAssertEqual(result, readResource(Resources.ResultModelOfTypeDeletedCase.rawValue))
@@ -92,16 +107,25 @@ class OfTypeModelTests: XCTestCase {
    """
     
     func testOfTypeModelDeleted() {
+        // swiftlint:disable:next force_try
         let fp = try! FileParser(contents: readResource(Resources.ModelOfTypeFacade.rawValue))
+        // swiftlint:disable:next force_try
         let code = try! fp.parse()
         let types = WrappedTypes(types: code.types)
-        let facade = types.getModifiable()!
+        guard let facade = types.getModifiable() else {
+            fatalError("Could not retrieve previous modifiable.")
+        }
         
         CodeStore.initInstance(previous: [facade], current: [])
     
-        _ = getMigrationResult(migration: deleteOfTypeChange, target: readResource(Resources.ModelPlaceholder.rawValue))
+        _ = getMigrationResult(
+            migration: deleteOfTypeChange,
+            target: readResource(Resources.ModelPlaceholder.rawValue)
+        )
         
-        let migrationResult = CodeStore.getInstance().getModel(facade.id)!
+        guard let migrationResult = CodeStore.getInstance().getModel(facade.id) else {
+            fatalError("Migration failed.")
+        }
         let result = ModelTemplate().render(migrationResult)
 
         XCTAssertEqual(result, readResource(Resources.ResultModelOfTypeDeleted.rawValue))
@@ -130,7 +154,10 @@ class OfTypeModelTests: XCTestCase {
    """
     
     func testOfTypeModelReplaced() {
-        let migrationResult = getMigrationResult(migration: replaceOfTypeModelChange, target: readResource(Resources.ModelOfTypeFacade.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: replaceOfTypeModelChange,
+            target: readResource(Resources.ModelOfTypeFacade.rawValue)
+        )
         let result = ModelTemplate().render(migrationResult)
 
         XCTAssertEqual(result, readResource(Resources.ResultModelOfTypeReplaced.rawValue))

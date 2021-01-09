@@ -21,6 +21,8 @@ extension WrappedMethod {
                     newName
                 }
             case .parameter:
+                // must provide renamed object due to migration guide constraints
+                // swiftlint:disable:next force_unwrapping
                 let renamedParam = self.parameters.first(where: { $0.name == change.renamed!.id })!
                 renamedParam.modify(change: change)
             default:
@@ -31,7 +33,10 @@ extension WrappedMethod {
                 """
                 \(self.signatureString) {
                 \(self.parameterConversion() ?? "")
-                return _\(Endpoint.endpointName(from: endpoint.id!)).\(
+                return _\(Endpoint.endpointName(
+                            // must provide ID due to migration guide constraints
+                            // swiftlint:disable:next force_unwrapping
+                            from: endpoint.id!)).\(
                     self.nameToCall())(\(self.parameters
                                             .map { $0.endpointCall() }
                                             .skipEmptyJoined(separator: ", ")))
@@ -58,16 +63,21 @@ extension WrappedMethod {
                 deletedParam.name = "element"
             }
             deletedParam.modify(change: change)
-            let insertIndex = self.parameters
+            guard let insertIndex = self.parameters
                 .firstIndex(where: { $0.name > deletedParam.name
                                 || $0.name == "element"
-                                || $0.name == "authorization" })!
+                                || $0.name == "authorization" }) else {
+                fatalError("Deleted parameter was not found in previos facade.")
+            }
             self.parameters.insert(deletedParam, at: insertIndex)
         case .signature:
             self.annotation = .unavailable(msg: "This method was removed in API version: xxx")
             apiMethodString = { () in
                 """
-                \(self.annotation!.description)
+                \(
+                    // annotation is set directly above.
+                    // swiftlint:disable:next force_unwrapping
+                    self.annotation!.description)
                 \(self.signatureString) {
                     fatalError("method unavailable")
                 }
@@ -87,11 +97,17 @@ extension WrappedMethod {
                 guard let param = addition as? Parameter else {
                     fatalError("Added value is malformed. Must be parameter.")
                 }
-                self.parameters.first(where: { $0.id == param.id })!.modify(change: change)
+                
+                guard let addedParameter = self.parameters.first(where: { $0.id == param.id }) else {
+                    fatalError("Added parameter of migration guide was not found in source code.")
+                }
+                addedParameter.modify(change: change)
             }
         case .contentBody:
-            let body = self.parameters.first(where: { $0.name == "element" })
-            body!.modify(change: change)
+            guard let body = self.parameters.first(where: { $0.name == "element" }) else {
+                fatalError("No element for content body found in library layer.")
+            }
+            body.modify(change: change)
         default:
             fatalError("Target type not supported for adding to method.")
         }
@@ -102,15 +118,21 @@ extension WrappedMethod {
     func handleReplaceChange(change: ReplaceChange) {
         switch change.target {
         case .parameter:
-            let replaceIndex = self.parameters.firstIndex(where: { $0.id == change.replacementId })
+            guard let replaceIndex = self.parameters.firstIndex(where: { $0.id == change.replacementId }) else {
+                fatalError("Replacement was not found in source code.")
+            }
+            // must provide replacement due to migration guide constraints
+            // swiftlint:disable:next force_unwrapping
             guard let param = change.replaced! as? Parameter else {
                 fatalError("Replaced value is malformed. Must be parameter.")
             }
             let original = createMethodParameter(param: param)
             original.modify(change: change)
-            self.parameters[replaceIndex!] = original
+            self.parameters[replaceIndex] = original
             self.paramsRequireJSContext = true
         case .returnValue:
+            // must provide replacement due to migration guide constraints
+            // swiftlint:disable:next force_unwrapping
             guard let returnValue = change.replaced! as? ReturnValue else {
                 fatalError("Replaced value is malformed. Must be return value.")
             }
@@ -124,8 +146,10 @@ extension WrappedMethod {
             )
             self.mapString = mapStringFunction(change: change)
         case .contentBody:
-            let element = self.parameters.first(where: { $0.name == "element" })
-            element!.modify(change: change)
+            guard let element = self.parameters.first(where: { $0.name == "element" }) else {
+                fatalError("Content-body parameter 'element' was not found.")
+            }
+            element.modify(change: change)
             self.paramsRequireJSContext = true
         case .signature:
             replaceMethod(change: change)
@@ -138,7 +162,9 @@ extension WrappedMethod {
 
     fileprivate func replaceMethodInOtherEndpoint(_ method: Method, _ change: ReplaceChange) {
         let codeStore = CodeStore.getInstance()
-        let changeMethod = codeStore.getMethod(method.operationId)!
+        guard let changeMethod = codeStore.getMethod(method.operationId) else {
+            fatalError("Changed method could not be found in previous facade.")
+        }
         changeMethod.modify(change: change)
         if let changeEndpoint = codeStore.getEndpoint(method.definedIn, searchInCurrent: true) {
             changeEndpoint.specialImports.insert("import JavaScriptCore")
@@ -165,20 +191,26 @@ extension WrappedMethod {
                     "target":"ReturnValue",
                     "replacement-id":"_",
                     "type":"\(replacementMethod.returnTypeName.mappedPublisherSuccessType)",
-                    "custom-revert":"\(change.customRevert!)",
+                    "custom-revert":"\(
+                        // must revert method due to migration guide constraints
+                        // swiftlint:disable:next force_unwrapping
+                        change.customRevert!)",
                     "replaced": {
                        "name":"_",
                        "type":"\(methodToModify.returnTypeName.mappedPublisherSuccessType)"
                     }
                 }
-                """.data(using: .utf8)!
+                """.data(using: .utf8)! // swiftlint:disable:this force_unwrapping
             let returnTypeChange = try? JSONDecoder().decode(ReplaceChange.self, from: returnTypeChangeData)
             guard let rChange = returnTypeChange else {
                 fatalError("Return type change is malformed.")
             }
             methodToModify.modify(change: rChange)
             if codeStore.getMethod(methodToModify.shortName, searchInCurrent: true) == nil {
-                codeStore.getEndpoint(targetMethod.definedIn, searchInCurrent: true)!.methods.append(methodToModify)
+                guard let endpoint = codeStore.getEndpoint(targetMethod.definedIn, searchInCurrent: true) else {
+                    fatalError("Endpoint could not be found in library layer: \(targetMethod.definedIn)")
+                }
+                endpoint.methods.append(methodToModify)
             }
         }
     }
@@ -195,15 +227,26 @@ extension WrappedMethod {
         var methodToModify: WrappedMethod
 
         if targetMethod.operationId == self.shortName {
-            methodToModify = codeStore.getMethod(method.operationId, searchInCurrent: false)!
-            let changeEndpoint = codeStore.getEndpoint(targetMethod.definedIn, searchInCurrent: true)!
+            guard let facadeMethod = codeStore
+                    .getMethod(method.operationId, searchInCurrent: false) else {
+                fatalError("Method to modify could not be found.")
+            }
+            methodToModify = facadeMethod
+            guard let changeEndpoint = codeStore
+                    .getEndpoint(targetMethod.definedIn, searchInCurrent: true) else {
+                fatalError("Endpoint could not be found: \(targetMethod.definedIn)")
+            }
             changeEndpoint.specialImports.insert("import JavaScriptCore")
             changeEndpoint.methods.append(methodToModify)
         } else {
             methodToModify = self
         }
 
-        let replacementMethod = codeStore.getMethod(targetMethod.operationId, searchInCurrent: true)!
+        guard let replacementMethod = codeStore
+                .getMethod(targetMethod.operationId, searchInCurrent: true)
+        else {
+            fatalError("Replacement method was not found in library layer.")
+        }
 
         let paramsOutput = Array(replacementMethod.parameters.dropLast(2))
         let paramsInput = Array(methodToModify.parameters.dropLast(2))
@@ -225,6 +268,8 @@ extension WrappedMethod {
         guard let method = change.replaced as? Method else {
             fatalError("Replacement malformed. Must be of type method.")
         }
+        // method must be defined in a parent component.
+        // swiftlint:disable:next force_unwrapping
         let ownRoute = Endpoint.routeName(from: self.definedInTypeName!.actualName)
 
         if method.definedIn != ownRoute {
@@ -253,7 +298,10 @@ extension WrappedMethod {
                 let context = JSContext()!
 
                 context.evaluateScript(\"""
-                \(change.customConvert!)
+                \(
+                    // must provide convert method due to migration guide constraints
+                    // swiftlint:disable:next force_unwrapping
+                    change.customConvert!)
                 \""")
 
                 let inputEncoded = try! JSONEncoder().encode(InputParam(\(paramsInput
@@ -277,8 +325,13 @@ extension WrappedMethod {
         methodToModify.apiMethodString = { () in
             """
                 \(methodToModify.signatureString) {
-                \(methodToModify.parameterConversion()!)
+                \(
+                    // must be set for replaced methods due to migration guide constraints
+                    // swiftlint:disable:next force_unwrapping
+                    methodToModify.parameterConversion()!)
                 return \(replacementMethod
+                            // method is defined in a parent component.
+                            // swiftlint:disable:next force_unwrapping
                             .definedInTypeName!.actualName).\(methodToModify
                                                                 .nameToCall())(\(paramsOutput
                                                                                     .map {
@@ -304,6 +357,8 @@ extension WrappedMethod {
             isPrimitive: param.type.isPrimitiveType
         )
         return WrappedMethodParameter(
+            // must provide an ID due to migration guide constraints
+            // swiftlint:disable:next force_unwrapping
             name: param.id!,
             isOptional: !param.required,
             typeName: type,
@@ -316,6 +371,8 @@ extension WrappedMethod {
     /// - Parameter change: ReplaceChange affecting this method
     /// - Returns: function which creates the map string
     private func mapStringFunction(change: ReplaceChange) -> (String) -> String {
+        // replacement type must be provided due to migration guide constraints
+        // swiftlint:disable:next force_unwrapping
         !change.type!.isPrimitiveType ? mapStringComplexTypes(change)
         : mapStringPrimitiveTypes(change)
     }

@@ -82,6 +82,8 @@ class WrappedMethod: Modifiable {
             throws: from.throws,
             name: from.name,
             definedInTypeName: from.definedInTypeName != nil ?
+                // nil check in previous line
+                // swiftlint:disable:next force_unwrapping
                 WrappedTypeName(from: from.definedInTypeName!) : nil,
             returnTypeName: WrappedTypeName(from: from.returnTypeName),
             parameters: from.parameters.map { WrappedMethodParameter(from: $0) }
@@ -109,7 +111,10 @@ class WrappedMethod: Modifiable {
         """
         \(self.signatureString) {
         \(self.parameterConversion() ?? "")
-        return _\(self.definedInTypeName!.name).\(self.nameToCall())(\(
+        return _\(
+            // it's a method that must be specified in a parent component.
+            // swiftlint:disable:next force_unwrapping
+            self.definedInTypeName!.name).\(self.nameToCall())(\(
             self.parameters.map { $0.endpointCall() }.skipEmptyJoined(separator: ", ")))
         \(self.apiMethodResultMap)
         }

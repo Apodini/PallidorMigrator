@@ -11,8 +11,11 @@ import Foundation
 class SemanticVersion: Comparable {
     internal init(versionString: String) {
         let versions = versionString.split(separator: ".")
-        self.major = Int(versions[0])!
-        self.minor = Int(versions[1])!
+        guard let major = Int(versions[0]), let minor = Int(versions[1]) else {
+            fatalError("Semantic version is malformed. Major/Minor must be integers.")
+        }
+        self.major = major
+        self.minor = minor
         self.patch = String(versions[2])
     }
 

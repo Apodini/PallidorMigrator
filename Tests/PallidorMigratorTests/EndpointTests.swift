@@ -1,3 +1,9 @@
+// Identifier_name linting rule is disabled
+// because enum cases reflect the names of corresponding test files
+// Force try is disabled for lines that refer to fetching and parsing
+// source code with Sourcery. File exceeds normal length due to migration guides.
+// Line length exceeds due to convert/revert definition in migration guide
+// swiftlint:disable identifier_name
 import XCTest
 import SourceryFramework
 @testable import PallidorMigrator
@@ -5,6 +11,7 @@ import SourceryFramework
 class EndpointTests: XCTestCase {
     override func tearDown() {
         CodeStore.clear()
+        super.tearDown()
     }
     
     let renameEndpointChange = """
@@ -28,19 +35,29 @@ class EndpointTests: XCTestCase {
     
     func testEndpointRenamed() {
         CodeStore.initInstance(previous: [], current: [])
-        let migrationResult = getMigrationResult(migration: renameEndpointChange, target: readResource(Resources.PetEndpointRenamed.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: renameEndpointChange,
+            target: readResource(Resources.PetEndpointRenamed.rawValue)
+        )
         let result = APITemplate().render(migrationResult)
         
         XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamed.rawValue))
     }
         
     func testRenamedAndAddMethod() {
+        // swiftlint:disable:next force_try
         let fp = try! FileParser(contents: readResource(Resources.PetEndpointFacadeAddMethod.rawValue))
+        // swiftlint:disable:next force_try
         let code = try! fp.parse()
-        let facade = WrappedTypes(types: code.types)
+        guard let facade = WrappedTypes(types: code.types).getModifiable() else {
+            fatalError("Could not retrieve previous modifiable.")
+        }
         
-        CodeStore.initInstance(previous: [facade.getModifiable()!], current: [])
-        let migrationResult = getMigrationResult(migration: renameEndpointChange, target: readResource(Resources.PetEndpointRenamed.rawValue))
+        CodeStore.initInstance(previous: [facade], current: [])
+        let migrationResult = getMigrationResult(
+            migration: renameEndpointChange,
+            target: readResource(Resources.PetEndpointRenamed.rawValue)
+        )
         let result = APITemplate().render(migrationResult)
         
         XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamed.rawValue))
@@ -68,16 +85,27 @@ class EndpointTests: XCTestCase {
    """
     
     func testDeleted() {
+        // swiftlint:disable:next force_try
         let fp = try! FileParser(contents: readResource(Resources.PetEndpointFacade.rawValue))
+        // swiftlint:disable:next force_try
         let code = try! fp.parse()
-        let facade = WrappedTypes(types: code.types)
+        guard let facade = WrappedTypes(types: code.types).getModifiable() else {
+            fatalError("Could not retrieve previous modifiable.")
+        }
         
-        CodeStore.initInstance(previous: [facade.getModifiable()!], current: [])
+        CodeStore.initInstance(previous: [facade], current: [])
         
         /// irrelevant for deleted migration
-        _ = getMigrationResult(migration: deleteEndpointChange, target: readResource(Resources.EndpointPlaceholder.rawValue))
+        _ = getMigrationResult(
+            migration: deleteEndpointChange,
+            target: readResource(Resources.EndpointPlaceholder.rawValue)
+        )
         
-        let migrationResult = CodeStore.getInstance().getEndpoint(facade.getModifiable()!.id, searchInCurrent: true)!
+        guard let migrationResult = CodeStore
+                .getInstance()
+                .getEndpoint(facade.id, searchInCurrent: true) else {
+            fatalError("Migration failed.")
+        }
         
         let result = APITemplate().render(migrationResult)
 
@@ -125,10 +153,15 @@ class EndpointTests: XCTestCase {
     /// method `updatePet()` is renamed to `updateMyPet()`
     /// parameter changed, return value remain the same
     func testRenameMethodAndChangeContentBodyChange() {
-        let migrationResult = getMigrationResult(migration: renameMethodAndChangeContentBodyChange, target: readResource(Resources.PetEndpointRenamedMethodAndContentBody.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: renameMethodAndChangeContentBodyChange,
+            target: readResource(Resources.PetEndpointRenamedMethodAndContentBody.rawValue)
+        )
         let result = APITemplate().render(migrationResult)
         
-        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamedMethodAndContentBody.rawValue))
+        XCTAssertEqual(result, readResource(
+                        Resources.ResultPetEndpointFacadeRenamedMethodAndContentBody.rawValue)
+        )
     }
 
     enum Resources: String {

@@ -100,7 +100,10 @@ extension String {
 
     /// returns true if the type defined in this string has a trailing `?`
     public var isOptional: Bool {
-        self.last! == "?"
+        if let last = self.last {
+            return last == "?"
+        }
+        return false
     }
 
     /// returns the type name without `?` if type is an optional

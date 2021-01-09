@@ -11,7 +11,7 @@ extension WrappedVariable {
     /// handle added a variable
     /// - Parameter addChange: AddChange affecting this variable
     internal func handleAddChange(_ addChange: AddChange) {
-        guard let attribute = addChange.added.first(where: { $0.id == name })! as? Property else {
+        guard let attribute = addChange.added.first(where: { $0.id == name }) as? Property else {
             fatalError("Property \(name) was not found.")
         }
 
@@ -40,13 +40,25 @@ self.\(self.name) = \(self.name) ?? \(TypeConversion
 self.\(self.name) = try JSONDecoder().decode(\(
     self.typeName.actualName.unwrapped
 ).self, from: \"\(
+        // must provide default value due to migration guide constraints
+        // swiftlint:disable:next force_unwrapping
         self.defaultValue!
     )\".data(using: .utf8)!
 """
             } else if self.typeName.actualName.unwrapped.isString {
-                return "self.\(self.name) = \"\(self.defaultValue!)\""
+                return """
+self.\(self.name) = \"\(
+                // must provide default value due to migration guide constraints
+                // swiftlint:disable:next force_unwrapping
+                self.defaultValue!)\"
+"""
             } else {
-                return "self.\(self.name) = \(self.defaultValue!)"
+                return """
+self.\(self.name) = \(
+    // must provide default value due to migration guide constraints
+    // swiftlint:disable:next force_unwrapping
+    self.defaultValue!)
+"""
             }
         }
     }
@@ -69,10 +81,15 @@ self.\(self.name) = try JSONDecoder().decode(\(
         _ replacedProperty: Property
     ) -> String {
        """
-        context.evaluateScript(\"""\n\(replaceChange.customRevert!)\n\""")
+        context.evaluateScript(\"""\n\(
+            // must provide convert method due to migration guide constraints
+            // swiftlint:disable:next force_unwrapping
+            replaceChange.customRevert!)\n\""")
         let \(replaceChange.replacementId)Encoded = \(TypeConversion
                                                         .getEncodingString(
                                                             id: "from.\(replaceChange.replacementId)",
+                                                            // must contain type declaration in migration guide
+                                                            // swiftlint:disable:next force_unwrapping
                                                             type: replaceChange.type!,
                                                             required: replacedProperty.required)
         )
@@ -95,7 +112,10 @@ self.\(self.name) = try JSONDecoder().decode(\(
         _ replacedProperty: Property
     ) -> String {
        """
-            context.evaluateScript(\"""\n\(replaceChange.customConvert!)\n\""")
+            context.evaluateScript(\"""\n\(
+                // must provide convert method due to migration guide constraints
+                // swiftlint:disable:next force_unwrapping
+                replaceChange.customConvert!)\n\""")
 
             let \(self.id)Encoded = \(TypeConversion
                                         .getEncodingString(
@@ -112,6 +132,8 @@ self.\(self.name) = try JSONDecoder().decode(\(
             let \(replaceChange.replacementId) = \(TypeConversion
                                                     .getDecodingString(
                                                         id: "\(replaceChange.replacementId)Tmp",
+                                                        // must provide type declaration due to migration guide constraints
+                                                        // swiftlint:disable:next force_unwrapping
                                                         type: replaceChange.type!)
             )
             """
@@ -132,6 +154,8 @@ self.\(self.name) = try JSONDecoder().decode(\(
             fatalError("Replacement could not be cast to Property.")
         }
 
+        // must provide ID due to migration guide constraints
+        // swiftlint:disable:next force_unwrapping
         self.name = replacedProperty.id!
         self.defaultValue = replacedProperty.defaultValue
         self.isCustomType = !replacedProperty.type.isPrimitiveType

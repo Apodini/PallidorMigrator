@@ -13,12 +13,12 @@ extension WrappedMethodParameter {
     func handleAddChange(_ change: AddChange) {
         switch change.target {
         case .parameter:
-            guard let param = change.added.first(where: { $0.id == self.name })! as? Parameter else {
+            guard let param = change.added.first(where: { $0.id == self.name }) as? Parameter else {
                 fatalError("Added parameter is malformed.")
             }
             handleAddedParameter(param)
         case .contentBody:
-            guard let element = change.added.first! as? Parameter else {
+            guard let element = change.added.first as? Parameter else {
                 fatalError("Added parameter is malformed.")
             }
             handleAddedContentBody(element)
@@ -34,6 +34,8 @@ extension WrappedMethodParameter {
         signatureString = { () in
             """
                 \(self.name): \(self.actualTypeName != nil ?
+                                    // nil check in previous line
+                                    // swiftlint:disable:next force_unwrapping
                                     self.actualTypeName!.name :
                                     self.typeName.name)\(self.isOptional ? "" : "?") = nil
                 """
@@ -43,7 +45,13 @@ extension WrappedMethodParameter {
         self.endpointCall = { () in
             """
 \(self.name): \(self.name) ?? \(TypeConversion
-                                    .getDefaultValueInit(type: self.typeName.name, defaultValue: self.defaultValue!))
+                                    .getDefaultValueInit(
+                                        type: self.typeName.name,
+                                        // must provide default value due to migration guide constraints
+                                        // for AddChanges.
+                                        // swiftlint:disable:next force_unwrapping
+                                        defaultValue: self.defaultValue!)
+)
 """
         }
     }
@@ -56,7 +64,11 @@ extension WrappedMethodParameter {
 
                     if \(self.id) == nil {
                         let \(self.id)Tmp : String? = \"""
-                            \(element.defaultValue!)
+                            \(
+                                // must provide default value due to migration guide constraints
+                                // for AddChanges.
+                                // swiftlint:disable:next force_unwrapping
+                                element.defaultValue!)
                         \"""
 
                         \(self.id) = \(TypeConversion
@@ -73,6 +85,9 @@ extension WrappedMethodParameter {
             self.paramConversionString = { () in
                 TypeConversion.getDefaultValueInit(
                     type: self.typeName.actualName,
+                    // must provide default value due to migration guide constraints
+                    // for AddChanges.
+                    // swiftlint:disable:next force_unwrapping
                     defaultValue: element.defaultValue!
                 )
             }
@@ -91,6 +106,9 @@ extension WrappedMethodParameter {
     func handleRenameChange(_ change: RenameChange) {
         self.name = change.originalId
         self.endpointCall = { () in
+            // must provide renamed parameter due to migration guide constraints
+            // for RenameChanges.
+            // swiftlint:disable:next force_unwrapping
             "\(change.renamed!.id!): \(self.name)"
         }
     }
@@ -99,7 +117,10 @@ extension WrappedMethodParameter {
     /// - Parameter change: DeleteChange affecting this parameter
     func handleDeleteChange(_ change: DeleteChange) {
         self.isOptional = true
-        self.actualTypeName!.actualName = self.actualTypeName!.actualName.wrapped
+        guard let actualTypeName = self.actualTypeName else {
+            fatalError("No type given for deleted parameter")
+        }
+        self.actualTypeName?.actualName = actualTypeName.actualName
         self.endpointCall = { () in "" }
     }
 
@@ -127,7 +148,11 @@ extension WrappedMethodParameter {
 
         self.paramConversionString = { () in
             """
-                context.evaluateScript(\"""\n\(change.customConvert!)\n\""")
+                context.evaluateScript(\"""\n\(
+                    // must provide convert method due to migration guide constraints
+                    // for ReplaceChanges.
+                    // swiftlint:disable:next force_unwrapping
+                    change.customConvert!)\n\""")
 
                 let \(self.id)Encoded = \(TypeConversion.getEncodingString(
                     id: self.id,
@@ -142,6 +167,9 @@ extension WrappedMethodParameter {
                 let \(change.replacementId) = \(TypeConversion
                                                     .getDecodingString(
                                                         id: "\(change.replacementId)Tmp",
+                                                        // must provide type due to migration guide constraints
+                                                        // for ReplaceChanges.
+                                                        // swiftlint:disable:next force_unwrapping
                                                         type: change.type!
                                                     ))
                 """
@@ -156,7 +184,11 @@ extension WrappedMethodParameter {
     fileprivate func handleReplacedContentBody(_ change: ReplaceChange, _ replaced: Parameter) {
         self.paramConversionString = { () in
             """
-                context.evaluateScript(\"""\n\(change.customConvert!)\n\""")
+                context.evaluateScript(\"""\n\(
+                    // must provide convert method due to migration guide constraints
+                    // for ReplaceChanges.
+                    // swiftlint:disable:next force_unwrapping
+                    change.customConvert!)\n\""")
 
                 let \(self.id)Encoded = \(TypeConversion
                                             .getEncodingString(
@@ -169,7 +201,13 @@ extension WrappedMethodParameter {
                         .objectForKeyedSubscript("conversion")
                         .call(withArguments: [String(data: \(self.id)Encoded, encoding: .utf8)!])?.toString()
 
-                let \(self.id) = \(TypeConversion.getDecodingString(id: "\(self.id)Tmp", type: change.type!))
+                let \(self.id) = \(TypeConversion.getDecodingString(
+                                    id: "\(self.id)Tmp",
+                                    // must provide type due to migration guide constraints
+                                    // for ReplaceChanges.
+                                    // swiftlint:disable:next force_unwrapping
+                                    type: change.type!)
+                )
                 """
         }
 

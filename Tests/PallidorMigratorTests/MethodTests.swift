@@ -1,3 +1,9 @@
+// Identifier_name linting rule is disabled
+// because enum cases reflect the names of corresponding test files
+// Force try is disabled for lines that refer to fetching and parsing
+// source code with Sourcery. 
+// Line length exceeds due to convert/revert definition in migration guide
+// swiftlint:disable identifier_name line_length
 import XCTest
 import SourceryFramework
 @testable import PallidorMigrator
@@ -5,6 +11,7 @@ import SourceryFramework
 class MethodTests: XCTestCase {
     override func tearDown() {
         CodeStore.clear()
+        super.tearDown()
     }
     
     let renameMethodChange = """
@@ -32,7 +39,10 @@ class MethodTests: XCTestCase {
     /// method `addPet()` is renamed to `addMyPet()`
     /// parameters & return value remain the same
     func testRenamedMethod() {
-        let migrationResult = getMigrationResult(migration: renameMethodChange, target: readResource(Resources.PetEndpointRenamedMethod.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: renameMethodChange,
+            target: readResource(Resources.PetEndpointRenamedMethod.rawValue)
+        )
         let result = APITemplate().render(migrationResult)
         
         XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamedMethod.rawValue))
@@ -59,23 +69,34 @@ class MethodTests: XCTestCase {
    """
     
     func testDeletedMethod() {
+        // swiftlint:disable:next force_try
         let fp = try! FileParser(contents: readResource(Resources.PetEndpointFacade.rawValue))
+        // swiftlint:disable:next force_try
         let code = try! fp.parse()
-        let facade = WrappedTypes(types: code.types)
+        guard let facade = WrappedTypes(types: code.types).getModifiable() else {
+            fatalError("Could not retrieve previous modifiable.")
+        }
         
+        // swiftlint:disable:next force_try
         let fp2 = try! FileParser(contents: readResource(Resources.PetEndpointDeletedMethod.rawValue))
+        // swiftlint:disable:next force_try
         let code2 = try! fp2.parse()
-        let current = WrappedTypes(types: code2.types)
+        guard let current = WrappedTypes(types: code2.types).getModifiable() else {
+            fatalError("Could not retrieve current modifiable.")
+        }
         
-        let sut = current.getModifiable()!
+        CodeStore.initInstance(previous: [facade], current: [current])
         
-        CodeStore.initInstance(previous: [facade.getModifiable()!], current: [sut])
+        guard let main = try? PallidorMigrator(
+                targetDirectory: "",
+                migrationGuidePath: nil,
+                migrationGuideContent: deleteMethodChange) else {
+            fatalError("Initialization of SUT failed.")
+        }
         
-        let main = try! PallidorMigrator(targetDirectory: "", migrationGuidePath: nil, migrationGuideContent: deleteMethodChange)
-        
-        sut.modify(change: main.migrationGuide.changes[0])
+        current.modify(change: main.migrationGuide.changes[0])
       
-        let result = APITemplate().render(sut)
+        let result = APITemplate().render(current)
 
         XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeDeletedMethod.rawValue))
     }
@@ -111,25 +132,42 @@ class MethodTests: XCTestCase {
     /// method `updateMyPet()` was put `User` from `Pet` endpoint
     /// parameters & return value are also changed
     func testReplacedMethod() {
+        // swiftlint:disable:next force_try
         let fp = try! FileParser(contents: readResource(Resources.PetEndpointFacadeReplacedMethod.rawValue))
+        // swiftlint:disable:next force_try
         let code = try! fp.parse()
-        let facade = WrappedTypes(types: code.types)
+        guard let facade = WrappedTypes(types: code.types).getModifiable() else {
+            fatalError("Could not retrieve previous modifiable.")
+        }
         
+        // swiftlint:disable:next force_try
         let fp2 = try! FileParser(contents: readResource(Resources.PetEndpointReplacedMethod.rawValue))
+        // swiftlint:disable:next force_try
         let code2 = try! fp2.parse()
-        let current = WrappedTypes(types: code2.types)
+        guard let current = WrappedTypes(types: code2.types).getModifiable() else {
+            fatalError("Could not retrieve current modifiable.")
+        }
         
+        // swiftlint:disable:next force_try
         let fp3 = try! FileParser(contents: readResource(Resources.UserEndpointReplacedMethod.rawValue))
+        // swiftlint:disable:next force_try
         let code3 = try! fp3.parse()
-        let current2 = WrappedTypes(types: code3.types)
+        guard let current2 = WrappedTypes(types: code3.types).getModifiable() else {
+            fatalError("Could not retrieve current modifiable.")
+        }
         
-        CodeStore.initInstance(previous: [facade.getModifiable()!], current: [current.getModifiable()!, current2.getModifiable()!])
+        CodeStore.initInstance(previous: [facade], current: [current, current2])
         
         let store = CodeStore.getInstance()
         
-        let modAPI = store.getEndpoint("/pet", searchInCurrent: true)!
+        guard let modAPI = store.getEndpoint("/pet", searchInCurrent: true) else {
+            fatalError("Could not retrieve endpoint.")
+        }
         
-        _ = getMigrationResult(migration: replaceMethodChange, target: readResource(Resources.UserEndpointReplacedMethod.rawValue))
+        _ = getMigrationResult(
+            migration: replaceMethodChange,
+            target: readResource(Resources.UserEndpointReplacedMethod.rawValue)
+        )
         let result = APITemplate().render(modAPI)
         
         XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeReplacedMethod.rawValue))
@@ -165,21 +203,40 @@ class MethodTests: XCTestCase {
     /// method `updatePet()` is replaced by `updatePetWithForm()` in `Pet` endpoint (same)
     /// parameters & return value are also changed
     func testReplacedMethodInSameEndpoint() {
+        // swiftlint:disable:next force_try
         let fp = try! FileParser(contents: readResource(Resources.PetEndpointReplacedMethod.rawValue))
+        // swiftlint:disable:next force_try
         let code = try! fp.parse()
-        let current = WrappedTypes(types: code.types)
+        guard let current = WrappedTypes(types: code.types).getModifiable() else {
+            fatalError("Could not retrieve current modifiable.")
+        }
         
+        // swiftlint:disable:next force_try
         let fp2 = try! FileParser(contents: readResource(Resources.PetEndpointFacadeReplacedMethod.rawValue))
+        // swiftlint:disable:next force_try
         let code2 = try! fp2.parse()
-        let facade = WrappedTypes(types: code2.types)
+        guard let facade = WrappedTypes(types: code2.types).getModifiable() else {
+            fatalError("Could not retrieve previous modifiable.")
+        }
         
-        CodeStore.initInstance(previous: [facade.getModifiable()!], current: [current.getModifiable()!])
+        CodeStore.initInstance(previous: [facade], current: [current])
         
-        _ = getMigrationResult(migration: replaceMethodInSameEndpointChange, target: readResource(Resources.PetEndpointReplacedMethod.rawValue))
+        _ = getMigrationResult(
+            migration: replaceMethodInSameEndpointChange,
+            target: readResource(Resources.PetEndpointReplacedMethod.rawValue)
+        )
         
-        let result = APITemplate().render(CodeStore.getInstance().getEndpoint("/pet", searchInCurrent: true)!)
+        guard let endpoint = CodeStore
+                .getInstance()
+                .getEndpoint("/pet", searchInCurrent: true) else {
+            fatalError("Could not retrieve endpoint.")
+        }
         
-        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeReplacedMethodInSameEndpoint.rawValue))
+        let result = APITemplate().render(endpoint)
+        
+        XCTAssertEqual(result, readResource(Resources
+                                                .ResultPetEndpointFacadeReplacedMethodInSameEndpoint
+                                                .rawValue))
     }
     
     let replaceMethodReturnTypeChange = """

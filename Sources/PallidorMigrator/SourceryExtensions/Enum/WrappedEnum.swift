@@ -151,10 +151,20 @@ class WrappedEnum: Modifiable {
             \(self.casesString)
 
             func to() -> \("\(self.parentName!).\(self.localName)")? {
-                \("\(self.parentName!).\(self.localName)")(rawValue : self.rawValue)
+                \("""
+                \(
+                    // is internal enum - always has parent.
+                    // swiftlint:disable:next force_unwrapping
+                    self.parentName!).\(self.localName)
+                """)(rawValue : self.rawValue)
             }
 
-            init?(_ from: \("\(self.parentName!).\(self.localName)")?) {
+            init?(_ from: \("""
+        \(
+            // is internal enum - always has parent.
+            // swiftlint:disable:next force_unwrapping
+            self.parentName!).\(self.localName)
+        """)?) {
                 if let from = from {
                     self.init(rawValue: from.rawValue)
                 } else {

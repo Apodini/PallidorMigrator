@@ -10,12 +10,15 @@ import Foundation
 extension WrappedMethod {
     func mapStringPrimitiveTypes(_ change: ReplaceChange) -> (String) -> String {
         { type in
-            !type.isPrimitiveType ?
-            (type.isArrayType ?
+            type.isArrayType ?
             """
             .map({ (result) -> \(type) in
                 let context = JSContext()!
-                context.evaluateScript(\"""\n\(change.customRevert!)\n\""")
+                context.evaluateScript(\"""\n\(
+                    // must provide revert method due to migration guide constraints
+                    // for ReplaceChanges.
+                    // swiftlint:disable:next force_unwrapping
+                    change.customRevert!)\n\""")
                 let encString = context
                             .objectForKeyedSubscript("conversion")
                             .call(withArguments: [String(result)])?.toString()
@@ -28,25 +31,15 @@ extension WrappedMethod {
             """
             .map({ (result) -> \(type) in
                 let context = JSContext()!
-                context.evaluateScript(\"""\n\(change.customRevert!)\n\""")
+                context.evaluateScript(\"""\n\(
+                    // must provide revert method due to migration guide constraints
+                    // for ReplaceChanges.
+                    // swiftlint:disable:next force_unwrapping
+                    change.customRevert!)\n\""")
                 let encString = context
                             .objectForKeyedSubscript("conversion")
                             .call(withArguments: [String(result)])?.toString()
                 return \(type)(try! JSONDecoder().decode(_\(type).self, from: encString!.data(using: .utf8)!))!
-            })
-            """)
-            :
-            """
-            .map({ (result) -> \(type) in
-                let context = JSContext()!
-                context.evaluateScript(\"""\n\(change.customRevert!)\n\""")
-                let encString = context
-                            .objectForKeyedSubscript("conversion")
-                            .call(withArguments: [String(result)])?.toString()
-                \(type.isCollectionType
-                ? "return \(type)(try! JSONDecoder().decode(\(type).self, from: encString!.data(using: .utf8)!))!"
-                : "return \(type.upperFirst)(encString)!"
-                )
             })
             """
         }
@@ -58,7 +51,11 @@ extension WrappedMethod {
         .map({ (result) -> \(type) in
             let context = JSContext()!
             let encoded = try! JSONEncoder().encode(result)
-            context.evaluateScript(\"""\n\(change.customRevert!)\n\""")
+            context.evaluateScript(\"""\n\(
+                // must provide revert method due to migration guide constraints
+                // for ReplaceChanges.
+                // swiftlint:disable:next force_unwrapping
+                change.customRevert!)\n\""")
             let encString = context
                     .objectForKeyedSubscript("conversion")
                     .call(withArguments: [String(data: encoded, encoding: .utf8)!])?.toString()

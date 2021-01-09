@@ -21,10 +21,20 @@ struct ModelFacade: Facade {
     func persist() throws -> [URL] {
         try self.modifiables.map { target -> URL in
             let template = ModelTemplate()
-            guard let model = try migrationSet!.activate(for: target) as? WrappedClass else {
+            guard let migrationSet = self.migrationSet else {
+                fatalError("MigrationSet not initialized!")
+            }
+            guard let model = try migrationSet.activate(for: target) as? WrappedClass else {
                 fatalError("Could not migrate model.")
             }
-            return try template.write(model, to: targetDirectory.persistentPath + Path("\(model.localName).swift"))!
+            guard let result = try? template.write(
+                    model,
+                    to: targetDirectory.persistentPath + Path("\(model.localName).swift")
+            ) else {
+                fatalError("Model could not be written to file.")
+            }
+            
+            return result
         }
     }
 }

@@ -23,30 +23,36 @@ class MigrationSet {
     /// - Parameter modifiable: the modifiable which is about to be changed
     /// - Throws: error if change type could not be detected
     /// - Returns: the migrated modifiable
+    // method requires that the current complexity to identify
+    // all change types and their respective targets.
+    // swiftlint:disable:next cyclomatic_complexity
     func activate(for modifiable: Modifiable?) throws -> Modifiable {
-        var migration: Migrating?
+        guard let modifiable = modifiable else {
+            fatalError("Tried to activate a migration without providing a modifiable.")
+        }
+        var migration: Migrating
         for change in guide.changes {
             switch change.object {
             case .endpoint(let endpoint):
-                if endpoint.route == modifiable!.id {
-                    migration = createMigration(change: change, target: modifiable!)
-                    migrations.append(migration!)
+                if endpoint.route == modifiable.id {
+                    migration = createMigration(change: change, target: modifiable)
+                    migrations.append(migration)
                 }
             case .method(let method):
-                if method.definedIn == modifiable!.id {
-                    migration = createMigration(change: change, target: modifiable!)
-                    migrations.append(migration!)
+                if method.definedIn == modifiable.id {
+                    migration = createMigration(change: change, target: modifiable)
+                    migrations.append(migration)
                 }
             case .model(let model):
-                if model.id == modifiable!.id {
-                    migration = createMigration(change: change, target: modifiable!)
-                    migrations.append(migration!)
+                if model.id == modifiable.id {
+                    migration = createMigration(change: change, target: modifiable)
+                    migrations.append(migration)
                 }
 
             case .enum(let enumModel):
-                if enumModel.id == modifiable!.id {
-                    migration = createMigration(change: change, target: modifiable!)
-                    migrations.append(migration!)
+                if enumModel.id == modifiable.id {
+                    migration = createMigration(change: change, target: modifiable)
+                    migrations.append(migration)
                 }
             }
         }
@@ -55,7 +61,7 @@ class MigrationSet {
             try mig.execute()
         }
 
-        return modifiable!
+        return modifiable
     }
     
     /// creates the migration required to adapt the modifiable
@@ -76,8 +82,13 @@ class MigrationSet {
         case .replace:
             // solvable has to be checked on constraint conditions (aka. remove endpoint not supported)
             if case .method(let method) = change.object, case .signature = change.target, method.definedIn != target.id {
-                let target = CodeStore.getInstance().getMethod(method.operationId)
-                return ReplaceMigration(solvable: true, executeOn: target!, change: change)
+                guard let target = CodeStore
+                        .getInstance()
+                        .getMethod(method.operationId)
+                else {
+                    fatalError("Target replacement method was not found.")
+                }
+                return ReplaceMigration(solvable: true, executeOn: target, change: change)
             }
             return ReplaceMigration(solvable: true, executeOn: target, change: change)
         case .nil:
@@ -86,24 +97,16 @@ class MigrationSet {
     }
 
     fileprivate func createDeleteMigration(_ change: Change, _ target: Modifiable) -> Migrating {
-        if case .model(let method) = change.object, case .signature = change.target {
-            let target = CodeStore.getInstance().getModel(method.name)!
-            return DeleteMigration(solvable: true, executeOn: target, change: change)
-        }
-        if case .endpoint(let endpoint) = change.object, case .signature = change.target {
-            let target = CodeStore.getInstance().getEndpoint(endpoint.id!)!
-            return DeleteMigration(solvable: true, executeOn: target, change: change)
-        }
-        if case .enum(let targetEnum) = change.object {
-            if case .signature = change.target {
-                let target = CodeStore.getInstance().getEnum(targetEnum.id!)!
-                return DeleteMigration(solvable: true, executeOn: target, change: change)
-            }
+        if case .enum(let targetEnum) = change.object, let enumId = targetEnum.id {
             if case .case = change.target {
-                let facade = CodeStore.getInstance().getEnum(targetEnum.id!)!
+                guard let facade = CodeStore.getInstance().getEnum(enumId) else {
+                    fatalError("Enum was not found in previous facade.")
+                }
                 guard let target = target as? WrappedEnum, let change = change as? DeleteChange else {
                     fatalError("Target is no enum or change type is malformed.")
                 }
+                // Change must specify a fallback value due to migration guide constraints.
+                // swiftlint:disable:next force_unwrapping
                 target.cases.append(facade.cases.first(where: { $0.name == change.fallbackValue!.id! })!)
                 return DeleteMigration(solvable: true, executeOn: target, change: change)
             }

@@ -18,6 +18,9 @@ extension WrappedMethod {
 
     /// only operation id without parameters and round brackets
     var shortName: String {
-        String(name[name.startIndex..<name.firstIndex(of: "(")!])
+        guard let endIndex = name.firstIndex(of: "(") else {
+            fatalError("Only methods can be shortend in their name.")
+        }
+        return String(name[name.startIndex..<endIndex])
     }
 }

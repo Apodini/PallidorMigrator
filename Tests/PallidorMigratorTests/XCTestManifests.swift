@@ -1,6 +1,8 @@
 import XCTest
 
 #if !canImport(ObjectiveC)
+/// All tests for PallidorMigrator
+/// - Returns: list of XCTestCaseEntry
 public func allTests() -> [XCTestCaseEntry] {
     [
         testCase(PallidorMigratorTests.allTests),

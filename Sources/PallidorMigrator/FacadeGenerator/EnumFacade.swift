@@ -20,10 +20,18 @@ struct EnumFacade: Facade {
     func persist() throws -> [URL] {
         try self.modifiables.map { target -> URL in
             let template = EnumTemplate()
-            guard let migratedEnum = try migrationSet!.activate(for: target) as? WrappedEnum else {
+
+            guard let migrationSet = self.migrationSet else {
+                fatalError("MigrationSet not initialized!")
+            }
+            guard let migratedEnum = try migrationSet.activate(for: target) as? WrappedEnum else {
                 fatalError("Could not migrate enum.")
             }
-            return try template.write(migratedEnum, to: targetDirectory.persistentPath + Path("\(migratedEnum.localName).swift"))!
+            guard let result = try? template.write(migratedEnum, to: targetDirectory.persistentPath + Path("\(migratedEnum.localName).swift")) else {
+                fatalError("Enum could not be written to file.")
+            }
+            
+            return result
         }
     }
 }

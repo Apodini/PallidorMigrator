@@ -30,7 +30,10 @@ extension WrappedMethod {
         let mapString = self.mapString(mappedType)
 
         return """
-        \(apiMethodErrorMap)\(mapString != nil ? "\n\(mapString!)" : "")
+        \(apiMethodErrorMap)\(
+            // is nil checked in previous statement.
+            // swiftlint:disable:next force_unwrapping
+            mapString != nil ? "\n\(mapString!)" : "")
         \(apiMethodEraseToPublisher)
         """
     }

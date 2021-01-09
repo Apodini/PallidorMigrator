@@ -21,6 +21,8 @@ extension Array where Element == String? {
     /// - Parameter separator: separator String
     /// - Returns: Joined String
     public func skipEmptyJoined(separator: String = "") -> String {
+        // $0 is checked for nil before unwrap.
+        // swiftlint:disable:next force_unwrapping
         guard let arr = self.filter({ $0 != nil && !$0!.isEmpty }) as? [String] else {
             fatalError("Could not parse to [String]")
         }

@@ -69,36 +69,50 @@ class MigrationGuide: Decodable {
 
     /// Identifies deleted items and prepares the facade for their deletion
     /// - Parameter change: change in which sth. was deleted
+    // method requires that the current complexity to identify
+    // all change types and their respective targets.
+    // swiftlint:disable:next cyclomatic_complexity
     private func addDeleted(change: DeleteChange) {
         var modifiable: Modifiable?
         switch change.object {
         case .endpoint(let endpoint):
             if case .signature = change.target {
                 let codeStore = CodeStore.getInstance()
-                modifiable = codeStore.getEndpoint(endpoint.route)
-                codeStore.insertDeleted(modifiable: modifiable!)
+                guard let endpointMod = codeStore.getEndpoint(endpoint.route) else {
+                    fatalError("Deleted endpoint \(endpoint.route) was not found in previous facade.")
+                }
+                modifiable = endpointMod
+                codeStore.insertDeleted(modifiable: endpointMod)
             }
         case .model(let model):
             if case .signature = change.target {
                 let codeStore = CodeStore.getInstance()
-                modifiable = codeStore.getModel(model.name)
-                codeStore.insertDeleted(modifiable: modifiable!)
+                guard let modelMod = codeStore.getModel(model.name) else {
+                    fatalError("Deleted model \(model.name) was not found in previous facade.")
+                }
+                modifiable = modelMod
+                codeStore.insertDeleted(modifiable: modelMod)
             }
         case .enum(let enumModel):
             if case .signature = change.target {
                 let codeStore = CodeStore.getInstance()
-                modifiable = codeStore.getEnum(enumModel.enumName)
-                codeStore.insertDeleted(modifiable: modifiable!)
+                guard let enumMod = codeStore.getEnum(enumModel.enumName) else {
+                    fatalError("Deleted enum \(enumModel.enumName) was not found in previous facade.")
+                }
+                modifiable = enumMod
+                codeStore.insertDeleted(modifiable: enumMod)
             }
         case .method(let method):
             if case .signature = change.target {
                 let codeStore = CodeStore.getInstance()
                 modifiable = codeStore.getMethod(method.operationId)
-                let endpoint = codeStore.getEndpoint(method.definedIn, searchInCurrent: true)
+                guard let endpoint = codeStore.getEndpoint(method.definedIn, searchInCurrent: true) else {
+                    fatalError("Deleted endpoint \(method.definedIn) was not found in previous facade.")
+                }
                 guard let wrappedMethod = modifiable as? WrappedMethod else {
                     fatalError("Method is malformed - operation id might be invalid")
                 }
-                endpoint!.methods.append(wrappedMethod)
+                endpoint.methods.append(wrappedMethod)
             }
         }
 

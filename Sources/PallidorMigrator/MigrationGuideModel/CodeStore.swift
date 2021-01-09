@@ -20,6 +20,8 @@ public class CodeStore {
 
     /// true after initial setup
     var hasFacade: Bool {
+        // nil check before executing
+        // swiftlint:disable:next force_unwrapping
         previousFacade != nil && previousFacade!.isEmpty
     }
 
@@ -29,7 +31,13 @@ public class CodeStore {
     }
 
     private init(targetDirectory: Path) {
-        self.currentAPI = getCode(modelPath: targetDirectory + Path("Models"), apiPath: targetDirectory + Path("APIs"))!
+        guard let currentAPI = getCode(
+                modelPath: targetDirectory + Path("Models"),
+                apiPath: targetDirectory + Path("APIs")
+        ) else {
+            fatalError("Current API must be present.")
+        }
+        self.currentAPI = currentAPI
         self.previousFacade = getCode(modelPath: targetDirectory + Path("PersistentModels"), apiPath: targetDirectory + Path("PersistentAPIs"))
     }
 
@@ -38,6 +46,45 @@ public class CodeStore {
         CodeStore.instance = nil
     }
 
+    fileprivate func importEndpoints(_ apiPaths: [String]?, _ apiDirectory: Path, _ modifiables: inout [Modifiable]) {
+        guard let apiPaths = apiPaths else {
+            fatalError("No paths to endpoints provided.")
+        }
+        
+        do {
+            for endpointPath in apiPaths {
+                let path = apiDirectory + Path(endpointPath)
+                let content = try path.read(.utf8)
+                let fileparser = try FileParser(contents: content, path: path)
+                let code = try fileparser.parse()
+                guard let types = WrappedTypes(types: code.types).getModifiable() else {
+                    fatalError("Modifiable could not be retrieved.")
+                }
+                modifiables.append(types)
+            }
+        } catch {
+            fatalError("Endpoints could not be loaded.")
+        }
+    }
+    
+    fileprivate func importModels(_ mPaths: [String], _ modelDirectory: Path, _ modifiables: inout [Modifiable]) {
+        do {
+            for modelPath in mPaths {
+                let path = modelDirectory + Path(modelPath)
+                let content = try path.read(.utf8)
+                let fileparser = try FileParser(contents: content, path: path)
+                let code = try fileparser.parse()
+                guard let types = WrappedTypes(types: code.types).getModifiable() else {
+                    fatalError("Modifiable could not be retrieved.")
+                }
+                
+                modifiables.append(types)
+            }
+        } catch {
+            fatalError("Models could not be loaded.")
+        }
+    }
+    
     /// Reads and parses the source code inside of target directories
     /// - Parameters:
     ///   - modelPath: path to models
@@ -62,39 +109,19 @@ public class CodeStore {
 
         var modifiables = [Modifiable]()
         
-        do {
-            for modelPath in mPaths {
-                let path = modelDirectory + Path(modelPath)
-                let content = try path.read(.utf8)
-                let fileparser = try FileParser(contents: content, path: path)
-                let code = try fileparser.parse()
-                let types = WrappedTypes(types: code.types)
-                modifiables.append(types.getModifiable()!)
-            }
-        } catch {
-            fatalError("Models could not be loaded.")
-        }
+        importModels(mPaths, modelDirectory, &modifiables)
 
-        do {
-            for endpointPath in apiPaths! {
-                let path = apiDirectory + Path(endpointPath)
-                let content = try path.read(.utf8)
-                let fileparser = try FileParser(contents: content, path: path)
-                let code = try fileparser.parse()
-                let types = WrappedTypes(types: code.types)
-                modifiables.append(types.getModifiable()!)
-            }
-        } catch {
-            fatalError("Endpoints could not be loaded.")
-        }
+        importEndpoints(apiPaths, apiDirectory, &modifiables)
 
         do {
             for errorPath in errorPaths {
                 if let content = try? errorPath.read(.utf8) {
                     let fileparser = try FileParser(contents: content, path: errorPath)
                     let code = try fileparser.parse()
-                    let types = WrappedTypes(types: code.types)
-                    modifiables.append(types.getModifiable()!)
+                    guard let types = WrappedTypes(types: code.types).getModifiable() else {
+                        fatalError("Modifiable could not be retrieved.")
+                    }
+                    modifiables.append(types)
                 }
             }
         } catch {
@@ -121,15 +148,17 @@ public class CodeStore {
         if CodeStore.instance == nil {
             CodeStore.instance = CodeStore(targetDirectory: targetDirectory)
         }
+        // nil check before executing
+        // swiftlint:disable:next force_unwrapping
         return CodeStore.instance!
     }
 
     /// Singleton getter
     /// - Returns: returns singleton instance of CodeStore
     static func getInstance() -> CodeStore {
-        guard CodeStore.instance != nil else {
+        guard let instance = CodeStore.instance else {
             fatalError("Code store was not properly initialized.")
         }
-        return CodeStore.instance!
+        return instance
     }
 }

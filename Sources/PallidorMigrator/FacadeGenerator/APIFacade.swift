@@ -20,11 +20,25 @@ struct APIFacade: Facade {
     /// - Returns: `[URL]` of file URLs
     func persist() throws -> [URL] {
         let activated = try self.modifiables.map { mod -> WrappedStruct in
-            guard let modifiable = try migrationSet!.activate(for: mod) as? WrappedStruct else {
+            guard let migrationSet = self.migrationSet else {
+                fatalError("MigrationSet not initialized!")
+            }
+            guard let modifiable = try migrationSet.activate(for: mod) as? WrappedStruct else {
                 fatalError("APIFacade requires structs to be generated.")
             }
             return modifiable
         }
-        return try activated.map { try APITemplate().write($0, to: targetDirectory.persistentPath + Path("\($0 .localName.removePrefix).swift"))! }
+        
+        
+        return activated.map { file in
+            let target = targetDirectory
+                    .persistentPath + Path("\(file.localName.removePrefix).swift")
+            
+            guard let result = try? APITemplate().write(file, to: target) else {
+                fatalError("Could not write file to target directory.")
+            }
+
+            return result
+        }
     }
 }

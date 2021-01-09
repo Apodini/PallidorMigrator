@@ -66,6 +66,8 @@ class WrappedMethodParameter: Modifiable {
             isOptional: from.isOptional,
             typeName: WrappedTypeName(from: from.typeName),
             actualTypeName: from.actualTypeName != nil ?
+                // nil check before
+                // swiftlint:disable:next force_unwrapping
                 WrappedTypeName(from: from.actualTypeName!) :
                 nil,
             defaultValue: from.defaultValue)
@@ -88,16 +90,19 @@ class WrappedMethodParameter: Modifiable {
 
     /// String representation of parameter in method signature
     lazy var signatureString : () -> String = { () in
-        let isString = self.actualTypeName!.name.unwrapped.isString && self.id != "contentType"
+        guard let actualTypeName = self.actualTypeName else {
+            fatalError("Type missing for parameter: \(self.id)")
+        }
+        let isString = actualTypeName.name.unwrapped.isString && self.id != "contentType"
         let defaultValue = """
 \(self.hasDefaultValue ?
     """
- = \(isString ?
-        "\"\(self.defaultValue!.replacingOccurrences(of: "\"", with: ""))\"" :
+ = \(isString ? // swiftlint:disable:next force_unwrapping
+        "\"\(self.defaultValue!.replacingOccurrences(of: "\"", with: "") )\"" : // swiftlint:disable:next force_unwrapping
         "\(self.defaultValue!)")
 """ : "")
 """
-        return "\(self.name): \(self.actualTypeName!.name) \(defaultValue)"
+        return "\(self.name): \(actualTypeName.name) \(defaultValue)"
     }
 
     /// String for parameter conversion

@@ -1,3 +1,9 @@
+// Identifier_name linting rule is disabled
+// because enum cases reflect the names of corresponding test files
+// Force try is disabled for lines that refer to fetching and parsing
+// source code with Sourcery. File exceeds normal length due to migration guides.
+// Line length exceeds due to convert/revert definition in migration guide
+// swiftlint:disable identifier_name line_length
 import XCTest
 import SourceryFramework
 @testable import PallidorMigrator
@@ -5,6 +11,7 @@ import SourceryFramework
 class MethodIntegrationTests: XCTestCase {
     override func tearDown() {
         CodeStore.clear()
+        super.tearDown()
     }
     
     let renameMethodAndReplaceAndDeleteParameterChange = """
@@ -56,10 +63,20 @@ class MethodIntegrationTests: XCTestCase {
    """
     
     func testRenamedMethodAndReplacedAndDeletedParameter() {
-        let migrationResult = getMigrationResult(migration: renameMethodAndReplaceAndDeleteParameterChange, target: readResource(Resources.PetEndpointRenamedMethodAndReplacedParameter.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: renameMethodAndReplaceAndDeleteParameterChange,
+            target: readResource(Resources
+                                    .PetEndpointRenamedMethodAndReplacedParameter
+                                    .rawValue)
+        )
         let result = APITemplate().render(migrationResult)
 
-        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamedMethodAndReplacedDeletedParameter.rawValue))
+        XCTAssertEqual(
+            result,
+            readResource(Resources
+                            .ResultPetEndpointFacadeRenamedMethodAndReplacedDeletedParameter
+                            .rawValue)
+        )
     }
     
     let renameMethodAndAddParameterChange = """
@@ -98,10 +115,17 @@ class MethodIntegrationTests: XCTestCase {
    """
     
     func testRenameMethodAndAddedParameter() {
-        let migrationResult = getMigrationResult(migration: renameMethodAndAddParameterChange, target: readResource( Resources.PetEndpointRenamedMethodAndAddedParameter.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: renameMethodAndAddParameterChange,
+            target: readResource(Resources
+                                    .PetEndpointRenamedMethodAndAddedParameter
+                                    .rawValue)
+        )
         let result = APITemplate().render(migrationResult)
         
-        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamedMethodAndAddedParameter.rawValue))
+        XCTAssertEqual(result, readResource(Resources
+                                                .ResultPetEndpointFacadeRenamedMethodAndAddedParameter
+                                                .rawValue))
     }
     
     let renameMethodAndRenameParameterChange = """
@@ -137,10 +161,20 @@ class MethodIntegrationTests: XCTestCase {
    """
     
     func testRenamedMethodAndRenameParameter() {
-        let migrationResult = getMigrationResult(migration: renameMethodAndRenameParameterChange, target: readResource(Resources.PetEndpointRenamedMethodAndRenamedParameter.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: renameMethodAndRenameParameterChange,
+            target: readResource(Resources
+                                    .PetEndpointRenamedMethodAndRenamedParameter
+                                    .rawValue)
+        )
         let result = APITemplate().render(migrationResult)
         
-        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamedMethodAndRenamedParameter.rawValue))
+        XCTAssertEqual(
+            result,
+            readResource(Resources
+                            .ResultPetEndpointFacadeRenamedMethodAndRenamedParameter
+                            .rawValue)
+        )
     }
         
     let renameMethodAndDeleteParameterChange = """
@@ -175,10 +209,20 @@ class MethodIntegrationTests: XCTestCase {
    """
 
     func testRenamedMethodAndDeletedParameter() {
-        let migrationResult = getMigrationResult(migration: renameMethodAndDeleteParameterChange, target: readResource(Resources.PetEndpointRenamedMethodAndDeletedParameter.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: renameMethodAndDeleteParameterChange,
+            target: readResource(Resources
+                                    .PetEndpointRenamedMethodAndDeletedParameter
+                                    .rawValue)
+        )
         let result = APITemplate().render(migrationResult)
 
-        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointFacadeRenamedMethodAndDeletedParameter.rawValue))
+        XCTAssertEqual(
+            result,
+            readResource(Resources
+                            .ResultPetEndpointFacadeRenamedMethodAndDeletedParameter
+                            .rawValue)
+        )
     }
     
     let renameMethodAndReplacedReturnValueChange = """
@@ -217,10 +261,20 @@ class MethodIntegrationTests: XCTestCase {
    """
 
     func testRenamedMethodAndReplacedReturnValue() {
-        let migrationResult = getMigrationResult(migration: renameMethodAndReplacedReturnValueChange, target: readResource(Resources.PetEndpointRenamedMethodAndReplacedReturnValue.rawValue))
+        let migrationResult = getMigrationResult(
+            migration: renameMethodAndReplacedReturnValueChange,
+            target: readResource(Resources
+                                    .PetEndpointRenamedMethodAndReplacedReturnValue
+                                    .rawValue)
+        )
         let result = APITemplate().render(migrationResult)
 
-        XCTAssertEqual(result, readResource(Resources.ResultPetEndpointRenamedMethodAndReplacedReturnValue.rawValue))
+        XCTAssertEqual(
+            result,
+            readResource(Resources
+                            .ResultPetEndpointRenamedMethodAndReplacedReturnValue
+                            .rawValue)
+        )
     }
     
     enum Resources: String {

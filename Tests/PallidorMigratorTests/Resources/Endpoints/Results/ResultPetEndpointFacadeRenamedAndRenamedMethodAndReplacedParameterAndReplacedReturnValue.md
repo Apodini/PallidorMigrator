@@ -82,7 +82,7 @@ function conversion(response) { var response = JSON.parse(response) return JSON.
     let encString = context
             .objectForKeyedSubscript("conversion")
             .call(withArguments: [String(data: encoded, encoding: .utf8)!])?.toString()
-    return String(encString)!
+    return encString!
 })
 .receive(on: DispatchQueue.main)
 .eraseToAnyPublisher()

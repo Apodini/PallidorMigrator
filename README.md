@@ -28,17 +28,20 @@ To integrate the `PallidorMigrator` library in your SwiftPM project, add the fol
 Because `PallidorMigrator` is currently under active development, there is no guarantee for source-stability.
 
 ## Usage
-To get started with `PallidorMigrator` you first need to create an instance of it, providing the path to the directory in which the source files are located, as well as the path to the location of the migration guide:
+To get started with `PallidorMigrator` you first need to create an instance of it, providing the path to the directory in which the source files are located, and the textual representation of the migration guide:
 ```swift
-var targetPath : String = ...
-var guidePath : String = ...
-let migrator = try PallidorMigrator(targetDirectory: targetPath, migrationGuidePath: guidePath)
+let targetDirectory : String = ...
+let migrationGuide : String = ...
+let migrator = try PallidorMigrator(targetDirectory: targetDirectory, migrationGuideContent: migrationGuide)
 ```
 To start with generating the persistent facade, you call the `buildFacade()` method:
 ```swift
 try migrator.buildFacade()
 ```
 All generated facade files will be located under `{targetDirectory}/PersistentModels` or `{targetDirectory}/PersistentAPIs`
+
+## Documentation
+The documentation for this package is generated with [jazzy](https://github.com/realm/jazzy) and can be found [here](https://apodini.github.io/PallidorMigrator/).
 
 ## Contributing
 Contributions to this projects are welcome. Please make sure to read the [contribution guidelines](https://github.com/Apodini/.github/blob/release/CONTRIBUTING.md) first.

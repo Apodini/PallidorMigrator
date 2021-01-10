@@ -81,7 +81,7 @@ extension WrappedMethod {
         \(defaultEncoding)
             \(type.isCollectionType
             ? "return \(type)(try! JSONDecoder().decode(\(type).self, from: encString!.data(using: .utf8)!))!"
-            : "return encString!" // "return \(type.upperFirst)(encString)!"
+                : ( type == "String" ? "return encString!" : "return \(type.upperFirst)(encString)!" ) 
             )
         })
         """

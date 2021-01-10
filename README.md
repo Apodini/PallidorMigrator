@@ -1,7 +1,7 @@
 # PallidorMigrator
 
 <p align="center">
-  <img width="150" src="https://github.com/tum-aweink/PallidorMigrator/blob/develop/Images/pallidor-icon.png">
+  <img width="150" src="https://github.com/Apodini/PallidorMigrator/blob/develop/Images/pallidor-icon.png">
 </p>
 
 <p align="center">
@@ -11,17 +11,19 @@
     <a href="https://swift.org">
         <img src="https://img.shields.io/badge/Swift-5.3-blue.svg" alt="Swift 5.3">
     </a>
-      <a href="https://github.com/tum-aweink/PallidorMigrator">
-        <img src="https://github.com/tum-aweink/PallidorMigrator/workflows/Build%20and%20Test/badge.svg" alt="Build and Test">
+      <a href="https://github.com/Apodini/PallidorMigrator">
+        <img src="https://github.com/Apodini/PallidorMigrator/workflows/Build%20and%20Test/badge.svg" alt="Build and Test">
     </a>
 </p>
+
+`PallidorMigrator` is a Swift package that generates a persistent facade layer for accessing a Web API dependency. Therefore, it incorporates all changes stated in a machine-readable migration guide into the internals of the facade. It is part of [**Pallidor**](https://github.com/Apodini/PallidorMigrator), a commandline tool which automatically migrates client applications after a Web API dependency changed.
 
 ## Requirements
 This library requires at least Swift 5.3 and macOS 10.15.
 ## Integration
 To integrate the `PallidorMigrator` library in your SwiftPM project, add the following line to the dependencies in your `Package.swift` file:
 ```swift
-.package(url: "https://github.com/tum-aweink/PallidorMigrator.git", .branch("master"))
+.package(url: "https://github.com/Apodini/PallidorMigrator.git", .branch("develop"))
 ```
 Because `PallidorMigrator` is currently under active development, there is no guarantee for source-stability.
 

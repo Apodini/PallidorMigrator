@@ -3,5 +3,6 @@ author: tum-aweink
 theme: fullwidth
 output: ./docs
 documentation: ./*.md
+min_acl: internal
 author_url: https://github.com/tum-aweink
-github_url: https://github.com/tum-aweink/PallidorMigrator
+github_url: https://github.com/Apodini/PallidorMigrator
